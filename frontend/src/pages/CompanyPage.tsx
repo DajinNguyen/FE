@@ -17,6 +17,7 @@ import {
   type CompanyTabId,
   type GoToTab,
 } from '../features/companyTabs';
+import { FinancialsTab } from '../features/financials/FinancialsTab';
 import { useCompany } from '../hooks/useCompanies';
 import { formatPrice, formatTrillion } from '../utils/format';
 import styles from './CompanyPage.module.css';
@@ -147,7 +148,8 @@ export function CompanyPage() {
               hidden={tab !== id}
               className={styles.panel}
             >
-              {id === 'chart' && <ChartTab stockCode={stockCode} />}
+              {id === 'chart' && <ChartTab stockCode={stockCode} onGoToTab={goToTab} />}
+              {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
             </div>
           ))}
         </div>
