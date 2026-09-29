@@ -1,0 +1,31 @@
+.change {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.change > span[aria-hidden] {
+  font-size: 0.7em;
+}
+
+.sm {
+  font-size: var(--fs-sm);
+}
+
+.md {
+  font-size: var(--fs-md);
+}
+
+.rise {
+  color: var(--rise);
+}
+
+.fall {
+  color: var(--fall);
+}
+
+.flat {
+  color: var(--text-3);
+}

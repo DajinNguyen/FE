@@ -1,0 +1,25 @@
+.control {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.option {
+  padding: 6px 14px;
+  white-space: nowrap;
+  border-radius: 9px;
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transition:
+    background var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.option[aria-checked='true'] {
+  background: var(--bg);
+  color: var(--text-1);
+  font-weight: 700;
+}

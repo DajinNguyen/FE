@@ -1,0 +1,39 @@
+.app {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+}
+
+.main {
+  width: 100%;
+  max-width: var(--content-max-width);
+  flex: 1;
+  margin: 0 auto;
+  padding: 0 var(--page-gutter) var(--sp-10);
+  animation: pageIn 320ms var(--ease);
+}
+
+.footer {
+  background: var(--surface);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.footerInner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--sp-8) var(--page-gutter);
+}
+
+.footerBrand {
+  margin-bottom: var(--sp-1);
+  color: var(--text-2);
+  font-weight: 700;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
