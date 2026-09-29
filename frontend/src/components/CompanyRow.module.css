@@ -1,0 +1,67 @@
+.row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-2);
+  margin: 0 calc(var(--sp-2) * -1);
+  width: calc(100% + var(--sp-4));
+  border-radius: var(--radius-md);
+  text-align: left;
+  transition: background var(--dur) var(--ease);
+}
+
+.row:active {
+  background: var(--surface-strong);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background: var(--surface-strong);
+  }
+}
+
+.rank {
+  width: 16px;
+  color: var(--brand);
+  font-weight: 700;
+  text-align: center;
+}
+
+.info {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.name {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+
+.meta {
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.priceValue {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.priceSub {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}

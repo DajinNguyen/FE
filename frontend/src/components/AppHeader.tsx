@@ -1,5 +1,6 @@
 import { Link, NavLink, useLocation } from 'react-router';
 import { useTheme } from '../hooks/useTheme';
+import { HeaderSearch } from './HeaderSearch';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
 import styles from './AppHeader.module.css';
@@ -46,6 +47,11 @@ export function AppHeader() {
         </nav>
 
         <div className={styles.actions}>
+          {pathname !== '/' && (
+            <div className={styles.search}>
+              <HeaderSearch />
+            </div>
+          )}
           <button
             type="button"
             className={styles.iconButton}
