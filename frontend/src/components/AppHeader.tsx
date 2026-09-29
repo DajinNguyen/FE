@@ -1,4 +1,5 @@
 import { Link, NavLink, useLocation } from 'react-router';
+import { LoginButton } from '../features/auth/LoginButton';
 import { useTheme } from '../hooks/useTheme';
 import { HeaderSearch } from './HeaderSearch';
 import { Icon } from './Icon';
@@ -61,6 +62,7 @@ export function AppHeader() {
           >
             <Icon name={themeIcon[mode]} size={20} />
           </button>
+          <LoginButton />
         </div>
       </div>
     </header>
