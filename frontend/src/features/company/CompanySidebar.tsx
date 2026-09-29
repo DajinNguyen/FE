@@ -1,17 +1,38 @@
+import { Icon } from '../../components/Icon';
 import { SampleBadge } from '../../components/SampleBadge';
 import { TermText } from '../../components/TermText';
 import { useCompany } from '../../hooks/useCompanies';
 import { useFinancials } from '../../hooks/useFinancials';
+import type { ReportFlow } from '../../hooks/useReportFlow';
 import type { SampleNumber } from '../../types';
 import { formatTrillion } from '../../utils/format';
+import { ReportActionButton } from '../report/ReportActionButton';
 import styles from './CompanySidebar.module.css';
 
 interface CompanySidebarProps {
   stockCode: string;
+  flow: ReportFlow;
+  onReportTab: boolean;
+  onOpenReport: () => void;
 }
 
-/** 기업 화면 오른쪽에 따라다니는 영역: 주요 지표 */
-export function CompanySidebar({ stockCode }: CompanySidebarProps) {
+const statusText = (flow: ReportFlow) => {
+  if (flow.status === 'generating') return 'AI가 재무제표·뉴스·사업보고서를 읽고 있어요.';
+  if (flow.status === 'ready')
+    return flow.fromCache
+      ? '저장된 리포트가 있어요. 누르면 바로 볼 수 있어요.'
+      : '리포트가 준비됐어요.';
+  if (flow.status === 'error') return '리포트를 만들지 못했어요. 다시 시도해 주세요.';
+  return '재무제표·뉴스·사업보고서를 함께 읽고 쉬운 말로 정리해 드려요.';
+};
+
+/** 기업 화면 오른쪽에 따라다니는 영역: AI 리포트 버튼 + 주요 지표 */
+export function CompanySidebar({
+  stockCode,
+  flow,
+  onReportTab,
+  onOpenReport,
+}: CompanySidebarProps) {
   const { data: company } = useCompany(stockCode);
   const { data: financials } = useFinancials(stockCode);
 
@@ -34,7 +55,21 @@ export function CompanySidebar({ stockCode }: CompanySidebarProps) {
   }
 
   return (
-    <aside className={styles.sidebar} aria-label="주요 지표">
+    <aside className={styles.sidebar} aria-label="AI 리포트와 주요 지표">
+      <section className={styles.aiCard}>
+        <p className={styles.eyebrow}>
+          <Icon name="sparkle" size={16} /> AI 기업 리포트
+        </p>
+        <p className={styles.aiText}>{statusText(flow)}</p>
+        <ReportActionButton
+          status={flow.status}
+          fromCache={flow.fromCache}
+          onReportTab={onReportTab}
+          onOpen={onOpenReport}
+          onRegenerate={flow.regenerate}
+        />
+      </section>
+
       {stats.length > 0 && (
         <section className={styles.statsCard}>
           <h2 className={styles.statsTitle}>주요 지표</h2>
