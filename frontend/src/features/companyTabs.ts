@@ -2,6 +2,7 @@ export const companyTabs = [
   { id: 'chart', label: '차트' },
   { id: 'financials', label: '재무 분석' },
   { id: 'news', label: '뉴스' },
+  { id: 'info', label: '기업 정보' },
 ] as const;
 
 /** 기업 화면을 처음 열면 보이는 탭 */
