@@ -20,7 +20,10 @@ import {
 } from '../features/companyTabs';
 import { FinancialsTab } from '../features/financials/FinancialsTab';
 import { NewsTab } from '../features/news/NewsTab';
+import { ReportTab } from '../features/report/ReportTab';
+import { ReportActionButton } from '../features/report/ReportActionButton';
 import { useCompany } from '../hooks/useCompanies';
+import { useReportFlow } from '../hooks/useReportFlow';
 import { formatPrice, formatTrillion } from '../utils/format';
 import styles from './CompanyPage.module.css';
 
@@ -31,6 +34,7 @@ export function CompanyPage() {
   const tabParam = searchParams.get('tab');
   const tab: CompanyTabId = isCompanyTabId(tabParam) ? tabParam : DEFAULT_COMPANY_TAB;
   const { data: company, isError, error } = useCompany(stockCode);
+  const reportFlow = useReportFlow(stockCode);
 
   const tabsAnchorRef = useRef<HTMLDivElement>(null);
   const [scrollTarget, setScrollTarget] = useState<{ id?: string; seq: number } | null>(null);
@@ -59,6 +63,11 @@ export function CompanyPage() {
       target.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
     }
   }, [scrollTarget]);
+
+  const openReport = () => {
+    goToTab('report');
+    reportFlow.start();
+  };
 
   const goBack = () => {
     const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
@@ -122,6 +131,18 @@ export function CompanyPage() {
                 </span>
               </div>
             </div>
+            <div className={styles.heroActions}>
+              {/* 넓은 화면에서는 오른쪽 사이드바에 같은 버튼이 있어서 숨겨요. */}
+              <div className={styles.heroCta}>
+                <ReportActionButton
+                  status={reportFlow.status}
+                  fromCache={reportFlow.fromCache}
+                  onReportTab={tab === 'report'}
+                  onOpen={openReport}
+                  onRegenerate={reportFlow.regenerate}
+                />
+              </div>
+            </div>
           </>
         ) : (
           <div className={styles.heroSkeleton} aria-hidden="true" />
@@ -151,16 +172,22 @@ export function CompanyPage() {
               className={styles.panel}
             >
               {id === 'chart' && <ChartTab stockCode={stockCode} onGoToTab={goToTab} />}
+              {id === 'report' && <ReportTab flow={reportFlow} onGoToTab={goToTab} />}
               {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
               {id === 'news' && <NewsTab stockCode={stockCode} />}
-              {id === 'info' && <CompanyInfoTab stockCode={stockCode} />}
+              {id === 'info' && <CompanyInfoTab stockCode={stockCode} onGoToTab={goToTab} />}
             </div>
           ))}
         </div>
 
         {company && (
           <div className={styles.sidebar}>
-            <CompanySidebar stockCode={stockCode} />
+            <CompanySidebar
+              stockCode={stockCode}
+              flow={reportFlow}
+              onReportTab={tab === 'report'}
+              onOpenReport={openReport}
+            />
           </div>
         )}
       </div>
