@@ -1,0 +1,48 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-bottom: 6px;
+  font-size: var(--fs-sm);
+}
+
+.label {
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  height: 12px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--surface-strong);
+}
+
+.bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--brand-muted);
+  animation: grow 700ms var(--ease);
+  transform-origin: left;
+}
+
+.top {
+  background: var(--brand);
+}
+
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}

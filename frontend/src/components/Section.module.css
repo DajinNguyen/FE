@@ -1,0 +1,28 @@
+.section {
+  padding: var(--sp-8) 0;
+  scroll-margin-top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
+}
+
+.section + .section {
+  border-top: 1px solid var(--line);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  margin-top: 2px;
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
