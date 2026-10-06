@@ -8,6 +8,7 @@ import { PriceChange } from '../components/PriceChange';
 import { SampleBadge } from '../components/SampleBadge';
 import { Tabs } from '../components/Tabs';
 import { TermText } from '../components/TermText';
+import { CompanyInfoTab } from '../features/company-info/CompanyInfoTab';
 import { ChartTab } from '../features/chart/ChartTab';
 import { CompanySidebar } from '../features/company/CompanySidebar';
 import {
@@ -152,6 +153,7 @@ export function CompanyPage() {
               {id === 'chart' && <ChartTab stockCode={stockCode} onGoToTab={goToTab} />}
               {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
               {id === 'news' && <NewsTab stockCode={stockCode} />}
+              {id === 'info' && <CompanyInfoTab stockCode={stockCode} />}
             </div>
           ))}
         </div>
