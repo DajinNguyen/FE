@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CompanyRow } from '../components/CompanyRow';
 import { EmptyState } from '../components/EmptyState';
 import { Icon } from '../components/Icon';
+import { TodayTermCard } from '../features/term-cards/TodayTermCard';
 import { usePopularCompanies } from '../hooks/useCompanies';
 import { useCompanySearch } from '../hooks/useCompanySearch';
 import { useOpenCompany } from '../hooks/useOpenCompany';
@@ -104,6 +105,7 @@ export function HomePage() {
           </section>
 
           <aside className={styles.aside}>
+            <TodayTermCard />
             <section className={styles.panel}>
               <h2 className={styles.panelTitle}>다진은 이렇게 써요</h2>
               <ol className={styles.steps}>
