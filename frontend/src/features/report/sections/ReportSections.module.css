@@ -1,0 +1,259 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* 넓은 화면에서 카드를 여러 칸으로 놓아요. */
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-3);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--sp-3);
+}
+
+/* 핵심 포인트 */
+.pointCard {
+  padding: var(--sp-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.pointHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.pointTitle {
+  font-size: var(--fs-md);
+  font-weight: 800;
+}
+
+.pointBody {
+  margin-top: var(--sp-2);
+  color: var(--text-1);
+  line-height: 1.65;
+}
+
+.source {
+  margin-top: var(--sp-3);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+/* 세 가지를 이어서 보면 */
+.connection {
+  padding: var(--sp-5);
+  border-radius: var(--radius-lg);
+  background: var(--brand-weak);
+}
+
+.chain {
+  display: flex;
+  flex-direction: column;
+}
+
+.chainItem {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-4);
+}
+
+.chainItem:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 31px;
+  top: 28px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--brand-muted);
+}
+
+.chainLabel {
+  flex-shrink: 0;
+  width: 64px;
+  padding: 3px 0;
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--brand-strong);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  text-align: center;
+}
+
+.chainText {
+  padding-top: 1px;
+  font-weight: 600;
+}
+
+.conclusion {
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--brand-muted);
+  font-size: var(--fs-md);
+  font-weight: 800;
+}
+
+/* 좋은 점 / 지켜볼 점 */
+.prosCons {
+  padding: var(--sp-5);
+  border-radius: var(--radius-lg);
+}
+
+.pros {
+  background: var(--good-weak);
+}
+
+.cons {
+  background: var(--normal-weak);
+}
+
+.prosConsTitle {
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-base);
+  font-weight: 800;
+}
+
+.pros .prosConsTitle {
+  color: var(--good);
+}
+
+.cons .prosConsTitle {
+  color: var(--normal);
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.bullets li {
+  position: relative;
+  padding-left: var(--sp-4);
+  line-height: 1.6;
+}
+
+.bullets li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* 자세히 보기 */
+.links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sp-3);
+}
+
+.links li {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.linkRow {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  color: var(--text-3);
+  text-align: left;
+}
+
+.linkRow {
+  height: 100%;
+}
+
+.linkRow:hover,
+.linkRow:active {
+  background: var(--surface-strong);
+}
+
+.linkLabel {
+  display: block;
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+.linkDescription {
+  display: block;
+  font-size: var(--fs-sm);
+}
+
+/* 안내 문구 */
+.disclaimer {
+  padding: var(--sp-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.disclaimerList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.dataSources {
+  margin-top: var(--sp-3);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+/* 그래프로 보면 */
+.chartCard {
+  padding: var(--sp-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.chartTitle {
+  font-size: var(--fs-md);
+  font-weight: 800;
+}
+
+.chartBody {
+  margin-top: var(--sp-3);
+}
+
+.chartSkeleton {
+  height: 180px;
+  border-radius: var(--radius-md);
+  background: var(--surface-strong);
+}
+
+.chartCaption {
+  margin-top: var(--sp-3);
+  line-height: 1.6;
+}
+
+.aiTag {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--brand-weak);
+  color: var(--brand-strong);
+  font-size: 11px;
+  font-weight: 800;
+  vertical-align: 1px;
+}

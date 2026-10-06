@@ -1,3 +1,4 @@
+import { Button } from '../../components/Button';
 import { Icon } from '../../components/Icon';
 import { SampleBadge } from '../../components/SampleBadge';
 import { Section } from '../../components/Section';
@@ -5,11 +6,19 @@ import { TermText } from '../../components/TermText';
 import { useCompany } from '../../hooks/useCompanies';
 import { useFinancials } from '../../hooks/useFinancials';
 import { formatTrillion } from '../../utils/format';
+import type { GoToTab } from '../companyTabs';
+import { QUIZ_ANCHOR_ID } from '../report/sections/QuizSection';
 import styles from './CompanyInfoTab.module.css';
 
 const marketLabel = { KOSPI: '코스피', KOSDAQ: '코스닥' } as const;
 
-export function CompanyInfoTab({ stockCode }: { stockCode: string }) {
+export function CompanyInfoTab({
+  stockCode,
+  onGoToTab,
+}: {
+  stockCode: string;
+  onGoToTab: GoToTab;
+}) {
   const { data: company } = useCompany(stockCode);
   const { data: financials } = useFinancials(stockCode);
 
@@ -110,6 +119,15 @@ export function CompanyInfoTab({ stockCode }: { stockCode: string }) {
           >
             DART 공시 보기 <Icon name="external" size={16} />
           </a>
+        </div>
+      </Section>
+
+      <Section>
+        <div className={styles.quizCta}>
+          <p className={styles.quizCtaTitle}>다 읽었다면, 퀴즈로 확인해 볼까요?</p>
+          <Button size="lg" onClick={() => onGoToTab('report', QUIZ_ANCHOR_ID)}>
+            퀴즈 풀러 가기
+          </Button>
         </div>
       </Section>
     </div>
