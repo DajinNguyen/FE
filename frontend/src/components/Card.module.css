@@ -1,0 +1,22 @@
+.card {
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+}
+
+.gray {
+  background: var(--surface);
+}
+
+.brand {
+  background: var(--brand-card);
+  color: var(--on-brand);
+}
+
+.brandWeak {
+  background: var(--brand-weak);
+}
+
+.plain {
+  background: var(--bg);
+  padding: 0;
+}
