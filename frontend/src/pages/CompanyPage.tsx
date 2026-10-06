@@ -22,6 +22,7 @@ import { FinancialsTab } from '../features/financials/FinancialsTab';
 import { NewsTab } from '../features/news/NewsTab';
 import { ReportTab } from '../features/report/ReportTab';
 import { ReportActionButton } from '../features/report/ReportActionButton';
+import { WatchlistHeart } from '../features/watchlist/WatchlistHeart';
 import { useCompany } from '../hooks/useCompanies';
 import { useReportFlow } from '../hooks/useReportFlow';
 import { formatPrice, formatTrillion } from '../utils/format';
@@ -132,6 +133,7 @@ export function CompanyPage() {
               </div>
             </div>
             <div className={styles.heroActions}>
+              <WatchlistHeart stockCode={company.stock_code} companyName={company.name} />
               {/* 넓은 화면에서는 오른쪽 사이드바에 같은 버튼이 있어서 숨겨요. */}
               <div className={styles.heroCta}>
                 <ReportActionButton
