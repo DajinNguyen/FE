@@ -1,4 +1,7 @@
-export const companyTabs = [{ id: 'chart', label: '차트' }] as const;
+export const companyTabs = [
+  { id: 'chart', label: '차트' },
+  { id: 'financials', label: '재무 분석' },
+] as const;
 
 /** 기업 화면을 처음 열면 보이는 탭 */
 export const DEFAULT_COMPANY_TAB: CompanyTabId = 'chart';

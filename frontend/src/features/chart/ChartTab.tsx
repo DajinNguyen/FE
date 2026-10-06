@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from '../../components/Button';
 import { PriceChart } from '../../components/PriceChart';
 import { PriceChange } from '../../components/PriceChange';
 import { SampleBadge } from '../../components/SampleBadge';
@@ -8,6 +9,7 @@ import { useFinancials } from '../../hooks/useFinancials';
 import { usePriceHistory } from '../../hooks/usePriceHistory';
 import type { PricePeriod } from '../../types';
 import { formatPrice } from '../../utils/format';
+import type { GoToTab } from '../companyTabs';
 import { AnnualFinancialsSection } from '../financials/AnnualFinancialsSection';
 import styles from './ChartTab.module.css';
 
@@ -26,7 +28,7 @@ const periodLabel: Record<PricePeriod, string> = {
 };
 
 /** AI 분석 전에 보는 기본 화면: 주가 그래프 + 재무제표 그래프 (주요 지표는 오른쪽 사이드바) */
-export function ChartTab({ stockCode }: { stockCode: string }) {
+export function ChartTab({ stockCode, onGoToTab }: { stockCode: string; onGoToTab: GoToTab }) {
   const [period, setPeriod] = useState<PricePeriod>('3m');
   const { data: prices, isPending: isPricePending } = usePriceHistory(stockCode, period);
   const { data: financials } = useFinancials(stockCode);
@@ -87,7 +89,17 @@ export function ChartTab({ stockCode }: { stockCode: string }) {
         )}
       </Section>
 
-      {financials && <AnnualFinancialsSection financials={financials} title="재무제표 한눈에" />}
+      {financials && (
+        <AnnualFinancialsSection financials={financials} title="재무제표 한눈에">
+          <Button
+            variant="secondary"
+            className={styles.more}
+            onClick={() => onGoToTab('financials')}
+          >
+            재무 분석 자세히 보기
+          </Button>
+        </AnnualFinancialsSection>
+      )}
     </div>
   );
 }

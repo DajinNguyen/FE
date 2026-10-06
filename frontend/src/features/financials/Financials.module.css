@@ -1,3 +1,9 @@
+.loading {
+  padding: var(--sp-10) 0;
+  color: var(--text-3);
+  text-align: center;
+}
+
 .chartSentence {
   margin-top: var(--sp-4);
   font-size: var(--fs-md);
@@ -8,4 +14,144 @@
   margin-top: var(--sp-1);
   color: var(--text-3);
   font-size: var(--fs-xs);
+}
+
+.quarter {
+  margin-top: var(--sp-4);
+  padding: var(--sp-4);
+  border-radius: var(--radius-md);
+  background: var(--brand-weak);
+}
+
+.quarterLabel {
+  color: var(--brand-strong);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.quarterValue {
+  margin-top: 2px;
+  font-weight: 700;
+}
+
+/* 지표 신호등 */
+.signals {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--sp-3);
+}
+
+.signal {
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.signalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.signalLabel {
+  color: var(--text-2);
+  font-weight: 700;
+}
+
+.signalValue {
+  margin-top: 2px;
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.signalDescription {
+  margin-top: var(--sp-1);
+  font-weight: 500;
+}
+
+.signalCriteria {
+  margin-top: var(--sp-1);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+/* 원본 숫자 */
+.rawToggle {
+  display: flex;
+  width: 100%;
+  max-width: 480px;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-weight: 700;
+}
+
+.chevron {
+  display: inline-block;
+  line-height: 1;
+  transition: transform var(--dur) var(--ease);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.rawWrap {
+  margin-top: var(--sp-3);
+  animation: open 260ms var(--ease);
+}
+
+.table {
+  width: 100%;
+  max-width: 640px;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: var(--sp-3) var(--sp-2);
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+
+.table th:first-child {
+  text-align: left;
+}
+
+.table thead th {
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+.table tbody th {
+  font-weight: 600;
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* 3년 실적과 사업별 매출을 나란히 */
+.twoCol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  column-gap: var(--sp-10);
+}
+
+.twoCol > section + section {
+  border-top: 0;
+}
+
+@media (max-width: 719px) {
+  .twoCol > section + section {
+    border-top: 1px solid var(--line);
+  }
 }
