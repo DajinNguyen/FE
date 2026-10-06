@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router';
 import { AppLayout } from './components/AppLayout';
+import { CompanyPage } from './pages/CompanyPage';
 import { HomePage } from './pages/HomePage';
 
 export function App() {
@@ -7,6 +8,7 @@ export function App() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="companies/:stockCode" element={<CompanyPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
