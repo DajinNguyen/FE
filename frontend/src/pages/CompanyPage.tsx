@@ -18,6 +18,7 @@ import {
   type GoToTab,
 } from '../features/companyTabs';
 import { FinancialsTab } from '../features/financials/FinancialsTab';
+import { NewsTab } from '../features/news/NewsTab';
 import { useCompany } from '../hooks/useCompanies';
 import { formatPrice, formatTrillion } from '../utils/format';
 import styles from './CompanyPage.module.css';
@@ -150,6 +151,7 @@ export function CompanyPage() {
             >
               {id === 'chart' && <ChartTab stockCode={stockCode} onGoToTab={goToTab} />}
               {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
+              {id === 'news' && <NewsTab stockCode={stockCode} />}
             </div>
           ))}
         </div>
