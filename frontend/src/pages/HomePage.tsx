@@ -1,67 +1,168 @@
-import { CompanyRow } from '../components/CompanyRow';
+import type { ReactNode } from 'react';
+import { CompanyAvatar } from '../components/CompanyAvatar';
 import { CompanySearch } from '../components/CompanySearch';
+import { Icon } from '../components/Icon';
+import { PriceChange } from '../components/PriceChange';
+import { SampleBadge } from '../components/SampleBadge';
 import { TodayTermCard } from '../features/term-cards/TodayTermCard';
-import { usePopularCompanies } from '../hooks/useCompanies';
+import { useHomeDashboard } from '../hooks/useHomeDashboard';
 import { useOpenCompany } from '../hooks/useOpenCompany';
+import type { CompanySummary, TradingCompany } from '../types';
 import styles from './HomePage.module.css';
 
-const howItWorks = [
-  { title: '회사 검색', description: '이름, 영어 이름, 종목코드 무엇이든 괜찮아요' },
-  { title: '그래프로 먼저 보기', description: '주가 흐름과 재무제표를 한눈에 봐요' },
-  { title: 'AI 리포트 작성', description: '재무제표·뉴스·사업보고서를 쉬운 말로 풀어 드려요' },
-];
+/** 거래대금(억 원) → "2.1조 원" / "9,820억 원" */
+const formatTradingValue = (eok: number) =>
+  eok >= 10_000
+    ? `${(eok / 10_000).toLocaleString('ko-KR', { maximumFractionDigits: 1 })}조 원`
+    : `${eok.toLocaleString('ko-KR')}억 원`;
 
 export function HomePage() {
-  const popular = usePopularCompanies();
+  const { data, isPending, isError } = useHomeDashboard();
   const openCompany = useOpenCompany();
 
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
-        <h1 className={styles.title}>궁금한 회사를 쉽게 알아봐요</h1>
+        <h1 className={styles.title}>궁금한 기업을 검색하면 AI가 쉽게 분석해 드려요</h1>
         <p className={styles.subtitle}>
-          어려운 재무제표와 뉴스를 AI가 쉬운 말로 풀어 드려요. 투자 추천이 아니라, 회사를 이해하는
-          데 집중해요.
+          어떤 회사인지, 지금 어떤 상황인지, 왜 그런 결과가 나왔는지 쉬운 말로 알려 드려요.
         </p>
-
         <div className={styles.searchBox}>
           <CompanySearch variant="hero" autoFocus />
         </div>
       </section>
 
-      <div className={styles.grid}>
-        <section className={styles.panel}>
-          <h2 className={styles.panelTitle}>많이 보는 회사</h2>
-          <ul>
-            {popular.data?.map((company, index) => (
-              <CompanyRow
+      {isError && (
+        <p className={styles.hint}>목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>
+      )}
+      {isPending && <div className={styles.loading} aria-hidden="true" />}
+
+      {data && (
+        <div className={styles.sections}>
+          <HomeSection
+            title="오늘 거래가 많은 기업"
+            note={`거래대금 기준 · ${data.base_time} 기준`}
+          >
+            {data.trading_value_top.map((company, index) => (
+              <CompanyCard
                 key={company.stock_code}
                 company={company}
-                onSelect={openCompany}
                 rank={index + 1}
+                onSelect={openCompany}
+                extra={<TradingValue company={company} />}
               />
             ))}
-          </ul>
-        </section>
+          </HomeSection>
 
-        <aside className={styles.aside}>
-          <TodayTermCard />
-          <section className={styles.panel}>
-            <h2 className={styles.panelTitle}>다진은 이렇게 써요</h2>
-            <ol className={styles.steps}>
-              {howItWorks.map((step, index) => (
-                <li key={step.title} className={styles.step}>
-                  <span className={styles.stepNumber}>{index + 1}</span>
-                  <span>
-                    <span className={styles.stepTitle}>{step.title}</span>
-                    <span className={styles.stepDescription}>{step.description}</span>
+          <HomeSection title="떠오르는 기업" note={data.rising.criteria}>
+            {data.rising.items.map((company) => (
+              <CompanyCard key={company.stock_code} company={company} onSelect={openCompany} />
+            ))}
+          </HomeSection>
+
+          <HomeSection title="관심도 높은 기업" note={data.most_viewed.criteria}>
+            {data.most_viewed.items.map((company, index) => (
+              <CompanyCard
+                key={company.stock_code}
+                company={company}
+                rank={index + 1}
+                onSelect={openCompany}
+              />
+            ))}
+          </HomeSection>
+
+          <HomeSection title="AI가 분석한 기업" note="AI 핵심 분석의 한 줄 결론이에요">
+            {data.ai_analyzed.length === 0 ? (
+              <p className={styles.emptyRail}>아직 분석한 기업이 없어요</p>
+            ) : (
+              data.ai_analyzed.map((item) => (
+                <button
+                  key={item.stock_code}
+                  type="button"
+                  className={`${styles.card} ${styles.aiCard}`}
+                  onClick={() => openCompany(item)}
+                >
+                  <span className={styles.aiEyebrow}>
+                    <Icon name="sparkle" size={14} /> {item.name}
                   </span>
-                </li>
-              ))}
-            </ol>
+                  <span className={styles.aiHeadline}>{item.headline}</span>
+                  <span className={styles.cardMore}>
+                    분석 보기 <Icon name="chevronRight" size={14} />
+                  </span>
+                </button>
+              ))
+            )}
+          </HomeSection>
+
+          <section className={styles.termSection} aria-label="오늘의 용어">
+            <TodayTermCard />
           </section>
-        </aside>
-      </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+function HomeSection({
+  title,
+  note,
+  children,
+}: {
+  title: string;
+  note?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className={styles.section} aria-label={title}>
+      <div className={styles.sectionHead}>
+        <h2 className={styles.sectionTitle}>{title}</h2>
+        {note && <p className={styles.sectionNote}>{note}</p>}
+      </div>
+      {/* 가로로 밀어서 더 볼 수 있어요. */}
+      <div className={styles.rail}>{children}</div>
+    </section>
+  );
+}
+
+function CompanyCard({
+  company,
+  rank,
+  onSelect,
+  extra,
+}: {
+  company: CompanySummary;
+  rank?: number;
+  onSelect: (company: CompanySummary) => void;
+  extra?: ReactNode;
+}) {
+  return (
+    <button type="button" className={styles.card} onClick={() => onSelect(company)}>
+      <span className={styles.cardTop}>
+        {rank !== undefined && <span className={styles.rank}>{rank}</span>}
+        <CompanyAvatar name={company.name} code={company.stock_code} size={32} />
+        <span className={styles.cardName}>{company.name}</span>
+        {company.market_alert && (
+          <span className={styles.alert} title={company.market_alert}>
+            주의
+          </span>
+        )}
+      </span>
+      <span className={styles.oneLiner}>{company.one_liner}</span>
+      <span className={styles.cardBottom}>
+        {extra}
+        <span className={styles.rate}>
+          <PriceChange rate={company.change_rate.value} />
+          <SampleBadge isSample={company.change_rate.is_sample} />
+        </span>
+      </span>
+    </button>
+  );
+}
+
+function TradingValue({ company }: { company: TradingCompany }) {
+  return (
+    <span className={styles.tradingValue}>
+      거래대금 <strong>{formatTradingValue(company.trading_value.value)}</strong>
+    </span>
   );
 }
