@@ -1,0 +1,32 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.good {
+  color: var(--good);
+  background: var(--good-weak);
+}
+
+.normal {
+  color: var(--normal);
+  background: var(--normal-weak);
+}
+
+.caution {
+  color: var(--caution);
+  background: var(--caution-weak);
+}

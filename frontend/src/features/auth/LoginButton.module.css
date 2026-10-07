@@ -1,0 +1,36 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 var(--sp-3);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.user {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.short {
+  display: none;
+}
+
+@media (max-width: 479px) {
+  .long {
+    display: none;
+  }
+
+  .short {
+    display: inline;
+  }
+}
