@@ -1,13 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCompaniesByCodes, getCompany, getPopularCompanies } from '../api/companies';
-
-export function usePopularCompanies() {
-  return useQuery({
-    queryKey: ['companies', 'popular'],
-    queryFn: getPopularCompanies,
-    staleTime: 60_000,
-  });
-}
+import { getCompaniesByCodes, getCompany } from '../api/companies';
 
 export function useCompaniesByCodes(stockCodes: string[]) {
   return useQuery({

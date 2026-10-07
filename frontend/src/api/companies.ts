@@ -20,13 +20,6 @@ export function searchCompanies(query: string) {
   });
 }
 
-export function getPopularCompanies() {
-  return request<CompanySummary[]>({
-    path: '/api/companies/popular',
-    mock: async () => (await loadMockServer()).getPopularCompanies(),
-  });
-}
-
 export function getCompaniesByCodes(stockCodes: string[]) {
   return request<CompanySummary[]>({
     path: `/api/companies?stock_codes=${stockCodes.join(',')}`,

@@ -14,6 +14,7 @@ import type {
   CompanyReport,
   CompanySummary,
   Financials,
+  HomeDashboard,
   NewsItem,
   PriceHistory,
   PricePeriod,
@@ -60,11 +61,6 @@ export async function searchCompanies(query: string, limit: number): Promise<Com
   return companies
     .filter((c) => [c.name, c.name_en, c.stock_code].some((field) => normalize(field).includes(q)))
     .slice(0, limit);
-}
-
-export async function getPopularCompanies(): Promise<CompanySummary[]> {
-  await wait(150);
-  return companies.slice(0, 5);
 }
 
 export async function getCompaniesByCodes(codes: string[]): Promise<CompanySummary[]> {
@@ -181,6 +177,57 @@ export async function generateReport(stockCode: string): Promise<CompanyReport> 
     jobs.set(stockCode, { startedAt: Date.now(), fail: shouldFail() });
   }
   return currentReport(stockCode);
+}
+
+/* ------------------------------------------------------------------ */
+/* 메인 대시보드                                                       */
+/* ------------------------------------------------------------------ */
+
+const pick = (codes: string[]) =>
+  codes
+    .map((code) => companies.find((c) => c.stock_code === code))
+    .filter(Boolean) as CompanySummary[];
+
+/** 거래대금(억 원) 예시 값 */
+const tradingValues: [string, number][] = [
+  ['005930', 21450],
+  ['000660', 18730],
+  ['012450', 9820],
+  ['329180', 7640],
+  ['373220', 6210],
+  ['035420', 4380],
+  ['005380', 3920],
+  ['068270', 3150],
+];
+
+export async function getHomeDashboard(): Promise<HomeDashboard> {
+  await wait(200);
+  const today = new Date();
+  const baseTime = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')} 15:30`;
+
+  return {
+    base_time: baseTime,
+    trading_value_top: tradingValues.map(([code, value]) => ({
+      ...findCompany(code),
+      trading_value: { value, is_sample: true },
+    })),
+    rising: {
+      criteria: '기준을 정하는 중이에요. 지금은 예시 목록이에요.',
+      items: pick(['012450', '329180', '009150', '196170', '000660', '015760']),
+    },
+    most_viewed: {
+      criteria: '다진에서 최근 7일 동안 많이 본 기업 (집계 기준 정하는 중 · 예시 목록)',
+      items: pick(['005930', '000660', '035720', '005380', '035420', '373220']),
+    },
+    ai_analyzed: [...doneReports.values()]
+      .filter((r) => r.status === 'done' && r.generated_at)
+      .map((r) => ({
+        stock_code: r.stock_code,
+        name: findCompany(r.stock_code).name,
+        headline: r.headline,
+        generated_at: r.generated_at as string,
+      })),
+  };
 }
 
 /* ------------------------------------------------------------------ */
