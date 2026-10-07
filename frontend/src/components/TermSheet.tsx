@@ -38,9 +38,9 @@ export function TermSheet({ term, onClose }: TermSheetProps) {
         <div className={styles.handle} aria-hidden="true" />
         <p className={styles.eyebrow}>용어 알아보기</p>
         <h2 id="term-sheet-title" className={styles.title}>
-          {term.name}
+          {term.term}
         </h2>
-        <p className={styles.meaning}>{term.easy_meaning}</p>
+        <p className={styles.meaning}>{term.easy}</p>
         <div className={styles.example}>
           <p className={styles.exampleLabel}>예를 들면</p>
           <p>{term.example}</p>

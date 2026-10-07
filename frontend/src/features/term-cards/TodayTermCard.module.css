@@ -23,11 +23,30 @@
   color: var(--text-2);
 }
 
+.links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+
+.game {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  background: var(--brand);
+  color: var(--on-brand);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
 .more {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  margin-top: var(--sp-4);
   color: var(--brand-strong);
   font-size: var(--fs-sm);
   font-weight: 700;
