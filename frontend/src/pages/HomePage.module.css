@@ -23,93 +23,7 @@
 }
 
 .searchBox {
-  position: relative;
-  display: flex;
-  align-items: center;
   margin-top: var(--sp-8);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  text-align: left;
-}
-
-.searchBox:focus-within {
-  box-shadow: inset 0 0 0 2px var(--brand);
-}
-
-.searchIcon {
-  position: absolute;
-  left: var(--sp-5);
-  color: var(--text-3);
-}
-
-.searchInput {
-  width: 100%;
-  height: 64px;
-  padding: 0 52px 0 56px;
-  border: 0;
-  border-radius: var(--radius-lg);
-  background: transparent;
-  font-size: var(--fs-md);
-  outline: none;
-}
-
-.searchInput::placeholder {
-  color: var(--text-4);
-}
-
-.searchInput::-webkit-search-cancel-button {
-  display: none;
-}
-
-.clear {
-  position: absolute;
-  right: var(--sp-4);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--text-4);
-  color: var(--bg);
-}
-
-.examples {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sp-2);
-  margin-top: var(--sp-4);
-  color: var(--text-3);
-  font-size: var(--fs-sm);
-}
-
-.exampleChip {
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  background: var(--surface);
-  color: var(--text-2);
-  font-weight: 600;
-}
-
-.exampleChip:hover {
-  background: var(--surface-strong);
-}
-
-.results {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--sp-2) var(--sp-4);
-  border-radius: var(--radius-lg);
-  background: var(--bg);
-  box-shadow: inset 0 0 0 1px var(--line);
-}
-
-.hint {
-  padding: var(--sp-6) 0;
-  color: var(--text-3);
-  text-align: center;
 }
 
 .grid {
@@ -195,8 +109,4 @@
   .panel {
     padding: var(--sp-4);
   }
-}
-
-.searchInput:focus-visible {
-  outline: none;
 }

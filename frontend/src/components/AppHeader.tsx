@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router';
 import { LoginButton } from '../features/auth/LoginButton';
 import { useTheme } from '../hooks/useTheme';
-import { HeaderSearch } from './HeaderSearch';
+import { CompanySearch } from './CompanySearch';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
 import styles from './AppHeader.module.css';
@@ -50,7 +50,7 @@ export function AppHeader() {
         <div className={styles.actions}>
           {pathname !== '/' && (
             <div className={styles.search}>
-              <HeaderSearch />
+              <CompanySearch variant="header" />
             </div>
           )}
           <button

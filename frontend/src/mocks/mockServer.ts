@@ -46,18 +46,18 @@ function getData(stockCode: string) {
 
 const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
-export async function searchCompanies(query: string): Promise<CompanySummary[]> {
+export async function searchCompanies(query: string, limit: number): Promise<CompanySummary[]> {
   await wait(200);
   const q = normalize(query);
   if (!q) return [];
-  return companies.filter((c) =>
-    [c.name, c.name_en, c.stock_code].some((field) => normalize(field).includes(q)),
-  );
+  return companies
+    .filter((c) => [c.name, c.name_en, c.stock_code].some((field) => normalize(field).includes(q)))
+    .slice(0, limit);
 }
 
 export async function getPopularCompanies(): Promise<CompanySummary[]> {
   await wait(150);
-  return companies;
+  return companies.slice(0, 5);
 }
 
 export async function getCompaniesByCodes(codes: string[]): Promise<CompanySummary[]> {
