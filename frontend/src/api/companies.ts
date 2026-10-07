@@ -10,10 +10,13 @@ import type {
   PricePeriod,
 } from '../types';
 
+/** 검색 결과는 최대 20개까지 받아요. */
+export const SEARCH_LIMIT = 20;
+
 export function searchCompanies(query: string) {
   return request<CompanySummary[]>({
-    path: `/api/companies?query=${encodeURIComponent(query)}`,
-    mock: async () => (await loadMockServer()).searchCompanies(query),
+    path: `/api/companies?query=${encodeURIComponent(query)}&limit=${SEARCH_LIMIT}`,
+    mock: async () => (await loadMockServer()).searchCompanies(query, SEARCH_LIMIT),
   });
 }
 

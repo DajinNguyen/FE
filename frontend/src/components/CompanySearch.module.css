@@ -1,0 +1,230 @@
+.search {
+  position: relative;
+  width: 100%;
+}
+
+.box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.box:focus-within {
+  box-shadow: inset 0 0 0 2px var(--brand);
+}
+
+.icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  padding: 0 40px 0 38px;
+  border: 0;
+  background: transparent;
+  font-size: var(--fs-sm);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--text-4);
+}
+
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.clear {
+  position: absolute;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--text-4);
+  color: var(--bg);
+}
+
+/* 메인 화면의 큰 검색창 */
+.hero .box {
+  border-radius: var(--radius-lg);
+}
+
+.hero .icon {
+  left: var(--sp-5);
+}
+
+.hero .input {
+  height: 60px;
+  padding: 0 52px 0 54px;
+  font-size: var(--fs-md);
+}
+
+.hero .clear {
+  right: var(--sp-4);
+  width: 26px;
+  height: 26px;
+}
+
+/* 결과 패널 */
+.panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 70;
+  max-height: min(480px, 70vh);
+  overflow-y: auto;
+  padding: var(--sp-2);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  box-shadow: var(--shadow-pop);
+  text-align: left;
+  animation: drop 180ms var(--ease);
+}
+
+.header .panel {
+  left: auto;
+  width: min(380px, calc(100vw - 2 * var(--page-gutter)));
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-1) var(--sp-2) var(--sp-2);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.textButton {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.textButton:hover {
+  color: var(--text-1);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.active {
+  background: var(--surface);
+}
+
+.info {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.name {
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tags {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: var(--fs-xs);
+}
+
+.sector {
+  color: var(--text-2);
+}
+
+.market {
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--surface-strong);
+  color: var(--text-2);
+  font-weight: 700;
+}
+
+.recentIcon {
+  flex-shrink: 0;
+  color: var(--text-4);
+}
+
+.recentName {
+  flex: 1;
+  font-weight: 600;
+}
+
+.code {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.remove {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--text-3);
+}
+
+.remove:hover {
+  background: var(--surface-strong);
+  color: var(--text-1);
+}
+
+.empty {
+  padding: var(--sp-5) var(--sp-4);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  text-align: center;
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 719px) {
+  .tags {
+    display: none;
+  }
+}
+
+/* 상단 내비게이션의 작은 검색창 */
+.header {
+  width: 260px;
+}

@@ -11,8 +11,10 @@ export interface CompanySummary {
   current_price: SampleNumber;
   /** 전일 대비 등락률 (%) */
   change_rate: SampleNumber;
-  /** AI 리포트가 준비된 회사인지 */
-  has_report: boolean;
+  /** 이 회사를 한 문장으로 소개해요. 예: "스마트폰과 반도체를 만드는 회사예요" */
+  one_liner: string;
+  /** 투자경고·관리종목 같은 시장 안내. 없으면 null (화면에는 "주의" 배지) */
+  market_alert: string | null;
 }
 
 export interface BusinessSegment {
