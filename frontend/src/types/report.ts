@@ -1,59 +1,107 @@
-import type { Status } from './common';
+/**
+ * AI 리포트 응답 형식 (docs/report-schema-proposal.md 제안안, 백엔드·AI 합의 전).
+ * 숫자(before/after, evidence)는 백엔드가 공식 자료로 계산해서 넣고,
+ * AI는 문장(headline, title, reason, meaning)만 써요.
+ *
+ * GET  /api/companies/{stock_code}/report → 마지막으로 성공한 리포트 내용 + 지금 상태
+ *      (한 번도 만든 적 없으면 status: "none", 다시 만드는 중·실패여도 이전 내용은 그대로)
+ * POST /api/companies/{stock_code}/report → 새로 만들기 시작 (status: "generating" 또는 바로 "done")
+ */
+
+/** none: 아직 없음 / generating: 만드는 중 / done: 완료 / failed: 실패 */
+export type ReportStatus = 'none' | 'generating' | 'done' | 'failed';
+
+/** 핵심 포인트 5가지. 항상 이 순서로 보여줘요. */
+export type KeyPointCategory =
+  'performance' | 'revenue_source' | 'recent_change' | 'risk' | 'strength';
+
+/** 근거 자료 종류 */
+export type EvidenceKind = 'financials' | 'news' | 'vision';
+
+export interface KeyPointValue {
+  label: string;
+  value: string;
+  period: string;
+}
 
 export interface KeyPoint {
-  id: string;
-  category: 'performance' | 'vision' | 'news';
+  category: KeyPointCategory;
+  /** 한 줄 결론 */
   title: string;
-  body: string;
-  status: Status;
+  /** 과거 값. 비교할 숫자가 없으면 null */
+  before: KeyPointValue | null;
+  /** 현재 값. 비교할 숫자가 없으면 null */
+  after: KeyPointValue | null;
+  /** 왜 그런가요? (1~2문장) */
+  reason: string;
+  /** 무슨 뜻인가요? (초보자용 해석 1문장) */
+  meaning: string;
+  evidence: EvidenceKind[];
+}
+
+export interface FinancialHighlight {
+  label: string;
+  value: string;
   source: string;
-  base_date: string;
+  /** (추가 제안) 아직 공식 자료로 확인하지 않은 값이면 true → "예시 값" 배지 */
+  is_sample?: boolean;
+}
+
+export interface FinancialsEvidence {
+  unit: string;
+  /** years[i] 와 revenue[i], operating_income[i] 가 같은 해예요. */
+  years: string[];
+  revenue: number[];
+  operating_income: number[];
+  highlights: FinancialHighlight[];
+  /** (추가 제안) 기준일 예: "2025년 연간 · 연결 기준" */
+  base_date?: string;
+}
+
+export interface NewsEvidence {
+  title: string;
+  press: string;
+  published_at: string;
+  summary: string;
+  url: string;
+}
+
+export interface RevenueMixItem {
+  name: string;
+  amount: number;
+  unit: string;
+  period: string;
+}
+
+export interface VisionEvidence {
+  summary: string;
+  revenue_mix: RevenueMixItem[];
+  source: string;
+  /** (추가 제안) 기준일 예: "2026년 1월" */
+  base_date?: string;
 }
 
 export interface QuizQuestion {
-  id: string;
   question: string;
   options: string[];
   answer_index: number;
   explanation: string;
 }
 
-/**
- * 리포트에 넣을 그래프. 그래프의 숫자는 재무 데이터(Financials)에서 가져오고,
- * AI는 어떤 그래프를 넣을지와 설명(caption)만 정해요.
- * 프론트가 모르는 type 은 건너뛰어서, 백엔드가 새 그래프를 먼저 추가해도 화면이 깨지지 않아요.
- */
-export type ReportChartType =
-  'annual_revenue' | 'annual_operating_income' | 'operating_margin' | 'segment_revenue';
-
-export interface ReportChart {
-  id: string;
-  type: ReportChartType | (string & {});
-  title: string;
-  caption: string;
-}
-
-/**
- * GET  /api/companies/{stock_code}/report → 저장된 리포트 (없으면 404)
- * POST /api/companies/{stock_code}/report → 새로 생성한 리포트
- */
 export interface CompanyReport {
   stock_code: string;
-  generated_at: string;
-  generation_seconds: number;
-  /** 서버에 저장된 리포트를 바로 돌려준 경우 true */
-  is_cached: boolean;
-  analyzed_sources: string[];
-  summary: string;
+  status: ReportStatus;
+  generated_at: string | null;
+  /** AI 한 줄 결론 */
+  headline: string;
   key_points: KeyPoint[];
-  charts: ReportChart[];
-  connection: {
-    chain: string[];
-    conclusion: string;
+  evidence: {
+    financials: FinancialsEvidence | null;
+    news: NewsEvidence[];
+    vision: VisionEvidence | null;
   };
-  strengths: string[];
-  watch_points: string[];
   quiz: QuizQuestion[];
-  disclaimers: string[];
-  data_sources: string[];
+  sources: string[];
+  /** (추가 제안) status 가 failed 일 때 사용자에게 보여줄 원인 */
+  failure_reason?: string | null;
 }

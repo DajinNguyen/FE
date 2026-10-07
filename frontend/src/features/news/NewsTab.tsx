@@ -1,3 +1,4 @@
+import { EmptyState } from '../../components/EmptyState';
 import { Icon } from '../../components/Icon';
 import { Section } from '../../components/Section';
 import { TermText } from '../../components/TermText';
@@ -8,7 +9,13 @@ export function NewsTab({ stockCode }: { stockCode: string }) {
   const { data: news, isPending, isError } = useNews(stockCode);
 
   if (isPending) return <p className={styles.loading}>최근 소식을 불러오고 있어요…</p>;
-  if (isError || !news) return <p className={styles.loading}>뉴스를 불러오지 못했어요.</p>;
+  if (isError || !news || news.length === 0)
+    return (
+      <EmptyState
+        title="자료를 찾지 못했어요"
+        description="이 기업의 최근 뉴스를 아직 불러오지 못했어요."
+      />
+    );
 
   return (
     <Section title="최근 소식" description="기사 제목을 누르면 원문으로 이동해요">

@@ -63,7 +63,7 @@ export function Quiz({ questions }: { questions: QuizQuestion[] }) {
   };
 
   return (
-    <div className={styles.card} key={question.id}>
+    <div className={styles.card} key={index}>
       <p className={styles.progress}>
         문제 {index + 1} / {questions.length}
       </p>

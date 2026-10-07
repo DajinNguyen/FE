@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { Button } from '../components/Button';
+import { DetailNotice } from '../components/DetailNotice';
 import { EmptyState } from '../components/EmptyState';
-import { CompanyAvatar } from '../components/CompanyAvatar';
 import { Icon } from '../components/Icon';
-import { PriceChange } from '../components/PriceChange';
-import { SampleBadge } from '../components/SampleBadge';
 import { Tabs } from '../components/Tabs';
-import { TermText } from '../components/TermText';
+import { CommunityTab } from '../features/community/CommunityTab';
+import { CompanyAside } from '../features/company/CompanyAside';
+import { CompanyHeader } from '../features/company/CompanyHeader';
 import { CompanyInfoTab } from '../features/company-info/CompanyInfoTab';
-import { ChartTab } from '../features/chart/ChartTab';
-import { CompanySidebar } from '../features/company/CompanySidebar';
 import {
   companyTabs,
   DEFAULT_COMPANY_TAB,
@@ -20,12 +18,9 @@ import {
 } from '../features/companyTabs';
 import { FinancialsTab } from '../features/financials/FinancialsTab';
 import { NewsTab } from '../features/news/NewsTab';
-import { ReportTab } from '../features/report/ReportTab';
-import { ReportActionButton } from '../features/report/ReportActionButton';
-import { WatchlistHeart } from '../features/watchlist/WatchlistHeart';
+import { OverviewTab } from '../features/overview/OverviewTab';
 import { useCompany } from '../hooks/useCompanies';
-import { useReportFlow } from '../hooks/useReportFlow';
-import { formatPrice, formatTrillion } from '../utils/format';
+import { useCompanyReport } from '../hooks/useCompanyReport';
 import styles from './CompanyPage.module.css';
 
 export function CompanyPage() {
@@ -34,8 +29,9 @@ export function CompanyPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
   const tab: CompanyTabId = isCompanyTabId(tabParam) ? tabParam : DEFAULT_COMPANY_TAB;
+
   const { data: company, isError, error } = useCompany(stockCode);
-  const reportFlow = useReportFlow(stockCode);
+  const report = useCompanyReport(stockCode);
 
   const tabsAnchorRef = useRef<HTMLDivElement>(null);
   const [scrollTarget, setScrollTarget] = useState<{ id?: string; seq: number } | null>(null);
@@ -65,11 +61,6 @@ export function CompanyPage() {
     }
   }, [scrollTarget]);
 
-  const openReport = () => {
-    goToTab('report');
-    reportFlow.start();
-  };
-
   const goBack = () => {
     const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (idx > 0) navigate(-1);
@@ -88,68 +79,21 @@ export function CompanyPage() {
         {backLink}
         <EmptyState
           title={error.message}
-          description="홈에서 삼성전자를 검색해 보세요."
+          description="기업 이름이나 종목코드를 다시 확인해 주세요."
           action={<Button onClick={() => navigate('/')}>홈으로 가기</Button>}
         />
       </div>
     );
   }
 
-  const marketLabel = company?.market === 'KOSDAQ' ? '코스닥' : '코스피';
-
   return (
     <div className={styles.page}>
       {backLink}
-
-      <section className={styles.hero} aria-label="회사 시세 정보">
-        {company ? (
-          <>
-            <div className={styles.identity}>
-              <CompanyAvatar name={company.name} code={company.stock_code} size={56} />
-              <div>
-                <h1 className={styles.name}>{company.name}</h1>
-                <p className={styles.companyMeta}>
-                  {company.name_en} · {company.stock_code} · {marketLabel}
-                </p>
-              </div>
-            </div>
-            <div className={styles.quote}>
-              <p className={styles.price}>
-                {formatPrice(company.current_price.value)}
-                <SampleBadge isSample={company.current_price.is_sample} />
-              </p>
-              <p className={styles.change}>
-                <span className={styles.changeLabel}>어제보다</span>
-                <PriceChange rate={company.change_rate.value} size="md" />
-                <SampleBadge isSample={company.change_rate.is_sample} />
-              </p>
-              <div className={styles.tags}>
-                <span className={styles.tag}>{company.sector}</span>
-                <span className={styles.tag}>
-                  <TermText text="시가총액" />{' '}
-                  {formatTrillion(company.market_cap.value, { min: 0, max: 0 })}
-                  <SampleBadge isSample={company.market_cap.is_sample} />
-                </span>
-              </div>
-            </div>
-            <div className={styles.heroActions}>
-              <WatchlistHeart stockCode={company.stock_code} companyName={company.name} />
-              {/* 넓은 화면에서는 오른쪽 사이드바에 같은 버튼이 있어서 숨겨요. */}
-              <div className={styles.heroCta}>
-                <ReportActionButton
-                  status={reportFlow.status}
-                  fromCache={reportFlow.fromCache}
-                  onReportTab={tab === 'report'}
-                  onOpen={openReport}
-                  onRegenerate={reportFlow.regenerate}
-                />
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className={styles.heroSkeleton} aria-hidden="true" />
-        )}
-      </section>
+      {company ? (
+        <CompanyHeader company={company} />
+      ) : (
+        <div className={styles.headerSkeleton} aria-hidden="true" />
+      )}
 
       <div ref={tabsAnchorRef} className={styles.tabsAnchor} />
       <div className={styles.tabs}>
@@ -173,23 +117,18 @@ export function CompanyPage() {
               hidden={tab !== id}
               className={styles.panel}
             >
-              {id === 'chart' && <ChartTab stockCode={stockCode} onGoToTab={goToTab} />}
-              {id === 'report' && <ReportTab flow={reportFlow} onGoToTab={goToTab} />}
+              {id !== 'overview' && <DetailNotice onBack={() => goToTab('overview')} />}
+              {id === 'overview' && <OverviewTab flow={report} onGoToTab={goToTab} />}
               {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
               {id === 'news' && <NewsTab stockCode={stockCode} />}
               {id === 'info' && <CompanyInfoTab stockCode={stockCode} onGoToTab={goToTab} />}
+              {id === 'community' && <CommunityTab />}
             </div>
           ))}
         </div>
-
         {company && (
           <div className={styles.sidebar}>
-            <CompanySidebar
-              stockCode={stockCode}
-              flow={reportFlow}
-              onReportTab={tab === 'report'}
-              onOpenReport={openReport}
-            />
+            <CompanyAside stockCode={stockCode} />
           </div>
         )}
       </div>

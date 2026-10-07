@@ -1,0 +1,88 @@
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.cardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-base);
+  font-weight: 800;
+}
+
+.periodChange {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.chartBox {
+  min-height: 120px;
+}
+
+.chartPlaceholder {
+  height: 120px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+}
+
+.small {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+}
+
+.stat {
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.stat dt {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.stat dd {
+  display: flex;
+  margin: 2px 0 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+}
