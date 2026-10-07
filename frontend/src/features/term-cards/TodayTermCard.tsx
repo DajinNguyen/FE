@@ -17,12 +17,17 @@ export function TodayTermCard() {
     <Card tone="brandWeak" className={styles.card}>
       <p className={styles.eyebrow}>오늘의 용어</p>
       <button type="button" className={styles.term} onClick={() => openTerm(term.id)}>
-        <span className={styles.name}>{term.name}</span>
-        <span className={styles.meaning}>{term.easy_meaning}</span>
+        <span className={styles.name}>{term.term}</span>
+        <span className={styles.meaning}>{term.easy}</span>
       </button>
-      <Link to="/terms" className={styles.more}>
-        용어 카드로 더 알아보기 <Icon name="chevronRight" size={16} />
-      </Link>
+      <div className={styles.links}>
+        <Link to="/terms?mode=game" className={styles.game}>
+          오늘의 용어 게임 하러 가기 <Icon name="chevronRight" size={16} />
+        </Link>
+        <Link to="/terms" className={styles.more}>
+          용어 카드로 더 알아보기 <Icon name="chevronRight" size={16} />
+        </Link>
+      </div>
     </Card>
   );
 }

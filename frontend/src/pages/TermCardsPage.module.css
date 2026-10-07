@@ -19,10 +19,65 @@
   letter-spacing: -0.03em;
 }
 
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+
 .subtitle {
   margin-top: var(--sp-1);
-  margin-bottom: var(--sp-6);
   color: var(--text-3);
+}
+
+.filters {
+  display: flex;
+  gap: var(--sp-2);
+  margin: 0 calc(var(--page-gutter) * -1) var(--sp-6);
+  padding: 0 var(--page-gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.filterChip {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  transition:
+    background var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.filterChip[aria-pressed='true'] {
+  background: var(--text-1);
+  color: var(--bg);
+}
+
+.filterCount {
+  opacity: 0.6;
+  font-weight: 600;
+}
+
+.gameWrap {
+  max-width: 640px;
+}
+
+.toGame {
+  margin-top: var(--sp-2);
 }
 
 .progress {
