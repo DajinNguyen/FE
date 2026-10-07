@@ -32,8 +32,8 @@ export interface TimelineItem {
 
 /** GET /api/companies/{stock_code} 응답 */
 export interface CompanyDetail extends CompanySummary {
-  /** 시가총액 (조 원) */
-  market_cap: SampleNumber;
+  /** 시가총액 (조 원). 아직 자료가 없으면 null */
+  market_cap: SampleNumber | null;
   homepage_url: string;
   dart_url: string;
   business_description: string;

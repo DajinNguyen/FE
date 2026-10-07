@@ -1,6 +1,9 @@
 /**
  * 백엔드가 준비되기 전까지 API 응답을 흉내 내는 목 서버예요.
  * src/api/* 에서만 import 해요. (컴포넌트·훅에서 직접 import 금지)
+ *
+ * 개발 중 확인용 주소 옵션
+ * - ?mock_report=fail : 리포트 생성이 실패하는 경우를 흉내 내요.
  */
 import companiesJson from './companies.json';
 import samsungJson from './samsungElectronics.json';
@@ -23,7 +26,7 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, isTest
 const companies = companiesJson as CompanySummary[];
 const terms = termsJson as Term[];
 
-/** 리포트가 준비된 회사. 다른 회사를 추가하려면 JSON을 만들고 여기에 등록해요. */
+/** 재무·뉴스·리포트 원본이 있는 회사. 다른 회사를 추가하려면 JSON을 만들고 여기에 등록해요. */
 const companyData: Record<
   string,
   { company: CompanyDetail; financials: Financials; news: NewsItem[]; report: CompanyReport }
@@ -36,11 +39,15 @@ const companyData: Record<
   },
 };
 
+function findCompany(stockCode: string) {
+  const company = companies.find((c) => c.stock_code === stockCode);
+  if (!company) throw new ApiError('회사를 찾지 못했어요', 404, 'COMPANY_NOT_FOUND');
+  return company;
+}
+
 function getData(stockCode: string) {
   const data = companyData[stockCode];
-  if (!data) {
-    throw new ApiError('시연에서는 삼성전자 리포트만 준비되어 있어요', 404, 'REPORT_NOT_READY');
-  }
+  if (!data) throw new ApiError('자료를 찾지 못했어요', 404, 'DATA_NOT_FOUND');
   return data;
 }
 
@@ -67,9 +74,22 @@ export async function getCompaniesByCodes(codes: string[]): Promise<CompanySumma
     .filter((c): c is CompanySummary => Boolean(c));
 }
 
+/** 원본 JSON이 없는 회사는 검색 목록 정보만으로 채워요. (사업 설명 등은 빈 값) */
 export async function getCompany(stockCode: string): Promise<CompanyDetail> {
   await wait(150);
-  return getData(stockCode).company;
+  const data = companyData[stockCode];
+  if (data) return data.company;
+  const summary = findCompany(stockCode);
+  return {
+    ...summary,
+    market_cap: null,
+    homepage_url: '',
+    dart_url: 'https://dart.fss.or.kr/',
+    business_description: '',
+    business_segments: [],
+    timeline: [],
+    timeline_source: '',
+  };
 }
 
 export async function getFinancials(stockCode: string): Promise<Financials> {
@@ -82,32 +102,90 @@ export async function getNews(stockCode: string): Promise<NewsItem[]> {
   return getData(stockCode).news;
 }
 
-/** 서버의 리포트 저장소 흉내. 생성한 리포트는 새로고침 전까지 기억해요. */
-const savedReports = new Map<string, CompanyReport>();
+/* ------------------------------------------------------------------ */
+/* AI 리포트: 없음 → 생성 중(약 15초) → 완료 / 실패                   */
+/* ------------------------------------------------------------------ */
 
-/** 저장된 리포트가 있으면 바로 돌려주고, 없으면 404 예요. */
-export async function getSavedReport(stockCode: string): Promise<CompanyReport> {
-  getData(stockCode);
+/** 실제 생성 시간(약 16초)과 비슷하게 맞췄어요. */
+const GENERATION_MS = isTest ? 0 : 15_000;
+
+interface ReportJob {
+  startedAt: number;
+  fail: boolean;
+}
+
+/** 서버의 리포트 저장소 흉내. 새로고침 전까지 기억해요. 삼성전자는 이미 만들어 둔 상태로 시작해요. */
+const doneReports = new Map<string, CompanyReport>([['005930', companyData['005930'].report]]);
+const failedReports = new Map<string, string>();
+const jobs = new Map<string, ReportJob>();
+
+const emptyReport = (stockCode: string, status: CompanyReport['status']): CompanyReport => ({
+  stock_code: stockCode,
+  status,
+  generated_at: null,
+  headline: '',
+  key_points: [],
+  evidence: { financials: null, news: [], vision: null },
+  quiz: [],
+  sources: [],
+  failure_reason: null,
+});
+
+const shouldFail = () =>
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('mock_report') === 'fail';
+
+/** 생성 시간이 지났으면 작업을 끝내고 결과를 저장해요. */
+function settle(stockCode: string) {
+  const job = jobs.get(stockCode);
+  if (!job || Date.now() - job.startedAt < GENERATION_MS) return;
+  jobs.delete(stockCode);
+  const source = companyData[stockCode]?.report;
+  if (job.fail || !source) {
+    failedReports.set(
+      stockCode,
+      job.fail
+        ? '자료를 정리하는 중에 문제가 생겼어요.'
+        : '이 기업의 재무제표를 아직 불러오지 못했어요. (시연용 목 데이터에는 삼성전자 자료만 있어요)',
+    );
+    return;
+  }
+  failedReports.delete(stockCode);
+  doneReports.set(stockCode, { ...source, generated_at: new Date().toISOString() });
+}
+
+/**
+ * 응답 규칙: 마지막으로 성공한 리포트 내용 + 지금 상태.
+ * 다시 만드는 중이거나 실패해도 이전 내용은 그대로 담아서 보내요.
+ */
+function currentReport(stockCode: string): CompanyReport {
+  settle(stockCode);
+  const base = doneReports.get(stockCode) ?? emptyReport(stockCode, 'none');
+  if (jobs.has(stockCode)) return { ...base, status: 'generating', failure_reason: null };
+  const failure = failedReports.get(stockCode);
+  if (failure) return { ...base, status: 'failed', failure_reason: failure };
+  return base;
+}
+
+export async function getCompanyReport(stockCode: string): Promise<CompanyReport> {
+  findCompany(stockCode);
   await wait(120);
-  const saved = savedReports.get(stockCode);
-  if (!saved) throw new ApiError('아직 만든 리포트가 없어요', 404, 'REPORT_NOT_FOUND');
-  return { ...saved, is_cached: true };
+  return currentReport(stockCode);
 }
 
-/** AI 리포트를 새로 만들어요. (실제로는 DART·뉴스·사업보고서를 읽고 Claude API 호출) */
+/** 새로 만들기 시작해요. (실제로는 DART·뉴스·사업보고서를 읽고 Claude API 호출) */
 export async function generateReport(stockCode: string): Promise<CompanyReport> {
-  const { report } = getData(stockCode);
-  const startedAt = performance.now();
-  await wait(3000);
-  const generated: CompanyReport = {
-    ...report,
-    is_cached: false,
-    generated_at: new Date().toISOString(),
-    generation_seconds: Math.round((performance.now() - startedAt) / 100) / 10,
-  };
-  savedReports.set(stockCode, generated);
-  return generated;
+  findCompany(stockCode);
+  await wait(200);
+  if (!jobs.has(stockCode)) {
+    jobs.set(stockCode, { startedAt: Date.now(), fail: shouldFail() });
+  }
+  return currentReport(stockCode);
 }
+
+/* ------------------------------------------------------------------ */
+/* 주가 (예시)                                                         */
+/* ------------------------------------------------------------------ */
 
 const pricePeriods: Record<PricePeriod, { count: number; stepDays: number; volatility: number }> = {
   '1m': { count: 22, stepDays: 1, volatility: 0.014 },
@@ -136,8 +214,7 @@ export async function getPriceHistory(
   period: PricePeriod,
 ): Promise<PriceHistory> {
   await wait(200);
-  const company = companies.find((c) => c.stock_code === stockCode);
-  if (!company) throw new ApiError('회사를 찾지 못했어요', 404, 'COMPANY_NOT_FOUND');
+  const company = findCompany(stockCode);
 
   const { count, stepDays, volatility } = pricePeriods[period];
   const random = seededRandom(`${stockCode}-${period}`);

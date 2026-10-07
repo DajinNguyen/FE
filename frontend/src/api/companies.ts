@@ -62,22 +62,28 @@ export function getPriceHistory(stockCode: string, period: PricePeriod) {
   });
 }
 
-/** 저장된 AI 리포트. 아직 만든 적이 없으면(404) null 을 돌려줘요. */
-export async function getSavedReport(stockCode: string): Promise<CompanyReport | null> {
+/**
+ * AI 리포트의 지금 상태. 아직 만든 적이 없으면 status: "none" 이에요.
+ * (백엔드가 404로 알려주는 경우도 "none" 으로 바꿔서 화면 코드는 한 가지만 보면 돼요.)
+ */
+export async function getCompanyReport(stockCode: string): Promise<CompanyReport> {
   try {
     return await request<CompanyReport>({
       path: `/api/companies/${stockCode}/report`,
-      mock: async () => (await loadMockServer()).getSavedReport(stockCode),
+      mock: async () => (await loadMockServer()).getCompanyReport(stockCode),
     });
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) return null;
+    if (error instanceof ApiError && error.status === 404 && error.code !== 'COMPANY_NOT_FOUND') {
+      return emptyReport(stockCode);
+    }
     throw error;
   }
 }
 
 /**
- * AI 리포트를 새로 만들어요. (저장된 리포트가 있어도 새로 만들어서 덮어써요)
- * 생성이 오래 걸리게 되면 여기만 "작업 시작 → 상태 조회(폴링/SSE)" 방식으로 바꾸면 돼요.
+ * AI 리포트를 새로 만들기 시작해요. (이미 있어도 새로 만들어서 덮어써요)
+ * 응답이 status: "generating" 이면 훅이 GET 으로 다 될 때까지 다시 물어봐요(폴링).
+ * 백엔드가 바로 "done" 을 돌려줘도 그대로 동작해요.
  */
 export function generateReport(stockCode: string) {
   return request<CompanyReport>({
@@ -86,3 +92,15 @@ export function generateReport(stockCode: string) {
     mock: async () => (await loadMockServer()).generateReport(stockCode),
   });
 }
+
+const emptyReport = (stockCode: string): CompanyReport => ({
+  stock_code: stockCode,
+  status: 'none',
+  generated_at: null,
+  headline: '',
+  key_points: [],
+  evidence: { financials: null, news: [], vision: null },
+  quiz: [],
+  sources: [],
+  failure_reason: null,
+});

@@ -1,0 +1,426 @@
+.analysis {
+  padding: var(--sp-6) 0 var(--sp-4);
+  scroll-margin-top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brand-strong);
+  font-size: var(--fs-sm);
+  font-weight: 800;
+}
+
+.headline {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+
+/* 핵심 포인트 */
+.points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-5);
+}
+
+.point {
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition: background var(--dur) var(--ease);
+}
+
+.pointOpen {
+  background: var(--brand-weak);
+}
+
+.pointHead {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.pointHead:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.pointIndex {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-top: 2px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--brand-strong);
+  font-size: var(--fs-sm);
+  font-weight: 800;
+}
+
+.pointMain {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pointCategory {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.pointTitle {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.change {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 4px;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.change strong {
+  color: var(--text-1);
+}
+
+.afterValue {
+  color: var(--brand-strong) !important;
+}
+
+.period {
+  margin-left: 2px;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.arrow {
+  color: var(--text-3);
+}
+
+.chevron {
+  flex-shrink: 0;
+  margin-top: 4px;
+  color: var(--text-3);
+  transition: transform var(--dur) var(--ease);
+}
+
+.pointOpen .chevron {
+  transform: rotate(180deg);
+}
+
+.pointBody {
+  padding: 0 var(--sp-5) var(--sp-5) calc(var(--sp-5) + 26px + var(--sp-3));
+}
+
+.explain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.explain dt {
+  color: var(--brand-strong);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+}
+
+.explain dd {
+  margin-top: 2px;
+  line-height: 1.65;
+}
+
+.evidenceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--sp-4);
+}
+
+.evidenceLabel {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.evidenceChip {
+  padding: 4px 10px;
+  border: 1px solid var(--brand-muted);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--brand-strong);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.evidenceChip:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.regenerate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.regenerate:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--text-1);
+}
+
+.regenerate:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* 없음 / 실패 */
+.emptyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+  padding: var(--sp-6);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.emptyTitle {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.emptyText {
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* 진행 표시 */
+.progress {
+  margin-top: var(--sp-3);
+  padding: var(--sp-5);
+  border-radius: var(--radius-lg);
+  background: var(--brand-weak);
+}
+
+.progressCompact {
+  position: sticky;
+  top: calc(var(--header-h) + var(--tabs-h) + var(--sp-2));
+  z-index: 5;
+  padding: var(--sp-3) var(--sp-4);
+  box-shadow: var(--shadow-float);
+}
+
+.progressHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.progressTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 800;
+}
+
+.cancel {
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.cancel:hover {
+  color: var(--text-1);
+}
+
+.track {
+  height: 6px;
+  margin-top: var(--sp-3);
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--bg);
+}
+
+.bar {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--brand);
+  transition: width 900ms linear;
+}
+
+.time {
+  margin-top: var(--sp-2);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
+.progressCompact .steps {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-xs);
+}
+
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-3);
+}
+
+.step.done {
+  color: var(--text-2);
+}
+
+.step.current {
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+.stepIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--brand-muted);
+  border-radius: 50%;
+}
+
+.done .stepIcon {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.current .stepIcon {
+  border-color: var(--brand);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--brand-muted);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 스켈레톤 */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+
+.skeletonCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.skeletonLine {
+  height: 14px;
+  border-radius: 6px;
+  background: var(--surface-strong);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonHeadline {
+  height: 28px;
+  width: 80%;
+  margin-bottom: var(--sp-2);
+}
+
+.skeletonShort {
+  width: 40%;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .skeletonLine {
+    animation: none;
+  }
+}
+
+@media (max-width: 719px) {
+  .headline {
+    font-size: var(--fs-xl);
+  }
+
+  .pointHead {
+    padding: var(--sp-4);
+  }
+
+  .pointBody {
+    padding: 0 var(--sp-4) var(--sp-4);
+  }
+}

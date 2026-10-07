@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { EmptyState } from '../../components/EmptyState';
 import { HorizontalBars } from '../../components/HorizontalBars';
 import { Section } from '../../components/Section';
 import { TermText } from '../../components/TermText';
@@ -11,13 +12,18 @@ import styles from './Financials.module.css';
 
 export function FinancialsTab({ stockCode }: { stockCode: string }) {
   const { data: financials, isPending, isError } = useFinancials(stockCode);
-  const [showRaw, setShowRaw] = useState(false);
+  const [showRaw, setShowRaw] = useState(true);
 
   const indicators = useMemo(() => (financials ? buildIndicators(financials) : []), [financials]);
 
   if (isPending) return <p className={styles.loading}>재무제표를 불러오고 있어요…</p>;
   if (isError || !financials)
-    return <p className={styles.loading}>재무제표를 불러오지 못했어요.</p>;
+    return (
+      <EmptyState
+        title="자료를 찾지 못했어요"
+        description="이 기업의 재무제표를 아직 불러오지 못했어요."
+      />
+    );
 
   const annual = [...financials.annual].sort((a, b) => a.fiscal_year - b.fiscal_year);
 

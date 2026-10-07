@@ -1,0 +1,100 @@
+.header {
+  padding: var(--sp-4) 0 var(--sp-5);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.titles {
+  min-width: 0;
+  flex: 1;
+}
+
+.name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.alert {
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--caution-weak);
+  color: var(--caution);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.meta {
+  margin-top: 2px;
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.oneLiner {
+  margin-top: var(--sp-3);
+  color: var(--text-1);
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+.quote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-3);
+}
+
+.price {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-md);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.chipLabel {
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+@media (max-width: 719px) {
+  .name {
+    font-size: var(--fs-xl);
+  }
+
+  .oneLiner {
+    font-size: var(--fs-base);
+  }
+}
