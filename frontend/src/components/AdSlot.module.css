@@ -1,0 +1,33 @@
+.slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--sp-6) 0;
+  border: 1px dashed var(--text-4);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.banner {
+  min-height: 90px;
+}
+
+.card {
+  min-height: 220px;
+  max-width: 360px;
+}
+
+.label {
+  position: absolute;
+  top: var(--sp-2);
+  left: var(--sp-3);
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--surface-strong);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}

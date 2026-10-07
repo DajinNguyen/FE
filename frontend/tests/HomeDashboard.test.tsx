@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { AdSlot } from '../src/components/AdSlot';
 import { HomePage } from '../src/pages/HomePage';
 import { renderWithProviders } from './testUtils';
 
@@ -23,5 +24,10 @@ describe('메인 대시보드', () => {
     ).toBeInTheDocument();
 
     expect(screen.queryByText('많이 보는 회사')).not.toBeInTheDocument();
+  });
+
+  it('광고 자리는 VITE_SHOW_ADS 를 켜지 않으면 보이지 않아요', () => {
+    renderWithProviders(<AdSlot placement="test" />);
+    expect(screen.queryByLabelText('광고')).not.toBeInTheDocument();
   });
 });

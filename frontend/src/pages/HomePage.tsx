@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { AdSlot } from '../components/AdSlot';
 import { CompanyAvatar } from '../components/CompanyAvatar';
 import { CompanySearch } from '../components/CompanySearch';
 import { Icon } from '../components/Icon';
@@ -59,6 +60,8 @@ export function HomePage() {
               <CompanyCard key={company.stock_code} company={company} onSelect={openCompany} />
             ))}
           </HomeSection>
+
+          <AdSlot placement="home-between-sections" />
 
           <HomeSection title="관심도 높은 기업" note={data.most_viewed.criteria}>
             {data.most_viewed.items.map((company, index) => (
