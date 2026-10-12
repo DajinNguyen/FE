@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
+import { AdSlot } from './AdSlot';
 import { AppHeader } from './AppHeader';
 import styles from './AppLayout.module.css';
 
@@ -13,6 +14,8 @@ export function AppLayout() {
   return (
     <div className={styles.app}>
       <AppHeader />
+      <AdSlot size="skyscraper" side="left" placement="layout-rail-left" />
+      <AdSlot size="skyscraper" side="right" placement="layout-rail-right" />
       <main key={pathname} className={styles.main}>
         <Outlet />
       </main>
