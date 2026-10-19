@@ -6,6 +6,7 @@
  * - ?mock_report=fail : 리포트 생성이 실패하는 경우를 흉내 내요.
  */
 import companiesJson from './companies.json';
+import crosswordsJson from './crosswords.json';
 import samsungJson from './samsungElectronics.json';
 import termsJson from './terms.json';
 import { ApiError } from '../api/errors';
@@ -13,6 +14,8 @@ import type {
   CompanyDetail,
   CompanyReport,
   CompanySummary,
+  CrosswordPuzzle,
+  CrosswordSummary,
   Financials,
   HomeDashboard,
   NewsItem,
@@ -339,4 +342,28 @@ export async function getPriceHistory(
 export async function getTerms(): Promise<Term[]> {
   await wait(100);
   return terms;
+}
+
+/* ------------------------------------------------------------------ */
+/* 가로세로 낱말퀴즈 (직접 설계한 퍼즐 3개)                              */
+/* ------------------------------------------------------------------ */
+
+const crosswords = crosswordsJson as CrosswordPuzzle[];
+
+export async function getCrosswordPuzzles(): Promise<CrosswordSummary[]> {
+  await wait(120);
+  return crosswords.map(({ id, title, difficulty, size, words }) => ({
+    id,
+    title,
+    difficulty,
+    size,
+    word_count: words.length,
+  }));
+}
+
+export async function getCrosswordPuzzle(puzzleId: string): Promise<CrosswordPuzzle> {
+  await wait(120);
+  const puzzle = crosswords.find((p) => p.id === puzzleId);
+  if (!puzzle) throw new ApiError('퍼즐을 찾지 못했어요', 404, 'PUZZLE_NOT_FOUND');
+  return puzzle;
 }

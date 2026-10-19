@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { Button } from '../components/Button';
 import { SegmentedControl } from '../components/SegmentedControl';
 import {
@@ -93,12 +93,17 @@ export function TermCardsPage() {
               : '카드를 눌러 뒤집으면 쉬운 뜻이 나와요'}
           </p>
         </div>
-        <SegmentedControl
-          label="학습 방법"
-          options={modeOptions}
-          value={mode}
-          onChange={changeMode}
-        />
+        <div className={styles.headerActions}>
+          <SegmentedControl
+            label="학습 방법"
+            options={modeOptions}
+            value={mode}
+            onChange={changeMode}
+          />
+          <Link to="/learn/crossword" className={styles.crosswordLink}>
+            가로세로 낱말퀴즈 →
+          </Link>
+        </div>
       </header>
 
       <div className={styles.filters} role="group" aria-label="용어 분류">
