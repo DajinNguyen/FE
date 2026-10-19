@@ -26,6 +26,10 @@
   --line: #e3e7ed;
   --line-strong: #c2c9d3;
 
+  /* 낱말퀴즈: 막힌 칸 / 글자 칸 */
+  --cw-block: #2b3442;
+  --cw-cell: #ffffff;
+
   /* 그래프: 강조 막대는 brand, 나머지 막대는 chart-muted (바탕 대비 3:1 이상) */
   --chart-muted: #7d90ae;
 
@@ -130,6 +134,8 @@
     --line: #313946;
     --line-strong: #4a5363;
     --chart-muted: #5a7399;
+    --cw-block: #04060a;
+    --cw-cell: #1f2631;
     --text-1: #e8ecf2;
     --text-2: #bcc4cf;
     --text-3: #939cab;
@@ -172,6 +178,8 @@
   --line: #313946;
   --line-strong: #4a5363;
   --chart-muted: #5a7399;
+  --cw-block: #04060a;
+  --cw-cell: #1f2631;
   --text-1: #e8ecf2;
   --text-2: #bcc4cf;
   --text-3: #939cab;

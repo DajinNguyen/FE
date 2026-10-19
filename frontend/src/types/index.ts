@@ -6,3 +6,4 @@ export type * from './report';
 export type * from './term';
 export type * from './price';
 export type * from './home';
+export type * from './crossword';

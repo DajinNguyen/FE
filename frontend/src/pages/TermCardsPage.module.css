@@ -16,6 +16,13 @@
   letter-spacing: -0.02em;
 }
 
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+}
+
 .subtitle {
   margin-top: var(--sp-1);
   color: var(--text-3);
