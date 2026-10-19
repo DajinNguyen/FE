@@ -1,0 +1,39 @@
+.page {
+  max-width: 860px;
+  padding-top: var(--sp-12);
+}
+
+.header {
+  margin-bottom: var(--sp-6);
+}
+
+.title {
+  font-size: var(--fs-3xl);
+  font-weight: 800;
+}
+
+.note {
+  margin-top: var(--sp-1);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.hint {
+  color: var(--text-3);
+}
+
+.loading {
+  height: 480px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+@media (max-width: 719px) {
+  .page {
+    padding-top: var(--sp-6);
+  }
+
+  .title {
+    font-size: var(--fs-2xl);
+  }
+}

@@ -18,6 +18,7 @@ import type {
   NewsItem,
   PriceHistory,
   PricePeriod,
+  SectorGroup,
   Term,
 } from '../types';
 
@@ -188,7 +189,7 @@ const pick = (codes: string[]) =>
     .map((code) => companies.find((c) => c.stock_code === code))
     .filter(Boolean) as CompanySummary[];
 
-/** 거래대금(억 원) 예시 값 */
+/** 거래대금(억 원) 예시 값. 순위 30개까지 */
 const tradingValues: [string, number][] = [
   ['005930', 21450],
   ['000660', 18730],
@@ -197,20 +198,64 @@ const tradingValues: [string, number][] = [
   ['373220', 6210],
   ['035420', 4380],
   ['005380', 3920],
+  ['042700', 3510],
   ['068270', 3150],
+  ['003230', 2980],
+  ['247540', 2740],
+  ['000270', 2510],
+  ['035720', 2330],
+  ['207940', 2180],
+  ['006400', 1990],
+  ['105560', 1820],
+  ['009150', 1710],
+  ['196170', 1640],
+  ['005490', 1520],
+  ['003670', 1410],
+  ['051910', 1330],
+  ['012330', 1240],
+  ['055550', 1150],
+  ['010130', 1070],
+  ['097950', 980],
+  ['015760', 910],
+  ['066570', 860],
+  ['271560', 790],
+  ['086790', 720],
+  ['000990', 650],
 ];
+
+/** 직전 거래일(주말 제외) 장 마감 시각. 실시간이 아니라 전날 자료일 수 있다는 걸 흉내 내요. */
+function lastCloseTime() {
+  const date = new Date();
+  do {
+    date.setDate(date.getDate() - 1);
+  } while (date.getDay() === 0 || date.getDay() === 6);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} 15:30`;
+}
 
 export async function getHomeDashboard(): Promise<HomeDashboard> {
   await wait(200);
-  const today = new Date();
-  const baseTime = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')} 15:30`;
+  const headlineOf = (code: string) => {
+    const report = doneReports.get(code);
+    return report?.status === 'done' && report.headline ? report.headline : null;
+  };
+  const bySector = (group: SectorGroup) => companies.filter((c) => c.sector_group === group);
 
   return {
-    base_time: baseTime,
+    base_time: lastCloseTime(),
     trading_value_top: tradingValues.map(([code, value]) => ({
       ...findCompany(code),
       trading_value: { value, is_sample: true },
+      ai_headline: headlineOf(code),
     })),
+    sector_companies: {
+      semiconductor: bySector('semiconductor'),
+      auto: bySector('auto'),
+      internet: bySector('internet'),
+      finance: bySector('finance'),
+      food: bySector('food'),
+      etc: bySector('etc'),
+    },
     rising: {
       criteria: '기준을 정하는 중이에요. 지금은 예시 목록이에요.',
       items: pick(['012450', '329180', '009150', '196170', '000660', '015760']),

@@ -85,9 +85,7 @@ export function CompanySearch({ variant, autoFocus }: CompanySearchProps) {
           type="search"
           role="combobox"
           className={styles.input}
-          placeholder={
-            variant === 'hero' ? '기업 이름, 영어 이름, 종목코드로 검색해 보세요' : '기업 검색'
-          }
+          placeholder={variant === 'hero' ? '기업 이름이나 종목코드로 검색' : '기업 검색'}
           aria-label="기업 검색"
           aria-autocomplete="list"
           aria-expanded={showPanel}

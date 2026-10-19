@@ -1,0 +1,32 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.title {
+  margin-right: var(--sp-3);
+  font-weight: 800;
+}
+
+.text {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.go {
+  display: inline-flex;
+  align-items: center;
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.banner:hover .go {
+  text-decoration: underline;
+}
