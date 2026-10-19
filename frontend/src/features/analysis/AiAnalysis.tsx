@@ -5,8 +5,8 @@ import type { CompanyReportFlow } from '../../hooks/useCompanyReport';
 import type { CompanyReport, EvidenceKind } from '../../types';
 import { formatMarketDate } from '../../utils/format';
 import { KeyPointCard } from './KeyPointCard';
-import { ReportProgress } from './ReportProgress';
-import { keyPointOrder, sortKeyPoints } from './reportMeta';
+import { RegenerateProgress, ReportSkeleton, ReportWaiting } from './ReportWaiting';
+import { sortKeyPoints } from './reportMeta';
 import styles from './AiAnalysis.module.css';
 
 interface AiAnalysisProps {
@@ -45,7 +45,7 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
           AI 핵심 분석
         </p>
 
-        {view === 'checking' && <AnalysisSkeleton />}
+        {view === 'checking' && <ReportSkeleton />}
 
         {view === 'none' && (
           <div className={styles.emptyCard}>
@@ -60,10 +60,7 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
         )}
 
         {view === 'generating' && !report && (
-          <>
-            <ReportProgress startedAt={startedAt} onCancel={cancel} />
-            <AnalysisSkeleton />
-          </>
+          <ReportWaiting startedAt={startedAt} onCancel={cancel} />
         )}
 
         {view === 'failed' && (
@@ -78,7 +75,7 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
 
         {report && (view === 'done' || view === 'generating') && (
           <>
-            {isRegenerating && <ReportProgress startedAt={startedAt} onCancel={cancel} compact />}
+            {isRegenerating && <RegenerateProgress startedAt={startedAt} onCancel={cancel} />}
             <h2 className={styles.headline}>
               <TermText text={report.headline} />
             </h2>
@@ -115,20 +112,5 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
         )}
       </div>
     </section>
-  );
-}
-
-/** 처음 만들 때 보여주는 핵심 분석 모양의 빈 카드 */
-function AnalysisSkeleton() {
-  return (
-    <div className={styles.skeleton} aria-hidden="true">
-      <div className={`${styles.skeletonLine} ${styles.skeletonHeadline}`} />
-      {keyPointOrder.map((category) => (
-        <div key={category} className={styles.skeletonCard}>
-          <div className={`${styles.skeletonLine} ${styles.skeletonShort}`} />
-          <div className={styles.skeletonLine} />
-        </div>
-      ))}
-    </div>
   );
 }
