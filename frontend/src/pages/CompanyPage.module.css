@@ -58,13 +58,6 @@
 
 .panel {
   min-height: 60vh;
-  animation: panelIn 260ms var(--ease);
-}
-
-@keyframes panelIn {
-  from {
-    opacity: 0;
-  }
 }
 
 /* 1024px 미만: 한 줄 세로 배치 (오른쪽 열은 본문 아래로) */

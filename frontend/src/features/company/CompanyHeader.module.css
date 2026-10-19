@@ -18,15 +18,15 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sp-2);
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-3xl);
   font-weight: 800;
-  line-height: 1.25;
+  line-height: var(--lh-tight);
   letter-spacing: -0.02em;
 }
 
 .alert {
   padding: 2px var(--sp-2);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-xs);
   background: var(--caution-weak);
   color: var(--caution);
   font-size: var(--fs-xs);
@@ -68,20 +68,23 @@
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-2);
+  gap: var(--sp-1) 0;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-1);
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  background: var(--surface);
+  padding: 0 var(--sp-3);
+  border-left: 1px solid var(--line-strong);
   color: var(--text-1);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+}
+
+.chip:first-child {
+  padding-left: 0;
+  border-left: 0;
 }
 
 .chipLabel {
@@ -91,7 +94,7 @@
 
 @media (max-width: 719px) {
   .name {
-    font-size: var(--fs-xl);
+    font-size: var(--fs-2xl);
   }
 
   .oneLiner {

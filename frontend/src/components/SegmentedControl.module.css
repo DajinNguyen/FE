@@ -9,7 +9,7 @@
 .option {
   padding: 6px 14px;
   white-space: nowrap;
-  border-radius: 9px;
+  border-radius: var(--radius-xs);
   color: var(--text-3);
   font-size: var(--fs-sm);
   font-weight: 600;

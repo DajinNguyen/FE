@@ -20,7 +20,7 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
 
   return (
     <Section title="이 분석의 근거" description="AI 핵심 분석은 아래 자료를 바탕으로 썼어요">
-      <div className={styles.grid}>
+      <div className={styles.list}>
         <EvidenceBlock
           kind="financials"
           title="재무"
@@ -31,18 +31,20 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
           }
         >
           {financials && financials.highlights.length > 0 ? (
-            <ul className={styles.highlights}>
-              {financials.highlights.slice(0, 4).map((h) => (
-                <li key={h.label} className={styles.highlight}>
-                  <span className={styles.highlightLabel}>
-                    <TermText text={h.label} />
-                  </span>
-                  <span className={styles.highlightValue}>
-                    {h.value} <SampleBadge isSample={Boolean(h.is_sample)} />
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <table className={styles.table}>
+              <tbody>
+                {financials.highlights.slice(0, 4).map((h) => (
+                  <tr key={h.label}>
+                    <th scope="row">
+                      <TermText text={h.label} />
+                    </th>
+                    <td>
+                      {h.value} <SampleBadge isSample={Boolean(h.is_sample)} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <NotFound />
           )}
@@ -137,12 +139,16 @@ function EvidenceBlock({
 }) {
   return (
     <article id={evidenceAnchorId(kind)} className={styles.block} tabIndex={-1}>
-      <h3 className={styles.blockTitle}>{title}</h3>
-      <div className={styles.blockBody}>{children}</div>
-      {meta && <p className={styles.meta}>{meta}</p>}
-      <button type="button" className={styles.detail} onClick={() => onGoToTab(detail.tab)}>
-        {detail.label} <Icon name="chevronRight" size={16} />
-      </button>
+      <div className={styles.blockHead}>
+        <h3 className={styles.blockTitle}>{title}</h3>
+        <button type="button" className={styles.detail} onClick={() => onGoToTab(detail.tab)}>
+          {detail.label} <Icon name="chevronRight" size={16} />
+        </button>
+      </div>
+      <div className={styles.blockBody}>
+        {children}
+        {meta && <p className={styles.meta}>{meta}</p>}
+      </div>
     </article>
   );
 }

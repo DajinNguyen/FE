@@ -10,7 +10,6 @@
   flex: 1;
   margin: 0 auto;
   padding: 0 var(--page-gutter) var(--sp-12);
-  animation: pageIn 320ms var(--ease);
 }
 
 .footer {
@@ -29,11 +28,4 @@
   margin-bottom: var(--sp-1);
   color: var(--text-2);
   font-weight: 700;
-}
-
-@keyframes pageIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
 }

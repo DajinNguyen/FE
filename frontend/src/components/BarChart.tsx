@@ -38,7 +38,7 @@ export function BarChart({ data, formatValue, ariaLabel, height = 200 }: BarChar
           />
           <Bar
             dataKey="value"
-            radius={[10, 10, 4, 4]}
+            radius={[2, 2, 0, 0]}
             maxBarSize={56}
             animationDuration={700}
             isAnimationActive={!reducedMotion}

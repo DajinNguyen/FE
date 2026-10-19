@@ -5,9 +5,8 @@
   justify-content: space-between;
   gap: var(--sp-3);
   margin-top: var(--sp-6);
-  padding: var(--sp-3) var(--sp-4);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--line);
 }
 
 .text {
@@ -24,13 +23,13 @@
   align-items: center;
   gap: var(--sp-1);
   padding: 6px 10px;
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
-  background: var(--bg);
-  color: var(--brand-strong);
+  color: var(--text-1);
   font-size: var(--fs-sm);
   font-weight: 700;
 }
 
 .back:hover {
-  background: var(--brand-weak);
+  background: var(--surface);
 }

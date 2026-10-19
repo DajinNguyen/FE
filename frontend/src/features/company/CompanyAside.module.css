@@ -1,16 +1,18 @@
 .aside {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: var(--sp-6);
 }
 
 .card {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
-  padding: var(--sp-4);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+}
+
+.card + .card {
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--line);
 }
 
 .cardHead {
@@ -25,7 +27,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-  font-size: var(--fs-base);
+  font-size: var(--fs-lg);
   font-weight: 800;
 }
 
@@ -53,36 +55,32 @@
 }
 
 .stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--sp-2);
+  display: flex;
+  flex-direction: column;
 }
 
 .stat {
-  padding: var(--sp-2) var(--sp-3);
-  border-radius: var(--radius-sm);
-  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .stat dt {
-  color: var(--text-3);
-  font-size: var(--fs-xs);
-  font-weight: 700;
+  color: var(--text-2);
 }
 
 .stat dd {
   display: flex;
-  margin: 2px 0 0;
-  flex-wrap: wrap;
+  margin: 0;
   align-items: center;
   gap: var(--sp-1);
-  font-size: var(--fs-sm);
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
+  font-weight: 700;
 }
 
 .note {
   color: var(--text-3);
   font-size: var(--fs-xs);
-  line-height: 1.6;
 }
