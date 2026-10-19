@@ -5,6 +5,7 @@ import { TermText } from '../../components/TermText';
 import type { CompanyReportFlow } from '../../hooks/useCompanyReport';
 import type { CompanyReport, EvidenceKind } from '../../types';
 import { KeyPointCard } from './KeyPointCard';
+import { QuotaNotice } from './QuotaNotice';
 import { RegenerateProgress, ReportSkeleton, ReportWaiting } from './ReportWaiting';
 import { sortKeyPoints } from './reportMeta';
 import styles from './AiAnalysis.module.css';
@@ -34,7 +35,8 @@ const formatGeneratedAt = (value: string | null) => {
 
 /** 기업 화면에서 가장 먼저, 가장 크게 보이는 AI 핵심 분석 */
 export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
-  const { view, report, isRegenerating, startedAt, failureReason, generate, cancel } = flow;
+  const { view, report, isRegenerating, startedAt, failureReason, generate, cancel, quota } = flow;
+  const blocked = quota.blocked !== null;
 
   return (
     <section className={styles.analysis} aria-labelledby="ai-analysis-title">
@@ -49,11 +51,15 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
           <div className={styles.emptyCard}>
             <p className={styles.emptyTitle}>아직 이 기업의 리포트가 없어요</p>
             <p className={styles.emptyText}>
-              재무제표·뉴스·기업 비전을 함께 읽고, 핵심 포인트 5가지로 쉽게 정리해 드려요.
+              AI가 재무제표·뉴스·기업 비전을 읽고 어떤 회사인지, 지금 어떤 상황인지, 왜 그런지를
+              핵심 포인트 5가지로 정리해 드려요. 보통 15초 정도 걸려요.
             </p>
-            <Button size="lg" onClick={generate}>
-              AI 리포트 만들기
-            </Button>
+            <div className={styles.actionRow}>
+              <Button size="lg" onClick={generate} disabled={blocked}>
+                AI 리포트 만들기
+              </Button>
+              <QuotaNotice quota={quota} />
+            </div>
           </div>
         )}
 
@@ -65,9 +71,12 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
           <div className={styles.emptyCard} role="alert">
             <p className={styles.emptyTitle}>리포트를 만들지 못했어요</p>
             <p className={styles.emptyText}>{failureReason}</p>
-            <Button size="lg" onClick={generate}>
-              <Icon name="refresh" size={18} /> 다시 시도
-            </Button>
+            <div className={styles.actionRow}>
+              <Button size="lg" onClick={generate} disabled={blocked}>
+                <Icon name="refresh" size={18} /> 다시 시도
+              </Button>
+              <QuotaNotice quota={quota} />
+            </div>
           </div>
         )}
 
@@ -99,14 +108,17 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
               <span>
                 숫자는 공식 자료, 문장은 AI가 썼어요. 교육용 정보이며 투자 추천이 아니에요.
               </span>
-              <button
-                type="button"
-                className={styles.regenerate}
-                onClick={generate}
-                disabled={isRegenerating}
-              >
-                <Icon name="refresh" size={14} /> 다시 만들기
-              </button>
+              <div className={styles.regenerateRow}>
+                <QuotaNotice quota={quota} />
+                <button
+                  type="button"
+                  className={styles.regenerate}
+                  onClick={generate}
+                  disabled={isRegenerating || blocked}
+                >
+                  <Icon name="refresh" size={14} /> 다시 만들기
+                </button>
+              </div>
             </div>
           </>
         )}

@@ -10,9 +10,19 @@ export interface PersistentStore<T> {
   subscribe: (listener: () => void) => () => void;
 }
 
+/** 만들어진 저장소들의 메모리 값을 비우는 함수 (테스트 사이에 초기화할 때 써요) */
+const resetters = new Set<() => void>();
+
+export function resetPersistentStores() {
+  resetters.forEach((reset) => reset());
+}
+
 export function createPersistentStore<T>(key: string, fallback: T): PersistentStore<T> {
   let cache: T | undefined;
   const listeners = new Set<() => void>();
+  resetters.add(() => {
+    cache = undefined;
+  });
 
   const get = () => {
     if (cache !== undefined) return cache;

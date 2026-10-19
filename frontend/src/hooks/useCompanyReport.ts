@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { generateReport, getCompanyReport } from '../api/companies';
 import type { CompanyReport } from '../types';
+import { useReportQuota } from './useReportQuota';
 import { useToast } from './useToast';
 
 /**
@@ -28,6 +29,7 @@ const reportKey = (stockCode: string) => ['companies', stockCode, 'report'] as c
 export function useCompanyReport(stockCode: string) {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const quota = useReportQuota(stockCode);
   const [cancelled, setCancelled] = useState(false);
 
   const query = useQuery({
@@ -80,11 +82,15 @@ export function useCompanyReport(stockCode: string) {
   }, [regenerateFailed, showToast]);
 
   const { mutate } = mutation;
+  const { blocked, consume } = quota;
+  /** 만들기·다시 만들기. 이용 제한에 걸리면 아무것도 하지 않아요. (버튼도 비활성화돼요) */
   const generate = useCallback(() => {
+    if (blocked) return;
+    consume();
     setCancelled(false);
     setRequested(true);
     mutate();
-  }, [mutate]);
+  }, [blocked, consume, mutate]);
 
   /** 기다리기를 멈춰요. (서버 작업 취소 API가 생기면 여기서 함께 불러요) */
   const cancel = useCallback(() => setCancelled(true), []);
@@ -97,6 +103,8 @@ export function useCompanyReport(stockCode: string) {
     failureReason,
     generate,
     cancel,
+    /** 남은 횟수·제한 상태 (리포트 보기는 제한 없음) */
+    quota,
   };
 }
 
