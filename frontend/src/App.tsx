@@ -3,6 +3,7 @@ import { AppLayout } from './components/AppLayout';
 import { CompanyPage } from './pages/CompanyPage';
 import { HomePage } from './pages/HomePage';
 import { TermCardsPage } from './pages/TermCardsPage';
+import { TradingRankingPage } from './pages/TradingRankingPage';
 import { WatchlistPage } from './pages/WatchlistPage';
 
 export function App() {
@@ -11,6 +12,7 @@ export function App() {
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
         <Route path="companies/:stockCode" element={<CompanyPage />} />
+        <Route path="rankings/trading" element={<TradingRankingPage />} />
         <Route path="terms" element={<TermCardsPage />} />
         <Route path="watchlist" element={<WatchlistPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

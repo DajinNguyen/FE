@@ -1,0 +1,147 @@
+/* 구분선이 있는 기업 리스트 (카드 대신) */
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.item {
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--sp-4);
+  padding: var(--sp-4) 0;
+  text-align: left;
+}
+
+.row:hover .name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.rank {
+  min-width: 2ch;
+  color: var(--text-1);
+  font-size: var(--fs-md);
+  font-weight: 800;
+  text-align: right;
+}
+
+.main {
+  display: flex;
+  min-width: 0;
+  grid-column: 2;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* 순위가 없는 줄은 첫 칸을 비워 두지 않아요. */
+.row > .main:first-child {
+  grid-column: 1 / 3;
+}
+
+.nameLine {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.name {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  line-height: var(--lh-tight);
+}
+
+.alert {
+  padding: 0 var(--sp-1);
+  border-radius: var(--radius-xs);
+  background: var(--caution-weak);
+  color: var(--caution);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+}
+
+.oneLiner {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.ai {
+  display: flex;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.aiLabel {
+  flex-shrink: 0;
+  color: var(--brand);
+  font-weight: 800;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: var(--fs-xs);
+  text-align: right;
+}
+
+.tradingValue {
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.tradingValue strong {
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+}
+
+.rate {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.rate > span:first-child {
+  font-size: var(--fs-xs);
+}
+
+/* 휴대폰: 거래대금·등락률을 기업 설명 아래 한 줄로 내려요. */
+@media (max-width: 719px) {
+  .row {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--sp-1) var(--sp-3);
+  }
+
+  .side {
+    grid-column: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-1) var(--sp-3);
+    text-align: left;
+  }
+
+  .row > .main:first-child,
+  .row > .main:first-child + .side {
+    grid-column: 1 / -1;
+  }
+}
+
+.panel .list {
+  border-top: 0;
+}
+
+.empty {
+  padding: var(--sp-6) 0;
+  color: var(--text-3);
+}

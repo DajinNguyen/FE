@@ -1,5 +1,11 @@
 import type { SampleNumber } from './common';
 
+/**
+ * 메인 화면 업종 탭에 쓰는 업종 묶음. 값은 프론트 상수(src/config/sectorGroups.ts)로 고정이에요.
+ * 어느 묶음에도 들지 않으면 "etc" 예요.
+ */
+export type SectorGroup = 'semiconductor' | 'auto' | 'internet' | 'finance' | 'food' | 'etc';
+
 /** GET /api/companies?query= , /api/companies/popular 응답 항목 */
 export interface CompanySummary {
   stock_code: string;
@@ -7,6 +13,8 @@ export interface CompanySummary {
   name: string;
   name_en: string;
   sector: string;
+  /** 업종 탭 묶음 (sector 는 화면에 그대로 보여주는 자세한 업종 이름) */
+  sector_group: SectorGroup;
   market: 'KOSPI' | 'KOSDAQ';
   current_price: SampleNumber;
   /** 전일 대비 등락률 (%) */

@@ -53,18 +53,32 @@
   color: var(--bg);
 }
 
-/* 메인 화면의 큰 검색창 */
+/* 메인 화면의 큰 검색창: 화면에서 가장 눈에 띄는 요소라 카드처럼 따로 떼어 보여줘요. */
 .hero .box {
-  border-radius: var(--radius-lg);
+  border: 2px solid var(--brand);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  box-shadow: var(--shadow-float);
+}
+
+.hero .box:focus-within {
+  box-shadow:
+    var(--shadow-float),
+    0 0 0 3px var(--brand-weak);
+}
+
+.hero .input:focus-visible {
+  outline: none;
 }
 
 .hero .icon {
   left: var(--sp-6);
+  color: var(--text-2);
 }
 
 .hero .input {
-  height: 60px;
-  padding: 0 52px 0 54px;
+  height: 64px;
+  padding: 0 52px 0 56px;
   font-size: var(--fs-md);
 }
 
@@ -227,4 +241,16 @@
 /* 상단 내비게이션의 작은 검색창 */
 .header {
   width: 260px;
+}
+
+@media (max-width: 719px) {
+  .hero .icon {
+    left: var(--sp-4);
+  }
+
+  .hero .input {
+    height: 56px;
+    padding: 0 44px 0 44px;
+    font-size: var(--fs-base);
+  }
 }
