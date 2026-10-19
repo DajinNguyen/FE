@@ -1,10 +1,12 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
+import { resetPersistentStores } from '../src/hooks/persistentStore';
 
 afterEach(() => {
   cleanup();
   window.localStorage.clear();
+  resetPersistentStores();
 });
 
 // jsdom 에는 없는 브라우저 API (Recharts ResponsiveContainer 가 사용)

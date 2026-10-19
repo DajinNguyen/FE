@@ -240,6 +240,40 @@
   color: var(--text-2);
 }
 
+/* 만들기 버튼 + 남은 횟수 */
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-2);
+}
+
+.regenerateRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-2) var(--sp-3);
+}
+
+.quota {
+  max-width: 420px;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.footer .quota {
+  font-size: var(--fs-xs);
+}
+
+.quotaLink {
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 @media (max-width: 719px) {
   .analysis {
     padding: var(--sp-6) var(--sp-4);
