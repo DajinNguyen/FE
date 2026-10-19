@@ -1,5 +1,5 @@
 .loading {
-  padding: var(--sp-10) 0;
+  padding: var(--sp-12) 0;
   color: var(--text-3);
   text-align: center;
 }
@@ -12,7 +12,7 @@
 }
 
 .item {
-  padding: var(--sp-5);
+  padding: var(--sp-6);
   border-radius: var(--radius-lg);
   background: var(--surface);
 }
@@ -34,7 +34,7 @@
 }
 
 .external {
-  margin-left: 4px;
+  margin-left: var(--sp-1);
   color: var(--text-3);
   vertical-align: -2px;
 }
@@ -55,7 +55,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--sp-2);
   margin-top: var(--sp-3);
   padding-top: var(--sp-3);
   border-top: 1px solid var(--line);
@@ -63,7 +63,7 @@
 }
 
 .linkBadge {
-  padding: 2px 8px;
+  padding: 2px var(--sp-2);
   border-radius: var(--radius-full);
   background: var(--brand-weak);
   color: var(--brand-strong);

@@ -25,7 +25,8 @@ body {
     'Noto Sans KR',
     sans-serif;
   font-size: var(--fs-base);
-  line-height: 1.55;
+  line-height: var(--lh-body);
+  font-variant-numeric: tabular-nums;
   word-break: keep-all;
   overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
@@ -40,6 +41,14 @@ p,
 ul,
 ol {
   margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: var(--lh-tight);
+  text-wrap: balance;
 }
 
 ul,

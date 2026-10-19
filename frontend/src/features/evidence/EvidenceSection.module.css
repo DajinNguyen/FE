@@ -7,7 +7,7 @@
 .block {
   display: flex;
   flex-direction: column;
-  padding: var(--sp-5);
+  padding: var(--sp-6);
   border-radius: var(--radius-lg);
   background: var(--surface);
   scroll-margin-top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
@@ -57,7 +57,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
   font-size: var(--fs-md);
   font-weight: 800;
   font-variant-numeric: tabular-nums;

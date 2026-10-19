@@ -27,7 +27,7 @@
 }
 
 .navItem {
-  padding: 8px 14px;
+  padding: var(--sp-2) 14px;
   border-radius: var(--radius-sm);
   color: var(--text-3);
   font-weight: 700;
@@ -79,7 +79,7 @@
   }
 
   .navItem {
-    padding: 6px 8px;
+    padding: 6px var(--sp-2);
     font-size: var(--fs-sm);
   }
 }

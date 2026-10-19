@@ -34,7 +34,7 @@ export function BarChart({ data, formatValue, ariaLabel, height = 200 }: BarChar
             dataKey="label"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: 'var(--text-3)', fontSize: 13 }}
+            tick={{ fill: 'var(--text-3)', style: { fontSize: 'var(--fs-xs)' } }}
           />
           <Bar
             dataKey="value"
@@ -50,7 +50,7 @@ export function BarChart({ data, formatValue, ariaLabel, height = 200 }: BarChar
               dataKey="value"
               position="top"
               formatter={(value) => formatValue(Number(value))}
-              style={{ fill: 'var(--text-2)', fontSize: 13, fontWeight: 700 }}
+              style={{ fill: 'var(--text-2)', fontSize: 'var(--fs-xs)', fontWeight: 700 }}
             />
           </Bar>
         </RechartsBarChart>

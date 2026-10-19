@@ -6,7 +6,7 @@
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--sp-2);
   color: var(--brand-strong);
   font-size: var(--fs-sm);
   font-weight: 800;
@@ -26,7 +26,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
 }
 
 .point {
@@ -44,7 +44,7 @@
   width: 100%;
   align-items: flex-start;
   gap: var(--sp-3);
-  padding: var(--sp-4) var(--sp-5);
+  padding: var(--sp-4) var(--sp-6);
   border-radius: var(--radius-lg);
   text-align: left;
 }
@@ -94,8 +94,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 8px;
-  margin-top: 4px;
+  gap: var(--sp-1) var(--sp-2);
+  margin-top: var(--sp-1);
   color: var(--text-2);
   font-size: var(--fs-sm);
   font-variant-numeric: tabular-nums;
@@ -121,7 +121,7 @@
 
 .chevron {
   flex-shrink: 0;
-  margin-top: 4px;
+  margin-top: var(--sp-1);
   color: var(--text-3);
   transition: transform var(--dur) var(--ease);
 }
@@ -131,7 +131,7 @@
 }
 
 .pointBody {
-  padding: 0 var(--sp-5) var(--sp-5) calc(var(--sp-5) + 26px + var(--sp-3));
+  padding: 0 var(--sp-6) var(--sp-6) calc(var(--sp-6) + 26px + var(--sp-3));
 }
 
 .explain {
@@ -155,7 +155,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--sp-2);
   margin-top: var(--sp-4);
 }
 
@@ -166,7 +166,7 @@
 }
 
 .evidenceChip {
-  padding: 4px 10px;
+  padding: var(--sp-1) 10px;
   border: 1px solid var(--brand-muted);
   border-radius: var(--radius-full);
   background: var(--bg);
@@ -195,7 +195,7 @@
 .regenerate {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
   padding: 6px 10px;
   border-radius: var(--radius-sm);
   color: var(--text-2);
@@ -238,7 +238,7 @@
 /* 진행 표시 */
 .progress {
   margin-top: var(--sp-3);
-  padding: var(--sp-5);
+  padding: var(--sp-6);
   border-radius: var(--radius-lg);
   background: var(--brand-weak);
 }
@@ -266,7 +266,7 @@
 }
 
 .cancel {
-  padding: 4px 10px;
+  padding: var(--sp-1) 10px;
   border-radius: var(--radius-sm);
   background: var(--bg);
   color: var(--text-2);
@@ -316,7 +316,7 @@
 .step {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--sp-2);
   color: var(--text-3);
 }
 
@@ -376,7 +376,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
-  padding: var(--sp-4) var(--sp-5);
+  padding: var(--sp-4) var(--sp-6);
   border-radius: var(--radius-lg);
   background: var(--surface);
 }

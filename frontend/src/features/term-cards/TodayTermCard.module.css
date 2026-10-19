@@ -35,7 +35,7 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  padding: 8px 14px;
+  padding: var(--sp-2) 14px;
   border-radius: var(--radius-full);
   background: var(--brand);
   color: var(--on-brand);

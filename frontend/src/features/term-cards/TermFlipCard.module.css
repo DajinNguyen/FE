@@ -38,7 +38,7 @@
 }
 
 .frontName {
-  font-size: 40px;
+  font-size: var(--fs-4xl);
   font-weight: 800;
   letter-spacing: -0.03em;
 }
@@ -70,7 +70,7 @@
 }
 
 .example {
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
   padding: var(--sp-4);
   border-radius: var(--radius-md);
   background: var(--bg);
@@ -88,10 +88,10 @@
 
 .badges {
   position: absolute;
-  top: var(--sp-5);
-  left: var(--sp-5);
+  top: var(--sp-6);
+  left: var(--sp-6);
   display: flex;
-  gap: 6px;
+  gap: var(--sp-2);
 }
 
 .badge {

@@ -1,11 +1,11 @@
 .page {
-  padding-top: var(--sp-10);
+  padding-top: var(--sp-12);
 }
 
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
-  gap: var(--sp-10);
+  gap: var(--sp-12);
   align-items: start;
 }
 
@@ -25,7 +25,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--sp-4);
-  margin-bottom: var(--sp-5);
+  margin-bottom: var(--sp-6);
 }
 
 .subtitle {
@@ -50,8 +50,8 @@
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: var(--sp-2);
+  padding: var(--sp-2) 14px;
   border-radius: var(--radius-full);
   background: var(--surface);
   color: var(--text-2);
@@ -131,7 +131,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--sp-2);
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
 }
 
 .done {
@@ -211,7 +211,7 @@
 .legend {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--sp-2);
   margin-top: var(--sp-4);
   color: var(--text-3);
   font-size: var(--fs-xs);
@@ -221,7 +221,7 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  margin-left: 6px;
+  margin-left: var(--sp-2);
   border-radius: 50%;
 }
 

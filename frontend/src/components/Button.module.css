@@ -27,7 +27,7 @@
 
 .lg {
   height: 56px;
-  padding: 0 var(--sp-5);
+  padding: 0 var(--sp-6);
   border-radius: var(--radius-md);
   font-size: var(--fs-md);
 }
