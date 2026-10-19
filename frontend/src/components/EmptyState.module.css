@@ -1,6 +1,6 @@
 .empty {
+  max-width: var(--reading-max-width);
   padding: var(--sp-12) 0;
-  text-align: center;
 }
 
 .title {

@@ -124,7 +124,6 @@
 .cardWrap {
   margin-top: var(--sp-3);
   --card-height: 380px;
-  animation: cardIn 320ms var(--ease);
 }
 
 .actions {
@@ -136,10 +135,8 @@
 
 .done {
   margin-top: var(--sp-8);
-  padding: var(--sp-6);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  text-align: center;
+  padding: var(--sp-6) 0;
+  border-top: 1px solid var(--line);
 }
 
 .doneTitle {
@@ -162,9 +159,8 @@
 .aside {
   position: sticky;
   top: calc(var(--header-h) + var(--sp-6));
-  padding: var(--sp-6);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+  padding-left: var(--sp-6);
+  border-left: 1px solid var(--line);
 }
 
 .asideTitle {
@@ -246,18 +242,15 @@
 
   .aside {
     position: static;
+    padding-left: 0;
+    padding-top: var(--sp-6);
+    border-left: 0;
+    border-top: 1px solid var(--line);
   }
 }
 
 @media (max-width: 719px) {
   .page {
     padding-top: var(--sp-6);
-  }
-}
-
-@keyframes cardIn {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
   }
 }

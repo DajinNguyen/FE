@@ -23,26 +23,18 @@
 }
 
 .track {
-  height: 12px;
+  height: 8px;
   overflow: hidden;
-  border-radius: var(--radius-full);
+  border-radius: 2px;
   background: var(--surface-strong);
 }
 
 .bar {
   height: 100%;
-  border-radius: var(--radius-full);
+  border-radius: 2px;
   background: var(--brand-muted);
-  animation: grow 700ms var(--ease);
-  transform-origin: left;
 }
 
 .top {
   background: var(--brand);
-}
-
-@keyframes grow {
-  from {
-    transform: scaleX(0);
-  }
 }

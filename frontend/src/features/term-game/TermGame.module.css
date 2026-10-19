@@ -1,15 +1,14 @@
 .card {
   padding: var(--sp-6);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  animation: in 280ms var(--ease);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
 }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-1);
-  color: var(--brand);
+  color: var(--text-3);
   font-size: var(--fs-sm);
   font-weight: 700;
 }
@@ -211,7 +210,6 @@
   color: var(--text-2);
   font-size: var(--fs-sm);
   line-height: 1.6;
-  animation: in 280ms var(--ease);
 }
 
 .feedbackTitle {
@@ -315,19 +313,5 @@
 @media (max-width: 719px) {
   .card {
     padding: var(--sp-6) var(--sp-4);
-  }
-}
-
-@keyframes in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card,
-  .feedback {
-    animation: none;
   }
 }

@@ -78,9 +78,7 @@ export function TermGame({ terms, allTerms, categoryLabel }: TermGameProps) {
     const savedWrong = allTerms.filter((t) => record.wrong_term_ids.includes(t.id));
     return (
       <div className={styles.card}>
-        <p className={styles.eyebrow}>
-          <Icon name="sparkle" size={16} /> 용어 게임
-        </p>
+        <p className={styles.eyebrow}>용어 게임</p>
         <h2 className={styles.setupTitle}>
           {Math.min(GAME_ROUND_SIZE, terms.length)}문제를 풀어 봐요
         </h2>

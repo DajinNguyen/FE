@@ -24,9 +24,5 @@
 }
 
 .notFound {
-  padding: var(--sp-6);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
   color: var(--text-3);
-  text-align: center;
 }
