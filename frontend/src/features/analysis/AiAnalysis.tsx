@@ -4,10 +4,10 @@ import { Icon } from '../../components/Icon';
 import { TermText } from '../../components/TermText';
 import type { CompanyReportFlow } from '../../hooks/useCompanyReport';
 import type { CompanyReport, EvidenceKind } from '../../types';
-import { KeyPointCard } from './KeyPointCard';
+import { KeyPointRow } from './KeyPointRow';
 import { QuotaNotice } from './QuotaNotice';
 import { RegenerateProgress, ReportSkeleton, ReportWaiting } from './ReportWaiting';
-import { sortKeyPoints } from './reportMeta';
+import { groupKeyPoints } from './reportMeta';
 import styles from './AiAnalysis.module.css';
 
 interface AiAnalysisProps {
@@ -86,24 +86,33 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
             <h2 className={styles.headline}>
               <TermText text={report.headline} />
             </h2>
+            <div className={styles.groups}>
+              {groupKeyPoints(report.key_points).map((group) => (
+                <section key={group.id} aria-labelledby={`kp-${group.id}`}>
+                  <h3 id={`kp-${group.id}`} className={styles.groupTitle}>
+                    {group.title}
+                  </h3>
+                  <ul className={styles.points}>
+                    {group.points.map((point, index) => (
+                      <KeyPointRow
+                        key={`${point.category}-${index}`}
+                        point={point}
+                        onEvidence={onEvidence}
+                      />
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
             <p className={styles.asOf}>
               <DataAsOf
                 items={dataAsOfItems(report)}
                 prefix="이 리포트는"
                 suffix="기준 자료로 만들었어요."
               />{' '}
-              {formatGeneratedAt(report.generated_at)} 생성
+              {formatGeneratedAt(report.generated_at)} 생성 · 항목을 누르면 이유와 근거를 볼 수
+              있어요
             </p>
-            <ol className={styles.points} aria-label="핵심 포인트">
-              {sortKeyPoints(report.key_points).map((point, index) => (
-                <KeyPointCard
-                  key={`${point.category}-${index}`}
-                  point={point}
-                  index={index}
-                  onEvidence={onEvidence}
-                />
-              ))}
-            </ol>
             <div className={styles.footer}>
               <span>
                 숫자는 공식 자료, 문장은 AI가 썼어요. 교육용 정보이며 투자 추천이 아니에요.

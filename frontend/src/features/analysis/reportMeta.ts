@@ -85,3 +85,28 @@ export function describeChange(before: KeyPointValue | null, after: KeyPointValu
       : `${ratio > 1 ? '+' : ''}${Math.round((ratio - 1) * 100)}%`;
   return { direction, text };
 }
+
+/**
+ * 리포트를 한눈에 읽도록 핵심 포인트를 질문 3개로 묶어요.
+ * "이 기업이 어떤 기업이고, 지금 어떤 상황이며, 무엇을 봐야 하는지" 순서예요.
+ * 모르는 분류는 "지금 어떤 상황인가요?"에 넣어요.
+ */
+export const keyPointGroups = [
+  { id: 'company', title: '어떤 회사인가요?', categories: ['revenue_source', 'strength'] },
+  { id: 'now', title: '지금 어떤 상황인가요?', categories: ['performance', 'recent_change'] },
+  { id: 'watch', title: '무엇을 조심해야 하나요?', categories: ['risk'] },
+] as const satisfies readonly { id: string; title: string; categories: KeyPointCategory[] }[];
+
+export function groupKeyPoints(points: KeyPoint[]) {
+  const known = new Set<string>(keyPointGroups.flatMap((g) => g.categories));
+  return keyPointGroups
+    .map((group) => ({
+      ...group,
+      points: sortKeyPoints(points).filter(
+        (p) =>
+          (group.categories as readonly string[]).includes(p.category) ||
+          (group.id === 'now' && !known.has(p.category)),
+      ),
+    }))
+    .filter((group) => group.points.length > 0);
+}

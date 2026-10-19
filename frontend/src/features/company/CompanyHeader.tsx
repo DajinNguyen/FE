@@ -35,7 +35,6 @@ export function CompanyHeader({ company }: { company: CompanyDetail }) {
         </div>
         <WatchlistHeart stockCode={company.stock_code} companyName={company.name} />
       </div>
-      {company.one_liner && <p className={styles.oneLiner}>{company.one_liner}</p>}
 
       <div className={styles.quote}>
         <span className={styles.price}>
