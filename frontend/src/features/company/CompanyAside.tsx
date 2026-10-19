@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DataAsOf } from '../../components/DataAsOf';
 import { PriceChart } from '../../components/PriceChart';
 import { PriceChange } from '../../components/PriceChange';
 import { SampleBadge } from '../../components/SampleBadge';
@@ -21,11 +22,14 @@ const periodOptions = [
 export function CompanyAside({ stockCode }: { stockCode: string }) {
   const [period, setPeriod] = useState<PricePeriod>('3m');
   const { data: prices } = usePriceHistory(stockCode, period);
-  const indicators = useIndicatorItems(stockCode, { withDebt: true });
+  const { items: indicators, asOf: indicatorsAsOf } = useIndicatorItems(stockCode, {
+    withDebt: true,
+  });
 
   const points = prices?.points ?? [];
   const first = points[0]?.close;
   const last = points.at(-1)?.close;
+  const lastDate = points.at(-1)?.date;
   const periodRate = first && last ? ((last - first) / first) * 100 : undefined;
   const periodLabel = periodOptions.find((o) => o.value === period)?.label;
 
@@ -58,7 +62,7 @@ export function CompanyAside({ stockCode }: { stockCode: string }) {
         {last !== undefined && (
           <p className={styles.small}>
             최근 종가 {formatPrice(last)}
-            {prices?.is_sample && ' · 예시 데이터예요'}
+            {prices?.is_sample && ' · 예시 데이터예요'} · <DataAsOf value={lastDate} />
           </p>
         )}
       </section>
@@ -78,6 +82,9 @@ export function CompanyAside({ stockCode }: { stockCode: string }) {
               </div>
             ))}
           </dl>
+        ) : null}
+        {indicators.length > 0 ? (
+          <DataAsOf value={indicatorsAsOf} />
         ) : (
           <p className={styles.small}>자료를 찾지 못했어요</p>
         )}

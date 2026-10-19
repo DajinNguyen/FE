@@ -9,7 +9,7 @@ export interface IndicatorItem {
   display: string;
 }
 
-/** 시가총액·PER·PBR·ROE(·부채비율). 자료가 없는 항목은 빼요. */
+/** 시가총액·PER·PBR·ROE(·부채비율)과 지표 기준. 자료가 없는 항목은 빼요. */
 export function useIndicatorItems(stockCode: string, { withDebt = false } = {}) {
   const { data: company } = useCompany(stockCode);
   const { data: financials } = useFinancials(stockCode);
@@ -32,5 +32,5 @@ export function useIndicatorItems(stockCode: string, { withDebt = false } = {}) 
     if (withDebt)
       items.push({ label: '부채비율', value: debt_ratio, display: `${debt_ratio.value}%` });
   }
-  return items;
+  return { items, asOf: financials?.indicators_as_of ?? null };
 }

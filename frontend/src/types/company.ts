@@ -48,4 +48,6 @@ export interface CompanyDetail extends CompanySummary {
   business_segments: BusinessSegment[];
   timeline: TimelineItem[];
   timeline_source: string;
+  /** 현재가·등락률의 기준일 (YYYY-MM-DD, 보통 직전 거래일). 없으면 기준일 표시를 숨겨요. */
+  price_as_of: string | null;
 }

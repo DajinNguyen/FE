@@ -33,6 +33,8 @@ export interface Financials {
     base_label: string;
     items: SegmentRevenue[];
   };
+  /** PER·PBR·ROE·부채비율의 기준 (예: "2025년 사업보고서"). 없으면 기준 표시를 숨겨요. */
+  indicators_as_of: string | null;
   indicators: {
     /** ROE (%) */
     roe: SampleNumber;

@@ -1,7 +1,7 @@
+import { DataAsOf } from '../components/DataAsOf';
 import { CompanyListRow } from '../features/home/CompanyListRow';
 import { useHomeDashboard } from '../hooks/useHomeDashboard';
 import { useOpenCompany } from '../hooks/useOpenCompany';
-import { formatMarketDate } from '../utils/format';
 import listStyles from '../features/home/CompanyList.module.css';
 import styles from './TradingRankingPage.module.css';
 
@@ -16,8 +16,10 @@ export function TradingRankingPage() {
         <h1 className={styles.title}>오늘 거래가 많은 기업</h1>
         {data && (
           <p className={styles.note}>
-            {formatMarketDate(data.base_time)} 기준 · 거래대금 순 · 상위{' '}
-            {data.trading_value_top.length}개
+            <DataAsOf
+              value={data.base_time}
+              suffix={`기준 · 거래대금 순 · 상위 ${data.trading_value_top.length}개`}
+            />
           </p>
         )}
       </header>
