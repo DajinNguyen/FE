@@ -7,81 +7,104 @@ import { renderWithProviders } from './testUtils';
 
 // 쉬움 5×5 "주식 기초"
 // 가로: 3 주가지수, 5 주주, 7 회계연도 / 세로: 1 주가, 2 매수, 3 주주총회, 4 지분, 6 매도
-const renderPuzzle = () =>
+const renderPuzzle = (route = '/terms?mode=crossword&puzzle=basics-easy') =>
   renderWithProviders(
     <Routes>
       <Route path="/terms" element={<TermCardsPage />} />
     </Routes>,
-    { route: '/terms?mode=crossword&puzzle=basics-easy' },
+    { route },
   );
 
-const input = () => screen.getByRole('textbox');
+/** 격자 위에 겹친 입력창 (지금 고른 단어) */
+const wordInput = () => screen.getByRole('textbox', { name: /답 입력/ });
 const cell = (label: RegExp) => screen.getByRole('button', { name: label });
 
+/** 칸에 바로 친 것처럼: 입력창에 포커스를 주고 키보드로 입력 */
+async function typeInGrid(user: ReturnType<typeof userEvent.setup>, text: string) {
+  wordInput().focus();
+  await user.keyboard(text);
+}
+
 describe('가로세로 낱말퀴즈', () => {
-  it('선택한 단어를 한 번에 입력하고 Enter 로 칸을 채워요', async () => {
+  it('칸 위에서 바로 입력하면 친 글자가 칸에 보이고, Enter 로 채점해서 맞으면 초록으로 칠해요', async () => {
     const user = userEvent.setup();
     renderPuzzle();
 
-    // 처음에는 가로 3번(주가지수)이 골라져 있어요.
-    expect(await screen.findByText('가로 3번')).toBeInTheDocument();
-    await user.type(input(), '주가지수{Enter}');
+    expect(
+      await screen.findByRole('textbox', { name: '가로 3번 답 입력 (4글자)' }),
+    ).toBeInTheDocument();
+    await typeInGrid(user, '주가');
+    // Enter 전에도 친 글자가 칸에 바로 보여요.
+    expect(cell(/^가로 3번, 2번째 칸/)).toHaveTextContent('가');
 
-    expect(cell(/^가로 3번, 1번째 칸, 세로 3번, 1번째 칸, 입력: 주$/)).toBeInTheDocument();
-    expect(cell(/^가로 3번, 4번째 칸, 세로 2번, 2번째 칸, 입력: 수$/)).toBeInTheDocument();
+    await typeInGrid(user, '지수{Enter}');
+    const first = cell(/^가로 3번, 1번째 칸, 세로 3번, 1번째 칸, 입력: 주, 맞음$/);
+    expect(first).toHaveAttribute('data-mark', 'correct');
+    expect(cell(/^가로 3번, 4번째 칸/)).toHaveAttribute('data-mark', 'correct');
     // 빈 칸이 있는 다음 단어(가로 5번)로 넘어가요.
-    expect(screen.getByText('가로 5번')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: '가로 5번 답 입력 (2글자)' })).toBeInTheDocument();
   });
 
-  it('글자 수가 다르면 "N글자 단어예요"라고 알려줘요', async () => {
-    const user = userEvent.setup();
-    renderPuzzle();
-    await user.type(await screen.findByRole('textbox'), '주가{Enter}');
-    expect(screen.getByText('4글자 단어예요')).toBeInTheDocument();
-    expect(cell(/^가로 3번, 1번째 칸, 세로 3번, 1번째 칸, 비어 있음$/)).toBeInTheDocument();
-  });
-
-  it('같은 칸을 다시 누르면 가로 ↔ 세로가 바뀌고, 교차 칸 글자는 입력창에 미리 보여요', async () => {
-    const user = userEvent.setup();
-    renderPuzzle();
-    await user.type(await screen.findByRole('textbox'), '주가지수{Enter}');
-
-    const shared = cell(/^가로 3번, 1번째 칸, 세로 3번, 1번째 칸/);
-    await user.click(shared);
-    expect(screen.getByText('가로 3번')).toBeInTheDocument();
-    await user.click(shared);
-    expect(screen.getByText('세로 3번')).toBeInTheDocument();
-    // 세로 3번(주주총회)의 첫 칸은 이미 "주"가 들어 있어요.
-    expect(input().getAttribute('placeholder')).toMatch(/^주○○○/);
-  });
-
-  it('[확인]은 틀린 칸만 표시하고, 끝까지 맞히면 완료 화면과 용어 목록을 보여줘요', async () => {
+  it('틀린 단어는 빨강으로 칠하고, 고쳐서 맞히면 초록으로 바뀌어요', async () => {
     const user = userEvent.setup();
     renderPuzzle();
     const clues = await screen.findByRole('complementary', { name: '열쇠 목록' });
-    const answers: [string, string][] = [
-      ['3', '주가지수'],
-      ['5', '주주'],
-      ['7', '회계연도'],
-      ['1', '주가'],
-      ['2', '매수'],
-      ['3', '주주총회'],
-      ['4', '지분'],
-      ['6', '매도'],
-    ];
+    const across = within(clues).getByRole('region', { name: '가로 열쇠' });
+
+    await user.click(within(across).getByRole('button', { name: /^7/ }));
+    await typeInGrid(user, '회계년도{Enter}');
+    expect(cell(/^가로 7번, 3번째 칸/)).toHaveAttribute('data-mark', 'wrong');
+
+    await user.click(within(across).getByRole('button', { name: /^7/ }));
+    await typeInGrid(user, '회계연도{Enter}');
+    expect(cell(/^가로 7번, 3번째 칸/)).toHaveAttribute('data-mark', 'correct');
+  });
+
+  it('글자 수가 다르면 "N글자 단어예요"라고 알려주고 칸을 채우지 않아요', async () => {
+    const user = userEvent.setup();
+    renderPuzzle();
+    await screen.findByRole('textbox', { name: /가로 3번/ });
+    await typeInGrid(user, '주가{Enter}');
+    expect(screen.getByText('4글자 단어예요')).toBeInTheDocument();
+    expect(cell(/^가로 3번, 1번째 칸, 세로 3번, 1번째 칸, 비어 있음$/)).not.toHaveAttribute(
+      'data-mark',
+    );
+  });
+
+  it('같은 칸을 다시 누르면 가로 ↔ 세로가 바뀌어요', async () => {
+    const user = userEvent.setup();
+    renderPuzzle();
+    await screen.findByRole('textbox', { name: /가로 3번/ });
+
+    // 처음에는 이 칸(가로 3번 첫 칸)이 골라져 있어서, 한 번 누르면 바로 세로로 바뀌어요.
+    expect(wordInput()).toHaveAccessibleName('가로 3번 답 입력 (4글자)');
+    const shared = cell(/^가로 3번, 1번째 칸, 세로 3번, 1번째 칸/);
+    await user.click(shared);
+    expect(wordInput()).toHaveAccessibleName('세로 3번 답 입력 (4글자)');
+    expect(screen.getByText('세로 3번')).toBeInTheDocument();
+    await user.click(shared);
+    expect(wordInput()).toHaveAccessibleName('가로 3번 답 입력 (4글자)');
+  });
+
+  it('끝까지 맞히면 완료 화면과 용어 목록을 보여주고 기록을 남겨요', async () => {
+    const user = userEvent.setup();
+    renderPuzzle();
+    const clues = await screen.findByRole('complementary', { name: '열쇠 목록' });
     const across = within(clues).getByRole('region', { name: '가로 열쇠' });
     const down = within(clues).getByRole('region', { name: '세로 열쇠' });
-
-    // 일부러 한 단어를 틀리게 넣고 확인해요.
-    await user.click(within(across).getByRole('button', { name: /^7/ }));
-    await user.type(input(), '회계년도{Enter}');
-    await user.click(screen.getByRole('button', { name: '확인' }));
-    expect(screen.getByText('틀린 칸 1개를 빨간색으로 표시했어요')).toBeInTheDocument();
-
-    for (const [i, [number, answer]] of answers.entries()) {
-      const list = i < 3 ? across : down;
+    const answers: [HTMLElement, string, string][] = [
+      [across, '3', '주가지수'],
+      [across, '5', '주주'],
+      [across, '7', '회계연도'],
+      [down, '1', '주가'],
+      [down, '2', '매수'],
+      [down, '3', '주주총회'],
+      [down, '4', '지분'],
+      [down, '6', '매도'],
+    ];
+    for (const [list, number, answer] of answers) {
       await user.click(within(list).getByRole('button', { name: new RegExp(`^${number}`) }));
-      await user.type(input(), `${answer}{Enter}`);
+      await typeInGrid(user, `${answer}{Enter}`);
     }
 
     expect(await screen.findByRole('heading', { name: '최고 기록이에요!' })).toBeInTheDocument();
@@ -90,28 +113,24 @@ describe('가로세로 낱말퀴즈', () => {
     expect(saved['basics-easy'].ever_completed).toBe(true);
   });
 
-  it('나갔다 와도 입력한 글자가 남아 있어 이어서 풀 수 있어요', async () => {
+  it('나갔다 와도 입력한 글자와 색이 남아 있어 이어서 풀 수 있어요', async () => {
     const user = userEvent.setup();
     const first = renderPuzzle();
-    await user.type(await screen.findByRole('textbox'), '주가지수{Enter}');
+    await screen.findByRole('textbox', { name: /가로 3번/ });
+    await typeInGrid(user, '주가지수{Enter}');
     first.unmount();
 
     renderPuzzle();
     expect(
       await screen.findByRole('button', {
-        name: /^가로 3번, 4번째 칸, 세로 2번, 2번째 칸, 입력: 수$/,
+        name: /^가로 3번, 4번째 칸, 세로 2번, 2번째 칸, 입력: 수, 맞음$/,
       }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute('data-mark', 'correct');
   });
 
   it('용어 카드 화면에서 [낱말퀴즈]를 누르면 목록 없이 바로 퍼즐이 나오고, 위에서 퍼즐을 바꿀 수 있어요', async () => {
     const user = userEvent.setup();
-    renderWithProviders(
-      <Routes>
-        <Route path="/terms" element={<TermCardsPage />} />
-      </Routes>,
-      { route: '/terms' },
-    );
+    renderPuzzle('/terms');
 
     await user.click(await screen.findByRole('radio', { name: '낱말퀴즈' }));
     const picker = await screen.findByRole('group', { name: '퍼즐 고르기' });

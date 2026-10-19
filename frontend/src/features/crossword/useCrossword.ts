@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import { useCrosswordSave } from '../../hooks/useCrosswordSave';
 import type { CrosswordPuzzle } from '../../types';
 import {
+  cellMarks,
   crosswordReducer,
   currentWord,
   initialState,
@@ -99,6 +100,7 @@ export function useCrossword(puzzle: CrosswordPuzzle) {
     word: currentWord(model, state),
     hint: wordHint(model, state),
     wrong: wrongCells(model, state),
+    marks: cellMarks(model, state),
     elapsedMs,
     result,
     bestMs: saved.best_ms,

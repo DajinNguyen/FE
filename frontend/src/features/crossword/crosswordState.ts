@@ -16,6 +16,8 @@ export interface CrosswordState {
   revealed: boolean;
   /** 입력창 안내 (예: "4글자 단어예요") */
   message: string | null;
+  /** 다 입력해서 채점한 단어(words 위치). 맞으면 초록, 틀리면 빨강으로 칸을 칠해요. */
+  judged: number[];
 }
 
 export type CrosswordAction =
@@ -27,7 +29,8 @@ export type CrosswordAction =
   | { type: 'check' }
   | { type: 'hint' }
   | { type: 'reveal' }
-  | { type: 'restart' };
+  | { type: 'restart' }
+  | { type: 'clearMessage' };
 
 /** 열쇠 순서: 가로 번호 순 → 세로 번호 순 */
 export const clueOrder = (model: PuzzleModel) => [
@@ -40,14 +43,19 @@ export function initialState(
   saved?: Partial<Pick<CrosswordState, 'entries' | 'hintLevels' | 'hintsUsed' | 'revealed'>>,
 ): CrosswordState {
   const first = clueOrder(model)[0];
+  const entries = saved?.entries ?? {};
   return {
-    entries: saved?.entries ?? {},
+    entries,
     selected: { key: first.cells[0], direction: first.word.direction },
     checked: false,
     hintLevels: saved?.hintLevels ?? {},
     hintsUsed: saved?.hintsUsed ?? 0,
     revealed: saved?.revealed ?? false,
     message: null,
+    // 이어 풀 때는 다 채워진 단어를 채점한 것으로 봐요.
+    judged: model.words
+      .filter((ref) => ref.cells.every((key) => entries[key]))
+      .map((ref) => ref.index),
   };
 }
 
@@ -64,6 +72,24 @@ const toChars = (text: string) => [...text.normalize('NFC').replace(/\s+/g, '')]
 
 export function isComplete(model: PuzzleModel, entries: Record<string, string>) {
   return [...model.cells.values()].every((cell) => entries[cell.key] === cell.answer);
+}
+
+/**
+ * 칸 색: 채점한 단어가 모두 맞으면 초록, 하나라도 틀리면 빨강.
+ * 맞은 단어와 틀린 단어가 겹치는 칸은 초록으로 둬요. [확인]으로 찾은 틀린 칸도 빨강이에요.
+ */
+export function cellMarks(model: PuzzleModel, state: CrosswordState) {
+  const marks = new Map<string, 'correct' | 'wrong'>();
+  for (const index of state.judged) {
+    const ref = model.words[index];
+    const right = ref.cells.every((key, i) => state.entries[key] === [...ref.word.answer][i]);
+    for (const key of ref.cells) {
+      if (right) marks.set(key, 'correct');
+      else if (marks.get(key) !== 'correct') marks.set(key, 'wrong');
+    }
+  }
+  for (const key of wrongCells(model, state)) marks.set(key, 'wrong');
+  return marks;
 }
 
 /** [확인] 후 빨간색으로 표시할 칸: 글자를 넣었는데 틀린 칸 */
@@ -155,6 +181,7 @@ export function crosswordReducer(
         entries,
         checked: false,
         message: null,
+        judged: state.judged.includes(ref.index) ? state.judged : [...state.judged, ref.index],
         selected: next ? selectRef(next) : state.selected,
       };
     }
@@ -179,10 +206,12 @@ export function crosswordReducer(
       model.cells.forEach((cell) => {
         entries[cell.key] = cell.answer;
       });
-      return { ...state, entries, revealed: true, checked: false, message: null };
+      return { ...state, entries, revealed: true, checked: false, message: null, judged: [] };
     }
     case 'restart':
       return initialState(model);
+    case 'clearMessage':
+      return state.message ? { ...state, message: null } : state;
     default:
       return state;
   }

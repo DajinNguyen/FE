@@ -6,7 +6,6 @@ import { CrosswordComplete } from './CrosswordComplete';
 import { CrosswordGrid } from './CrosswordGrid';
 import { formatClock } from './formatClock';
 import { useCrossword } from './useCrossword';
-import { WordInput } from './WordInput';
 import styles from './Crossword.module.css';
 
 /**
@@ -107,27 +106,42 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
             {word.word.direction === 'across' ? '가로' : '세로'} {word.word.number}번
           </strong>{' '}
           {word.word.clue} <span className={styles.clueLength}>({word.cells.length}글자)</span>
+          <span className={styles.message} aria-live="polite">
+            {state.message}
+          </span>
         </p>
 
         <CrosswordGrid
+          ref={inputRef}
           model={model}
           state={state}
           word={word}
-          wrong={game.wrong}
+          marks={game.marks}
           dispatch={dispatch}
-          onEnter={() => inputRef.current?.focus()}
         />
-
-        {/* 아래쪽에는 정답 입력만 */}
-        <WordInput key={word.index} ref={inputRef} word={word} state={state} dispatch={dispatch} />
+        <p className={styles.gridTip}>
+          칸을 누르고 바로 입력한 뒤 Enter · 맞으면 초록, 틀리면 빨강
+        </p>
       </div>
 
       <aside className={styles.side} aria-label="열쇠 목록">
-        <ClueList model={model} state={state} word={word} dispatch={dispatch} />
+        <ClueList
+          model={model}
+          state={state}
+          word={word}
+          dispatch={dispatch}
+          onPicked={() => inputRef.current?.focus()}
+        />
       </aside>
       <details className={styles.mobileClues}>
         <summary>열쇠 목록 보기</summary>
-        <ClueList model={model} state={state} word={word} dispatch={dispatch} />
+        <ClueList
+          model={model}
+          state={state}
+          word={word}
+          dispatch={dispatch}
+          onPicked={() => inputRef.current?.focus()}
+        />
       </details>
     </div>
   );
