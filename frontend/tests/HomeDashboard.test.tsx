@@ -7,7 +7,7 @@ import { TradingRankingPage } from '../src/pages/TradingRankingPage';
 import { renderWithProviders } from './testUtils';
 
 describe('메인 화면', () => {
-  it('서비스 한 줄 설명, 검색창, 검색 예시, 3단계 설명을 보여줘요', () => {
+  it('서비스 한 줄 설명, 검색창, 3단계 설명을 보여주고 검색 예시 칩은 없어요', () => {
     renderWithProviders(<HomePage />);
 
     expect(
@@ -17,9 +17,7 @@ describe('메인 화면', () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: '기업 검색' })).toBeInTheDocument();
-    for (const name of ['삼성전자', 'SK하이닉스', '현대차']) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument();
-    }
+    expect(screen.queryByText('이렇게 찾아보세요')).not.toBeInTheDocument();
     const steps = screen.getByRole('list', { name: '다진이 하는 일' });
     expect(within(steps).getAllByRole('listitem')).toHaveLength(3);
   });

@@ -1,12 +1,5 @@
 /** 메인 화면 설정값 */
 
-/** 검색창 아래 예시 칩. 누르면 그 기업 화면으로 가요. */
-export const SEARCH_EXAMPLES = [
-  { stock_code: '005930', name: '삼성전자' },
-  { stock_code: '000660', name: 'SK하이닉스' },
-  { stock_code: '005380', name: '현대차' },
-];
-
 /** 메인에 보여줄 거래대금 순위 개수 (전체 보기는 응답 전체) */
 export const HOME_TRADING_LIMIT = 10;
 

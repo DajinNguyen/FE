@@ -25,38 +25,6 @@
   margin-top: var(--sp-2);
 }
 
-.examples {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2) var(--sp-3);
-}
-
-.examplesLabel {
-  color: var(--text-3);
-  font-size: var(--fs-sm);
-}
-
-.exampleList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.exampleChip {
-  padding: var(--sp-1) var(--sp-3);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-full);
-  color: var(--text-1);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-}
-
-.exampleChip:hover {
-  border-color: var(--brand);
-  color: var(--brand);
-}
-
 .hint {
   color: var(--text-3);
 }
