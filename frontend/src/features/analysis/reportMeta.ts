@@ -7,6 +7,9 @@ import type {
 } from '../../types';
 import type { CompanyTabId } from '../companyTabs';
 
+/** 리포트를 만드는 단계. 서버가 단계를 알려주면(스트리밍) ReportWaiting 의 activeStep 으로 넘겨줘요. */
+export const REPORT_STEPS = ['재무제표 확인', '뉴스 확인', '기업 비전 읽기', '핵심 포인트 정리'];
+
 /** 핵심 포인트는 항상 이 순서로 보여줘요. */
 export const keyPointOrder: KeyPointCategory[] = [
   'performance',

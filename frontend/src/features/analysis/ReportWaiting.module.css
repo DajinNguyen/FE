@@ -1,0 +1,190 @@
+/* 처음 만들 때 진행 표시 */
+.progress {
+  margin-top: var(--sp-4);
+  padding: var(--sp-6) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+
+.cancel {
+  flex-shrink: 0;
+  padding: var(--sp-1) 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.cancel:hover {
+  background: var(--surface);
+}
+
+.track {
+  height: 4px;
+  margin-top: var(--sp-3);
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--surface-strong);
+}
+
+.bar {
+  height: 100%;
+  background: var(--brand);
+  transition: width 900ms linear;
+}
+
+.time {
+  margin-top: var(--sp-2);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-6);
+  margin-top: var(--sp-4);
+  font-size: var(--fs-sm);
+}
+
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-3);
+}
+
+.step.done {
+  color: var(--text-2);
+}
+
+.step.current {
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+.stepIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+}
+
+.done .stepIcon {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.current .stepIcon {
+  border-color: var(--brand);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--line-strong);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 다시 만들 때: 기존 리포트 위에 얇은 진행 표시줄 */
+.compact {
+  position: sticky;
+  top: calc(var(--header-h) + var(--tabs-h) + var(--sp-2));
+  z-index: 5;
+  margin-top: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.compactTitle {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.compact .track {
+  margin-top: var(--sp-2);
+}
+
+/* 스켈레톤: 핵심 포인트 모양 */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--sp-6);
+}
+
+.point {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0;
+  border-top: 1px solid var(--line);
+}
+
+.line {
+  height: 14px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-strong);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.headline {
+  width: 80%;
+  height: 28px;
+  margin-bottom: var(--sp-4);
+}
+
+.short {
+  width: 20%;
+}
+
+.title {
+  width: 55%;
+  height: 20px;
+}
+
+.medium {
+  width: 70%;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .line {
+    animation: none;
+  }
+}
