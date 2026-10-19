@@ -86,7 +86,7 @@ describe('가로세로 낱말퀴즈', () => {
     expect(wordInput()).toHaveAccessibleName('가로 3번 답 입력 (4글자)');
   });
 
-  it('끝까지 맞히면 완료 화면과 용어 목록을 보여주고 기록을 남겨요', async () => {
+  it('끝까지 맞히면 다른 화면으로 넘어가지 않고 격자에서 바로 "다 풀었어요"를 보여주고, 기록은 쌓지 않아요', async () => {
     const user = userEvent.setup();
     renderPuzzle();
     const clues = await screen.findByRole('complementary', { name: '열쇠 목록' });
@@ -107,10 +107,29 @@ describe('가로세로 낱말퀴즈', () => {
       await typeInGrid(user, `${answer}{Enter}`);
     }
 
-    expect(await screen.findByRole('heading', { name: '최고 기록이에요!' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /주주총회/ })).toBeInTheDocument();
+    expect(await screen.findByText('다 풀었어요!')).toBeInTheDocument();
+    // 격자는 그대로 있고 모든 칸이 초록이에요.
+    expect(cell(/^가로 7번, 4번째 칸/)).toHaveAttribute('data-mark', 'correct');
+    expect(screen.queryByText(/최고 기록/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '정답 보기' })).toBeDisabled();
     const saved = JSON.parse(window.localStorage.getItem('dajin:crossword') ?? '{}');
-    expect(saved['basics-easy'].ever_completed).toBe(true);
+    expect(saved['basics-easy']).not.toHaveProperty('best_ms');
+  });
+
+  it('[정답 보기]는 확인 창 없이 격자에 바로 정답을 채우고, 내가 맞힌 칸과 구분해요', async () => {
+    const user = userEvent.setup();
+    renderPuzzle();
+    await screen.findByRole('textbox', { name: /가로 3번/ });
+    await typeInGrid(user, '주가지수{Enter}');
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }));
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+    expect(screen.getByText('정답을 채웠어요')).toBeInTheDocument();
+    expect(cell(/^가로 3번, 4번째 칸/)).toHaveAttribute('data-mark', 'correct');
+    expect(cell(/^가로 7번, 1번째 칸, 세로 3번, 4번째 칸, 입력: 회/)).toHaveAttribute('data-mark', 'revealed');
+
+    await user.click(screen.getByRole('button', { name: '다시 하기' }));
+    expect(cell(/^가로 7번, 1번째 칸, 세로 3번, 4번째 칸, 비어 있음$/)).not.toHaveAttribute('data-mark');
   });
 
   it('나갔다 와도 입력한 글자와 색이 남아 있어 이어서 풀 수 있어요', async () => {

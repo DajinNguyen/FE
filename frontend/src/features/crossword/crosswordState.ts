@@ -14,6 +14,8 @@ export interface CrosswordState {
   hintsUsed: number;
   /** [정답 보기]를 썼는지 */
   revealed: boolean;
+  /** [정답 보기]로 채운 칸 (내가 틀렸거나 비워 둔 칸). 맞힌 칸과 다른 색으로 보여줘요. */
+  revealedKeys: string[];
   /** 입력창 안내 (예: "4글자 단어예요") */
   message: string | null;
   /** 다 입력해서 채점한 단어(words 위치). 맞으면 초록, 틀리면 빨강으로 칸을 칠해요. */
@@ -40,7 +42,9 @@ export const clueOrder = (model: PuzzleModel) => [
 
 export function initialState(
   model: PuzzleModel,
-  saved?: Partial<Pick<CrosswordState, 'entries' | 'hintLevels' | 'hintsUsed' | 'revealed'>>,
+  saved?: Partial<
+    Pick<CrosswordState, 'entries' | 'hintLevels' | 'hintsUsed' | 'revealed' | 'revealedKeys'>
+  >,
 ): CrosswordState {
   const first = clueOrder(model)[0];
   const entries = saved?.entries ?? {};
@@ -51,6 +55,7 @@ export function initialState(
     hintLevels: saved?.hintLevels ?? {},
     hintsUsed: saved?.hintsUsed ?? 0,
     revealed: saved?.revealed ?? false,
+    revealedKeys: saved?.revealedKeys ?? [],
     message: null,
     // 이어 풀 때는 다 채워진 단어를 채점한 것으로 봐요.
     judged: model.words
@@ -78,8 +83,10 @@ export function isComplete(model: PuzzleModel, entries: Record<string, string>) 
  * 칸 색: 채점한 단어가 모두 맞으면 초록, 하나라도 틀리면 빨강.
  * 맞은 단어와 틀린 단어가 겹치는 칸은 초록으로 둬요. [확인]으로 찾은 틀린 칸도 빨강이에요.
  */
+export type CellMark = 'correct' | 'wrong' | 'revealed';
+
 export function cellMarks(model: PuzzleModel, state: CrosswordState) {
-  const marks = new Map<string, 'correct' | 'wrong'>();
+  const marks = new Map<string, CellMark>();
   for (const index of state.judged) {
     const ref = model.words[index];
     const right = ref.cells.every((key, i) => state.entries[key] === [...ref.word.answer][i]);
@@ -89,6 +96,12 @@ export function cellMarks(model: PuzzleModel, state: CrosswordState) {
     }
   }
   for (const key of wrongCells(model, state)) marks.set(key, 'wrong');
+  // 정답 보기: 내가 맞힌 칸은 초록 그대로, 나머지는 정답 색으로
+  if (state.revealed) {
+    model.cells.forEach((cell) => {
+      marks.set(cell.key, state.revealedKeys.includes(cell.key) ? 'revealed' : 'correct');
+    });
+  }
   return marks;
 }
 
@@ -206,7 +219,10 @@ export function crosswordReducer(
       model.cells.forEach((cell) => {
         entries[cell.key] = cell.answer;
       });
-      return { ...state, entries, revealed: true, checked: false, message: null, judged: [] };
+      const revealedKeys = [...model.cells.values()]
+        .filter((cell) => state.entries[cell.key] !== cell.answer)
+        .map((cell) => cell.key);
+      return { ...state, entries, revealed: true, revealedKeys, checked: false, message: null };
     }
     case 'restart':
       return initialState(model);

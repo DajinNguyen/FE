@@ -1,8 +1,7 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Button } from '../../components/Button';
 import type { CrosswordPuzzle } from '../../types';
 import { ClueList } from './ClueList';
-import { CrosswordComplete } from './CrosswordComplete';
 import { CrosswordGrid } from './CrosswordGrid';
 import { formatClock } from './formatClock';
 import { useCrossword } from './useCrossword';
@@ -10,26 +9,13 @@ import styles from './Crossword.module.css';
 
 /**
  * 퍼즐 게임 화면
- * PC: 왼쪽 격자·입력, 오른쪽 가로·세로 열쇠 / 휴대폰: 위 격자, 아래 현재 열쇠·입력, 열쇠 목록은 접기
+ * PC: 왼쪽 격자, 오른쪽 열쇠 / 휴대폰: 위 격자, 열쇠 목록은 접기
+ * 다 풀거나 정답을 봐도 다른 화면으로 넘어가지 않고 격자에서 바로 보여줘요.
  */
 export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
   const game = useCrossword(puzzle);
-  const { model, state, dispatch, word } = game;
+  const { model, state, dispatch, word, finished } = game;
   const inputRef = useRef<HTMLInputElement>(null);
-  const [confirmReveal, setConfirmReveal] = useState(false);
-
-  if (game.result) {
-    return (
-      <CrosswordComplete
-        puzzle={puzzle}
-        result={game.result}
-        hintsUsed={state.hintsUsed}
-        bestMs={game.bestMs}
-        onRestart={game.restart}
-      />
-    );
-  }
-
   const hintLevel = state.hintLevels[word.index] ?? 0;
 
   return (
@@ -46,70 +32,66 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
         </div>
         <div className={styles.tools}>
           <div className={styles.toolbar}>
-            <Button variant="secondary" onClick={() => dispatch({ type: 'check' })}>
+            <Button
+              variant="secondary"
+              onClick={() => dispatch({ type: 'check' })}
+              disabled={finished}
+            >
               확인
             </Button>
             <Button
               variant="secondary"
               onClick={() => dispatch({ type: 'hint' })}
-              disabled={hintLevel >= 2}
+              disabled={finished || hintLevel >= 2}
             >
               {hintLevel === 0 ? '힌트' : hintLevel === 1 ? '한 글자 공개' : '힌트 다 씀'}
             </Button>
-            <Button variant="secondary" onClick={() => setConfirmReveal(true)}>
+            <Button
+              variant="secondary"
+              onClick={() => dispatch({ type: 'reveal' })}
+              disabled={finished}
+            >
               정답 보기
             </Button>
             <Button variant="ghost" onClick={game.restart}>
               다시 하기
             </Button>
           </div>
-          {game.hint && (
+          {!finished && game.hint && (
             <p className={styles.toolNote} aria-live="polite">
               {word.word.direction === 'across' ? '가로' : '세로'} {word.word.number}번 힌트{' '}
               <strong className={styles.hintText}>{game.hint}</strong>
             </p>
           )}
-          {state.checked && (
+          {!finished && state.checked && (
             <p className={styles.toolNote} role="status">
               {game.wrong.size === 0
                 ? '지금까지 넣은 글자는 모두 맞아요'
                 : `틀린 칸 ${game.wrong.size}개를 빨간색으로 표시했어요`}
             </p>
           )}
-          {confirmReveal && (
-            <div className={styles.confirm} role="alertdialog" aria-labelledby="reveal-title">
-              <p id="reveal-title">
-                정답을 모두 보여줄까요? 이번 판은 기록에 <strong>"정답 확인함"</strong>으로 남아요.
-              </p>
-              <div className={styles.confirmActions}>
-                <Button
-                  onClick={() => {
-                    setConfirmReveal(false);
-                    dispatch({ type: 'reveal' });
-                  }}
-                  autoFocus
-                >
-                  정답 보기
-                </Button>
-                <Button variant="secondary" onClick={() => setConfirmReveal(false)}>
-                  취소
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
       <div className={styles.board}>
-        <p className={styles.currentClue}>
-          <strong>
-            {word.word.direction === 'across' ? '가로' : '세로'} {word.word.number}번
-          </strong>{' '}
-          {word.word.clue} <span className={styles.clueLength}>({word.cells.length}글자)</span>
-          <span className={styles.message} aria-live="polite">
-            {state.message}
-          </span>
-        </p>
+        {finished ? (
+          <p className={styles.finished} role="status">
+            <strong>{state.revealed ? '정답을 채웠어요' : '다 풀었어요!'}</strong>{' '}
+            {state.revealed
+              ? '초록은 내가 맞힌 칸, 파랑은 정답으로 채운 칸이에요.'
+              : `${formatClock(game.elapsedMs)} 걸렸고 힌트는 ${state.hintsUsed}번 썼어요.`}
+          </p>
+        ) : (
+          <p className={styles.currentClue}>
+            <strong>
+              {word.word.direction === 'across' ? '가로' : '세로'} {word.word.number}번
+            </strong>{' '}
+            {word.word.clue} <span className={styles.clueLength}>({word.cells.length}글자)</span>
+            <span className={styles.message} aria-live="polite">
+              {state.message}
+            </span>
+          </p>
+        )}
 
         <CrosswordGrid
           ref={inputRef}
@@ -117,11 +99,14 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
           state={state}
           word={word}
           marks={game.marks}
+          finished={finished}
           dispatch={dispatch}
         />
-        <p className={styles.gridTip}>
-          칸을 누르고 바로 입력한 뒤 Enter · 맞으면 초록, 틀리면 빨강
-        </p>
+        {!finished && (
+          <p className={styles.gridTip}>
+            칸을 누르고 바로 입력한 뒤 Enter · 맞으면 초록, 틀리면 빨강
+          </p>
+        )}
       </div>
 
       <aside className={styles.side} aria-label="열쇠 목록">

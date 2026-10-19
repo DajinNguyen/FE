@@ -1,5 +1,5 @@
 import { forwardRef, useRef, useState, type KeyboardEvent } from 'react';
-import type { CrosswordAction, CrosswordState } from './crosswordState';
+import type { CellMark, CrosswordAction, CrosswordState } from './crosswordState';
 import { clueOrder } from './crosswordState';
 import type { PuzzleModel, WordRef } from './puzzleModel';
 import styles from './Crossword.module.css';
@@ -8,8 +8,10 @@ interface CrosswordGridProps {
   model: PuzzleModel;
   state: CrosswordState;
   word: WordRef;
-  /** 칸 색: 맞은 단어 초록, 틀린 단어 빨강 */
-  marks: Map<string, 'correct' | 'wrong'>;
+  /** 칸 색: 맞은 단어 초록, 틀린 단어 빨강, 정답 보기로 채운 칸 파랑 */
+  marks: Map<string, CellMark>;
+  /** 다 풀었거나 정답을 봤으면 입력을 막아요. */
+  finished: boolean;
   dispatch: (action: CrosswordAction) => void;
 }
 
@@ -20,7 +22,7 @@ function cellLabel(
   model: PuzzleModel,
   key: string,
   entry: string | undefined,
-  mark: 'correct' | 'wrong' | undefined,
+  mark: CellMark | undefined,
 ) {
   const cell = model.cells.get(key)!;
   const parts = (['across', 'down'] as const)
@@ -29,7 +31,9 @@ function cellLabel(
       const ref = model.words[cell[d]!];
       return `${directionLabel[d]} ${ref.word.number}번, ${ref.cells.indexOf(key) + 1}번째 칸`;
     });
-  const markText = mark === 'correct' ? '맞음' : mark === 'wrong' ? '틀림' : null;
+  const markText = mark
+    ? { correct: '맞음', wrong: '틀림', revealed: '정답 보기로 채움' }[mark]
+    : null;
   return [...parts, entry ? `입력: ${entry}` : '비어 있음', markText].filter(Boolean).join(', ');
 }
 
@@ -42,7 +46,7 @@ const toChars = (text: string) => [...text.replace(/\s+/g, '')];
  * 치는 글자를 칸에 바로 보여줘요. 다 치고 Enter 를 누르면 채점해요.
  */
 export const CrosswordGrid = forwardRef<HTMLInputElement, CrosswordGridProps>(
-  function CrosswordGrid({ model, state, word, marks, dispatch }, inputRef) {
+  function CrosswordGrid({ model, state, word, marks, finished, dispatch }, inputRef) {
     // 지금 단어에 치고 있는 글자 (단어가 바뀌면 비워요)
     const [draft, setDraft] = useState({ index: word.index, text: '' });
     const text = draft.index === word.index ? draft.text : '';
@@ -138,16 +142,18 @@ export const CrosswordGrid = forwardRef<HTMLInputElement, CrosswordGridProps>(
               style={area}
               className={[
                 styles.cell,
-                wordCells.has(key) ? styles.inWord : '',
-                key === cursorKey ? styles.cursorCell : '',
+                !finished && wordCells.has(key) ? styles.inWord : '',
+                !finished && key === cursorKey ? styles.cursorCell : '',
                 mark === 'correct' ? styles.correctCell : '',
                 mark === 'wrong' ? styles.wrongCell : '',
+                mark === 'revealed' ? styles.revealedCell : '',
               ].join(' ')}
               tabIndex={-1}
               aria-label={cellLabel(model, key, state.entries[key], mark)}
               data-mark={mark}
               aria-pressed={state.selected.key === key}
               onClick={() => {
+                if (finished) return;
                 dispatch({ type: 'clickCell', key });
                 // 칸을 누른 바로 그때 입력창에 포커스를 줘야 휴대폰 키보드가 떠요.
                 localRef.current?.focus();
@@ -190,6 +196,7 @@ export const CrosswordGrid = forwardRef<HTMLInputElement, CrosswordGridProps>(
           autoCapitalize="off"
           spellCheck={false}
           enterKeyHint="done"
+          disabled={finished}
         />
       </div>
     );
