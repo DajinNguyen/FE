@@ -1,162 +1,171 @@
+/* AI 핵심 분석: 화면에서 따로 떨어져야 하는 요소라 카드로 보여줘요. 본문 폭은 720px 까지. */
 .analysis {
-  padding: var(--sp-6) 0 var(--sp-4);
+  margin-top: var(--sp-6);
+  padding: var(--sp-8);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
   scroll-margin-top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
 }
 
+.body {
+  max-width: var(--reading-max-width);
+}
+
 .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-  color: var(--brand-strong);
+  color: var(--text-3);
   font-size: var(--fs-sm);
   font-weight: 800;
 }
 
 .headline {
-  margin-top: var(--sp-3);
+  margin-top: var(--sp-2);
   font-size: var(--fs-2xl);
   font-weight: 800;
-  line-height: 1.4;
   letter-spacing: -0.02em;
-  word-break: keep-all;
 }
 
-/* 핵심 포인트 */
+.asOf {
+  margin-top: var(--sp-3);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+/* 핵심 포인트: 구분선으로 나누고 사이를 넉넉하게 */
 .points {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
   margin-top: var(--sp-6);
 }
 
 .point {
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  transition: background var(--dur) var(--ease);
-}
-
-.pointOpen {
-  background: var(--brand-weak);
-}
-
-.pointHead {
   display: flex;
-  width: 100%;
-  align-items: flex-start;
-  gap: var(--sp-3);
-  padding: var(--sp-4) var(--sp-6);
-  border-radius: var(--radius-lg);
-  text-align: left;
-}
-
-.pointHead:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
-
-.pointIndex {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  margin-top: 2px;
-  border-radius: 50%;
-  background: var(--bg);
-  color: var(--brand-strong);
-  font-size: var(--fs-sm);
-  font-weight: 800;
-}
-
-.pointMain {
-  display: flex;
-  min-width: 0;
-  flex: 1;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--sp-3);
+  padding: var(--sp-8) 0;
+  border-top: 1px solid var(--line);
+}
+
+.point:last-child {
+  padding-bottom: var(--sp-6);
 }
 
 .pointCategory {
   color: var(--text-3);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 
-.pointTitle {
-  font-size: var(--fs-md);
+.pointIndex {
+  margin-right: var(--sp-1);
+  color: var(--text-1);
   font-weight: 800;
-  line-height: 1.45;
-  word-break: keep-all;
 }
 
+.pointTitle {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+
+/* 과거 → 현재 숫자 */
 .change {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-1) var(--sp-2);
-  margin-top: var(--sp-1);
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.changeLabel {
   color: var(--text-2);
   font-size: var(--fs-sm);
-  font-variant-numeric: tabular-nums;
 }
 
-.change strong {
-  color: var(--text-1);
+.values {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--sp-2) var(--sp-4);
 }
 
-.afterValue {
-  color: var(--brand-strong) !important;
+.before,
+.after {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.before strong {
+  color: var(--text-2);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.after strong {
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: var(--lh-tight);
+}
+
+.valueLabel {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
 }
 
 .period {
-  margin-left: 2px;
   color: var(--text-3);
   font-size: var(--fs-xs);
 }
 
 .arrow {
+  align-self: center;
   color: var(--text-3);
+  font-size: var(--fs-lg);
 }
 
-.chevron {
-  flex-shrink: 0;
-  margin-top: var(--sp-1);
-  color: var(--text-3);
-  transition: transform var(--dur) var(--ease);
-}
-
-.pointOpen .chevron {
-  transform: rotate(180deg);
-}
-
-.pointBody {
-  padding: 0 var(--sp-6) var(--sp-6) calc(var(--sp-6) + 26px + var(--sp-3));
-}
-
-.explain {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-}
-
-.explain dt {
-  color: var(--brand-strong);
-  font-size: var(--fs-xs);
+.delta {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--fs-sm);
   font-weight: 800;
 }
 
-.explain dd {
-  margin-top: 2px;
-  line-height: 1.65;
+.delta > span:first-child {
+  font-size: 0.75em;
 }
 
+.up {
+  color: var(--rise);
+}
+
+.down {
+  color: var(--fall);
+}
+
+/* 이유·의미 */
+.explain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin: var(--sp-2) 0 0;
+}
+
+.explain dt {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.explain dd {
+  margin: 2px 0 0;
+  font-size: var(--fs-base);
+}
+
+/* 근거 칩 */
 .evidenceRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sp-2);
-  margin-top: var(--sp-4);
+  margin-top: var(--sp-1);
 }
 
 .evidenceLabel {
@@ -166,19 +175,17 @@
 }
 
 .evidenceChip {
-  padding: var(--sp-1) 10px;
-  border: 1px solid var(--brand-muted);
+  padding: 2px var(--sp-3);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-full);
-  background: var(--bg);
-  color: var(--brand-strong);
+  color: var(--text-1);
   font-size: var(--fs-xs);
   font-weight: 700;
 }
 
 .evidenceChip:hover {
-  background: var(--brand);
   border-color: var(--brand);
-  color: var(--on-brand);
+  color: var(--brand);
 }
 
 .footer {
@@ -186,8 +193,9 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--sp-2);
-  margin-top: var(--sp-3);
+  gap: var(--sp-2) var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--line);
   color: var(--text-3);
   font-size: var(--fs-xs);
 }
@@ -197,15 +205,15 @@
   align-items: center;
   gap: var(--sp-1);
   padding: 6px 10px;
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
-  color: var(--text-2);
+  color: var(--text-1);
   font-size: var(--fs-sm);
   font-weight: 700;
 }
 
 .regenerate:hover:not(:disabled) {
   background: var(--surface);
-  color: var(--text-1);
 }
 
 .regenerate:disabled {
@@ -219,10 +227,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--sp-3);
-  margin-top: var(--sp-3);
-  padding: var(--sp-6);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+  margin-top: var(--sp-4);
 }
 
 .emptyTitle {
@@ -231,8 +236,8 @@
 }
 
 .emptyText {
+  max-width: 560px;
   color: var(--text-2);
-  line-height: 1.6;
 }
 
 /* 진행 표시 */
@@ -412,15 +417,15 @@
 }
 
 @media (max-width: 719px) {
+  .analysis {
+    padding: var(--sp-6) var(--sp-4);
+  }
+
   .headline {
     font-size: var(--fs-xl);
   }
 
-  .pointHead {
-    padding: var(--sp-4);
-  }
-
-  .pointBody {
-    padding: 0 var(--sp-4) var(--sp-4);
+  .after strong {
+    font-size: var(--fs-xl);
   }
 }

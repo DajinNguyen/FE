@@ -40,19 +40,24 @@ describe('기업 화면: AI 핵심 분석 중심', () => {
     expect(screen.getByText('이 분석의 근거')).toBeInTheDocument();
   });
 
-  it('포인트 카드를 누르면 이유·해석과 근거 칩이 펼쳐져요', async () => {
-    const user = userEvent.setup();
+  it('이유·의미와 출처·날짜가 붙은 근거 칩을 처음부터 보여주고, 맨 위에 자료 기준일을 알려줘요', async () => {
     renderCompanyPage('005930');
 
     const points = await screen.findByRole('list', { name: '핵심 포인트' });
-    const [first] = within(points).getAllByRole('button', { expanded: false });
-    expect(within(points).getAllByText('왜 그런가요?')[0]).not.toBeVisible();
+    const items = within(points).getAllByRole('listitem');
+    expect(within(items[0]).getByText('왜 그런가요?')).toBeVisible();
+    expect(within(items[0]).getByText('무슨 뜻인가요?')).toBeVisible();
+    expect(
+      within(items[0]).getByRole('button', { name: '재무제표 2025 사업보고서' }),
+    ).toBeVisible();
+    expect(within(points).getAllByRole('button', { name: '뉴스 01.29' })[0]).toBeVisible();
+    // 영업이익 6.57조 → 43.6조: 증가 방향과 크기
+    expect(within(items[0]).getByText(/6\.6배/)).toBeInTheDocument();
+    expect(within(items[0]).getByText('증가')).toBeInTheDocument();
 
-    await user.click(first);
-
-    expect(first).toHaveAttribute('aria-expanded', 'true');
-    expect(within(points).getAllByText('왜 그런가요?')[0]).toBeVisible();
-    expect(within(points).getAllByRole('button', { name: '재무제표' })[0]).toBeVisible();
+    expect(
+      screen.getByText(/이 리포트는 재무 2025년 사업보고서 · 주가 10월 5일 · 뉴스 1월 29일 기준/),
+    ).toBeInTheDocument();
   });
 
   it('리포트가 없는 기업은 "아직 이 기업의 리포트가 없어요"를 보여주고, 실패하면 원인과 다시 시도를 보여줘요', async () => {

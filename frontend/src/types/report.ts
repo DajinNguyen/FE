@@ -18,6 +18,30 @@ export type KeyPointCategory =
 /** 근거 자료 종류 */
 export type EvidenceKind = 'financials' | 'news' | 'vision';
 
+/**
+ * 핵심 포인트마다 붙는 근거 칩. 화면에는 "label date" 로 보여줘요.
+ * 예: { type: "news", label: "뉴스", date: "2026-10-15" } → "뉴스 10.15"
+ *     { type: "financials", label: "재무제표 2025 사업보고서", date: null } → "재무제표 2025 사업보고서"
+ * 칩을 누르면 같은 화면의 해당 근거 자료(type)로 이동해요.
+ */
+export interface EvidenceRef {
+  type: EvidenceKind;
+  /** 칩에 보여줄 이름. 출처(보고서 이름 등)를 함께 써도 돼요. */
+  label: string;
+  /** 자료 날짜 (YYYY-MM-DD). 날짜가 의미 없으면 null */
+  date: string | null;
+}
+
+/** 리포트를 만들 때 쓴 자료의 기준일. 리포트 맨 위 안내 문구에 써요. */
+export interface ReportDataAsOf {
+  /** 예: "2025년 사업보고서" */
+  financials: string | null;
+  /** 주가 기준일 (YYYY-MM-DD) */
+  price: string | null;
+  /** 가장 최근 뉴스 날짜 (YYYY-MM-DD) */
+  news: string | null;
+}
+
 export interface KeyPointValue {
   label: string;
   value: string;
@@ -36,7 +60,7 @@ export interface KeyPoint {
   reason: string;
   /** 무슨 뜻인가요? (초보자용 해석 1문장) */
   meaning: string;
-  evidence: EvidenceKind[];
+  evidence: EvidenceRef[];
 }
 
 export interface FinancialHighlight {
@@ -104,4 +128,6 @@ export interface CompanyReport {
   sources: string[];
   /** (추가 제안) status 가 failed 일 때 사용자에게 보여줄 원인 */
   failure_reason?: string | null;
+  /** 자료 기준일. 없으면 리포트 위에 생성 시각만 보여줘요. */
+  data_as_of?: ReportDataAsOf | null;
 }
