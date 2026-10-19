@@ -1,9 +1,9 @@
-/* AI 핵심 분석: 화면에서 따로 떨어져야 하는 요소라 카드로 보여줘요. 본문 폭은 720px 까지. */
+/* AI 핵심 분석: 화면에서 따로 떨어져야 하는 요소라 옅은 면의 카드 하나로 보여줘요. 본문 폭은 720px 까지. */
 .analysis {
   margin-top: var(--sp-6);
   padding: var(--sp-8);
-  border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
+  background: var(--surface);
   scroll-margin-top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
 }
 
@@ -14,7 +14,7 @@
 .eyebrow {
   color: var(--text-3);
   font-size: var(--fs-sm);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .headline {
@@ -25,105 +25,90 @@
 }
 
 .asOf {
-  margin-top: var(--sp-3);
+  margin-top: var(--sp-2);
   color: var(--text-3);
   font-size: var(--fs-xs);
 }
 
-/* 핵심 포인트: 구분선으로 나누고 사이를 넉넉하게 */
+/* 핵심 포인트: 선 대신 여백으로 나눠요. 왼쪽 번호, 오른쪽 내용 */
 .points {
   display: flex;
   flex-direction: column;
-  margin-top: var(--sp-6);
+  gap: var(--sp-8);
+  margin: var(--sp-8) 0;
 }
 
 .point {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-  padding: var(--sp-8) 0;
-  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: var(--sp-8) minmax(0, 1fr);
+  align-items: baseline;
 }
 
-.point:last-child {
-  padding-bottom: var(--sp-6);
+.pointIndex {
+  color: var(--text-3);
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+
+.pointBody {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--sp-2);
 }
 
 .pointCategory {
   color: var(--text-3);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   font-weight: 700;
 }
 
-.pointIndex {
-  margin-right: var(--sp-1);
-  color: var(--text-1);
-  font-weight: 800;
-}
-
 .pointTitle {
+  margin-top: calc(var(--sp-1) * -1);
   font-size: var(--fs-lg);
   font-weight: 800;
 }
 
-/* 과거 → 현재 숫자 */
-.change {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-}
-
-.changeLabel {
-  color: var(--text-2);
-  font-size: var(--fs-sm);
-}
-
-.values {
+/* 숫자 한 줄: 영업이익 6.57조 원(2023) → 43.6조 원(2025) ▲6.6배 */
+.metric {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--sp-2) var(--sp-4);
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-2);
+  margin-bottom: var(--sp-1);
 }
 
-.before,
-.after {
-  display: inline-flex;
-  flex-direction: column;
+.metricLabel {
+  margin-right: var(--sp-1);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
 }
 
 .before strong {
   color: var(--text-2);
-  font-size: var(--fs-lg);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .after strong {
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-lg);
   font-weight: 800;
-  line-height: var(--lh-tight);
-}
-
-.valueLabel {
-  color: var(--text-2);
-  font-size: var(--fs-sm);
 }
 
 .period {
+  margin-left: 2px;
   color: var(--text-3);
   font-size: var(--fs-xs);
 }
 
 .arrow {
-  align-self: center;
   color: var(--text-3);
-  font-size: var(--fs-lg);
 }
 
 .delta {
-  align-self: center;
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 2px;
+  margin-left: var(--sp-1);
   font-size: var(--fs-sm);
   font-weight: 800;
 }
@@ -140,52 +125,41 @@
   color: var(--fall);
 }
 
-/* 이유·의미 */
+/* 이유·의미: 굵은 머리말을 문단 앞에 붙여요. */
 .explain {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-  margin: var(--sp-2) 0 0;
+  color: var(--text-1);
 }
 
-.explain dt {
-  color: var(--text-3);
-  font-size: var(--fs-sm);
-  font-weight: 700;
+.lead {
+  margin-right: var(--sp-1);
+  font-weight: 800;
 }
 
-.explain dd {
-  margin: 2px 0 0;
-  font-size: var(--fs-base);
-}
-
-/* 근거 칩 */
-.evidenceRow {
+/* 근거: 작은 글자 링크 */
+.evidence {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-top: var(--sp-1);
+  align-items: baseline;
+  gap: 0 var(--sp-2);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
 }
 
 .evidenceLabel {
-  color: var(--text-3);
-  font-size: var(--fs-xs);
   font-weight: 700;
 }
 
-.evidenceChip {
-  padding: 2px var(--sp-3);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-full);
-  color: var(--text-1);
-  font-size: var(--fs-xs);
-  font-weight: 700;
+.evidenceLink {
+  color: var(--text-2);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
 }
 
-.evidenceChip:hover {
-  border-color: var(--brand);
+.evidenceLink:hover {
   color: var(--brand);
+  text-decoration-color: currentColor;
 }
 
 .footer {
@@ -195,7 +169,7 @@
   justify-content: space-between;
   gap: var(--sp-2) var(--sp-4);
   padding-top: var(--sp-4);
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--line-strong);
   color: var(--text-3);
   font-size: var(--fs-xs);
 }
@@ -213,7 +187,7 @@
 }
 
 .regenerate:hover:not(:disabled) {
-  background: var(--surface);
+  background: var(--surface-strong);
 }
 
 .regenerate:disabled {
