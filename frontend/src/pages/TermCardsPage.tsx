@@ -133,9 +133,16 @@ export function TermCardsPage() {
         <>
           <div className={styles.progress}>
             <div className={styles.progressText}>
-              <span>알고 있는 용어</span>
-              <span>
-                <strong>{knownCount}</strong> / {total}개
+              {!finished && total > 0 && (
+                <span>
+                  <span className={styles.counter}>
+                    {index + 1} / {total}
+                  </span>
+                  번째 카드
+                </span>
+              )}
+              <span className={styles.knownText}>
+                알고 있는 용어 <strong>{knownCount}</strong> / {total}개
               </span>
             </div>
             <div
@@ -184,9 +191,6 @@ export function TermCardsPage() {
               ) : (
                 term && (
                   <>
-                    <p className={styles.counter}>
-                      {index + 1} / {total}
-                    </p>
                     <div key={term.id} className={styles.cardWrap}>
                       <TermFlipCard
                         term={term}
@@ -225,6 +229,7 @@ export function TermCardsPage() {
                       }}
                       aria-current={i === index ? 'true' : undefined}
                     >
+                      <span className={styles.statusDot} aria-hidden="true" />
                       {t.term}
                       <span className="visually-hidden">
                         {marks[t.id] === 'known'
@@ -240,6 +245,7 @@ export function TermCardsPage() {
               <p className={styles.legend}>
                 <span className={`${styles.dot} ${styles.known}`} /> 알아요
                 <span className={`${styles.dot} ${styles.review}`} /> 다시 볼래요
+                <span className={styles.dot} /> 아직 안 봤어요
               </p>
               <p className={styles.notice}>로그인하면 외운 용어와 진행 상황이 저장돼요</p>
             </aside>
