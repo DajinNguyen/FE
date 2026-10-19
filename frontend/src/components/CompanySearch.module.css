@@ -9,6 +9,7 @@
   align-items: center;
   border-radius: var(--radius-sm);
   background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 
 .box:focus-within {

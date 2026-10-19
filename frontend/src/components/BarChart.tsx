@@ -44,7 +44,7 @@ export function BarChart({ data, formatValue, ariaLabel, height = 200 }: BarChar
             isAnimationActive={!reducedMotion}
           >
             {data.map((d) => (
-              <Cell key={d.label} fill={d.highlight ? 'var(--brand)' : 'var(--brand-muted)'} />
+              <Cell key={d.label} fill={d.highlight ? 'var(--brand)' : 'var(--chart-muted)'} />
             ))}
             <LabelList
               dataKey="value"
