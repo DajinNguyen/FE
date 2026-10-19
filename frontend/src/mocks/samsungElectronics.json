@@ -205,7 +205,13 @@
         },
         "reason": "2023년에는 반도체 가격이 떨어져 이익이 크게 줄었어요. 2024년부터 메모리 반도체가 다시 잘 팔리면서 이익이 회복됐어요.",
         "meaning": "매출(258.94조 → 333.6조 원)보다 이익이 훨씬 빠르게 늘어서, 팔아서 남기는 돈이 많아졌다는 뜻이에요.",
-        "evidence": ["financials"]
+        "evidence": [
+          {
+            "type": "financials",
+            "label": "재무제표 2025 사업보고서",
+            "date": null
+          }
+        ]
       },
       {
         "category": "revenue_source",
@@ -218,7 +224,18 @@
         },
         "reason": "2025년 4분기 사업별 매출 가운데 DS(반도체)가 44.0조 원으로 가장 컸고, 스마트폰 등 MX·네트워크가 29.3조 원으로 뒤를 이었어요.",
         "meaning": "삼성전자의 실적은 반도체 시장 분위기에 가장 크게 영향을 받는다는 뜻이에요.",
-        "evidence": ["vision", "financials"]
+        "evidence": [
+          {
+            "type": "vision",
+            "label": "기업 비전",
+            "date": "2026-01-29"
+          },
+          {
+            "type": "financials",
+            "label": "재무제표 2025 사업보고서",
+            "date": null
+          }
+        ]
       },
       {
         "category": "recent_change",
@@ -235,7 +252,18 @@
         },
         "reason": "AI 서버에 들어가는 메모리(HBM) 판매가 늘어난 것이 큰 이유로 꼽혀요.",
         "meaning": "AI 서버 수요가 계속 이어지는지가 앞으로의 실적에 중요하다는 뜻이에요.",
-        "evidence": ["financials", "news"]
+        "evidence": [
+          {
+            "type": "financials",
+            "label": "재무제표 2025 사업보고서",
+            "date": null
+          },
+          {
+            "type": "news",
+            "label": "뉴스",
+            "date": "2026-01-29"
+          }
+        ]
       },
       {
         "category": "risk",
@@ -248,7 +276,18 @@
         "after": null,
         "reason": "2023년처럼 반도체 가격이 떨어지면 이익이 크게 줄었어요. 매출에서 반도체가 차지하는 몫이 커서 영향도 커요.",
         "meaning": "지금 실적이 좋아도 반도체 시장이 나빠지면 이익이 다시 줄어들 수 있다는 뜻이에요.",
-        "evidence": ["financials", "vision"]
+        "evidence": [
+          {
+            "type": "financials",
+            "label": "재무제표 2025 사업보고서",
+            "date": null
+          },
+          {
+            "type": "vision",
+            "label": "기업 비전",
+            "date": "2026-01-29"
+          }
+        ]
       },
       {
         "category": "strength",
@@ -257,7 +296,18 @@
         "after": null,
         "reason": "HBM 판매를 늘린 데 이어, 다음 세대 제품인 HBM4 공급을 시작하겠다고 밝혔어요.",
         "meaning": "AI 서버가 늘어날수록 이 회사의 반도체가 더 필요해질 수 있지만, 계획이 실제로 이뤄지는지는 지켜봐야 한다는 뜻이에요.",
-        "evidence": ["news", "vision"]
+        "evidence": [
+          {
+            "type": "news",
+            "label": "뉴스",
+            "date": "2026-01-29"
+          },
+          {
+            "type": "vision",
+            "label": "기업 비전",
+            "date": "2026-01-29"
+          }
+        ]
       }
     ],
     "evidence": {
@@ -360,6 +410,11 @@
       }
     ],
     "sources": ["금융감독원 DART", "한국거래소", "삼성전자 실적 발표"],
-    "failure_reason": null
+    "failure_reason": null,
+    "data_as_of": {
+      "financials": "2025년 사업보고서",
+      "price": "2026-10-05",
+      "news": "2026-01-29"
+    }
   }
 }
