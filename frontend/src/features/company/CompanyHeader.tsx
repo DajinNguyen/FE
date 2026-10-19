@@ -1,4 +1,5 @@
 import { CompanyAvatar } from '../../components/CompanyAvatar';
+import { DataAsOf } from '../../components/DataAsOf';
 import { PriceChange } from '../../components/PriceChange';
 import { SampleBadge } from '../../components/SampleBadge';
 import { TermText } from '../../components/TermText';
@@ -12,7 +13,7 @@ const marketLabel = { KOSPI: '코스피', KOSDAQ: '코스닥' } as const;
 
 /** 기업 헤더 + 작은 주가·주요 지표 줄. 주가는 보조 정보라 크게 보여주지 않아요. */
 export function CompanyHeader({ company }: { company: CompanyDetail }) {
-  const indicators = useIndicatorItems(company.stock_code);
+  const { items: indicators } = useIndicatorItems(company.stock_code);
 
   return (
     <section className={styles.header} aria-label="기업 정보">
@@ -43,6 +44,7 @@ export function CompanyHeader({ company }: { company: CompanyDetail }) {
           <SampleBadge
             isSample={company.current_price.is_sample || company.change_rate.is_sample}
           />
+          <DataAsOf value={company.price_as_of} />
         </span>
         {indicators.length > 0 && (
           <ul className={styles.chips} aria-label="주요 지표">

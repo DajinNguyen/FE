@@ -1,9 +1,9 @@
 import { Button } from '../../components/Button';
+import { DataAsOf } from '../../components/DataAsOf';
 import { Icon } from '../../components/Icon';
 import { TermText } from '../../components/TermText';
 import type { CompanyReportFlow } from '../../hooks/useCompanyReport';
 import type { CompanyReport, EvidenceKind } from '../../types';
-import { formatMarketDate } from '../../utils/format';
 import { KeyPointCard } from './KeyPointCard';
 import { RegenerateProgress, ReportSkeleton, ReportWaiting } from './ReportWaiting';
 import { sortKeyPoints } from './reportMeta';
@@ -15,16 +15,14 @@ interface AiAnalysisProps {
 }
 
 /** "재무 2025년 사업보고서 · 주가 10월 5일 · 뉴스 1월 29일" (없는 항목은 빼요) */
-const describeDataAsOf = (report: CompanyReport) => {
+const dataAsOfItems = (report: CompanyReport) => {
   const asOf = report.data_as_of;
-  if (!asOf) return '';
+  if (!asOf) return [];
   return [
-    asOf.financials && `재무 ${asOf.financials}`,
-    asOf.price && `주가 ${formatMarketDate(asOf.price)}`,
-    asOf.news && `뉴스 ${formatMarketDate(asOf.news)}`,
-  ]
-    .filter(Boolean)
-    .join(' · ');
+    { label: '재무', value: asOf.financials },
+    { label: '주가', value: asOf.price },
+    { label: '뉴스', value: asOf.news },
+  ];
 };
 
 const formatGeneratedAt = (value: string | null) => {
@@ -80,9 +78,11 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
               <TermText text={report.headline} />
             </h2>
             <p className={styles.asOf}>
-              {describeDataAsOf(report)
-                ? `이 리포트는 ${describeDataAsOf(report)} 기준 자료로 만들었어요. `
-                : ''}
+              <DataAsOf
+                items={dataAsOfItems(report)}
+                prefix="이 리포트는"
+                suffix="기준 자료로 만들었어요."
+              />{' '}
               {formatGeneratedAt(report.generated_at)} 생성
             </p>
             <ol className={styles.points} aria-label="핵심 포인트">

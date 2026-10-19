@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { DataAsOf } from '../../components/DataAsOf';
 import { HorizontalBars } from '../../components/HorizontalBars';
 import { Icon } from '../../components/Icon';
 import { SampleBadge } from '../../components/SampleBadge';
@@ -26,9 +27,7 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
           title="재무"
           detail={{ tab: 'financials', label: '재무 상세 보기' }}
           onGoToTab={onGoToTab}
-          meta={
-            financials ? sourceLine(financials.highlights[0]?.source, financials.base_date) : ''
-          }
+          meta={financials && sourceLine(financials.highlights[0]?.source, financials.base_date)}
         >
           {financials && financials.highlights.length > 0 ? (
             <table className={styles.table}>
@@ -55,6 +54,7 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
           title="뉴스"
           detail={{ tab: 'news', label: '뉴스 상세 보기' }}
           onGoToTab={onGoToTab}
+          meta={news.length > 0 && <DataAsOf prefix="최근 뉴스" value={news[0].published_at} />}
         >
           {news.length > 0 ? (
             <ul className={styles.news}>
@@ -84,7 +84,7 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
           title="기업 비전"
           detail={{ tab: 'info', label: '기업 정보 보기' }}
           onGoToTab={onGoToTab}
-          meta={vision ? sourceLine(vision.source, vision.base_date) : ''}
+          meta={vision && sourceLine(vision.source, vision.base_date)}
         >
           {vision ? (
             <>
@@ -119,8 +119,13 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
   );
 }
 
-const sourceLine = (source?: string, baseDate?: string) =>
-  [source && `출처: ${source}`, baseDate && `기준: ${baseDate}`].filter(Boolean).join(' · ');
+const sourceLine = (source?: string, baseDate?: string) => (
+  <>
+    {source && `출처: ${source}`}
+    {source && baseDate && ' · '}
+    <DataAsOf value={baseDate} />
+  </>
+);
 
 function EvidenceBlock({
   kind,
@@ -132,7 +137,7 @@ function EvidenceBlock({
 }: {
   kind: EvidenceKind;
   title: string;
-  meta?: string;
+  meta?: ReactNode;
   detail: { tab: CompanyTabId; label: string };
   onGoToTab: GoToTab;
   children: ReactNode;

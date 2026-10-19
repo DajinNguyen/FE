@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { CompanySearch } from '../components/CompanySearch';
+import { DataAsOf } from '../components/DataAsOf';
 import { Icon } from '../components/Icon';
 import { FEATURE_RISING_COMPANIES, HOME_TRADING_LIMIT, SEARCH_EXAMPLES } from '../config/home';
 import { CompanyListRow } from '../features/home/CompanyListRow';
@@ -9,7 +10,6 @@ import { SectorCompanies } from '../features/home/SectorCompanies';
 import { TermGameBanner } from '../features/home/TermGameBanner';
 import { useHomeDashboard } from '../hooks/useHomeDashboard';
 import { useOpenCompany } from '../hooks/useOpenCompany';
-import { formatMarketDate } from '../utils/format';
 import listStyles from '../features/home/CompanyList.module.css';
 import styles from './HomePage.module.css';
 
@@ -63,7 +63,7 @@ export function HomePage() {
         <>
           <HomeSection
             title="오늘 거래가 많은 기업"
-            note={`${formatMarketDate(data.base_time)} 기준 · 거래대금 순`}
+            note={<DataAsOf value={data.base_time} suffix="기준 · 거래대금 순" />}
             action={
               <Link to="/rankings/trading" className={styles.more}>
                 전체 보기 <Icon name="chevronRight" size={16} />
@@ -114,7 +114,7 @@ function HomeSection({
   children,
 }: {
   title: string;
-  note?: string;
+  note?: ReactNode;
   action?: ReactNode;
   children: ReactNode;
 }) {
@@ -123,7 +123,7 @@ function HomeSection({
       <div className={styles.sectionHead}>
         <div>
           <h2 className={styles.sectionTitle}>{title}</h2>
-          {note && <p className={styles.sectionNote}>{note}</p>}
+          {note && <div className={styles.sectionNote}>{note}</div>}
         </div>
         {action}
       </div>

@@ -53,6 +53,16 @@ function getData(stockCode: string) {
   return data;
 }
 
+/** 직전 거래일(주말 제외) YYYY-MM-DD. 실시간이 아니라 전날 자료일 수 있다는 걸 흉내 내요. */
+function lastTradingDate() {
+  const date = new Date();
+  do {
+    date.setDate(date.getDate() - 1);
+  } while (date.getDay() === 0 || date.getDay() === 6);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export async function searchCompanies(query: string, limit: number): Promise<CompanySummary[]> {
@@ -75,10 +85,11 @@ export async function getCompaniesByCodes(codes: string[]): Promise<CompanySumma
 export async function getCompany(stockCode: string): Promise<CompanyDetail> {
   await wait(150);
   const data = companyData[stockCode];
-  if (data) return data.company;
+  if (data) return { ...data.company, price_as_of: lastTradingDate() };
   const summary = findCompany(stockCode);
   return {
     ...summary,
+    price_as_of: lastTradingDate(),
     market_cap: null,
     homepage_url: '',
     dart_url: 'https://dart.fss.or.kr/',
@@ -223,16 +234,6 @@ const tradingValues: [string, number][] = [
   ['000990', 650],
 ];
 
-/** 직전 거래일(주말 제외) 장 마감 시각. 실시간이 아니라 전날 자료일 수 있다는 걸 흉내 내요. */
-function lastCloseTime() {
-  const date = new Date();
-  do {
-    date.setDate(date.getDate() - 1);
-  } while (date.getDay() === 0 || date.getDay() === 6);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} 15:30`;
-}
-
 export async function getHomeDashboard(): Promise<HomeDashboard> {
   await wait(200);
   const headlineOf = (code: string) => {
@@ -242,7 +243,7 @@ export async function getHomeDashboard(): Promise<HomeDashboard> {
   const bySector = (group: SectorGroup) => companies.filter((c) => c.sector_group === group);
 
   return {
-    base_time: lastCloseTime(),
+    base_time: `${lastTradingDate()} 15:30`,
     trading_value_top: tradingValues.map(([code, value]) => ({
       ...findCompany(code),
       trading_value: { value, is_sample: true },
@@ -318,8 +319,9 @@ export async function getPriceHistory(
     closes.unshift(Math.round(closes[0] / (1 + change) / tick) * tick);
   }
 
+  // 마지막 값은 직전 거래일 종가예요. (실시간 시세가 아니에요)
   const dates: string[] = [];
-  const cursor = new Date();
+  const cursor = new Date(`${lastTradingDate()}T12:00:00`);
   while (dates.length < count) {
     const day = cursor.getDay();
     if (stepDays > 1 || (day !== 0 && day !== 6)) dates.unshift(toDateString(cursor));

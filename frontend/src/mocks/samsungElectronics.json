@@ -72,7 +72,8 @@
         "is_plan": true
       }
     ],
-    "timeline_source": "삼성전자 2025년 4분기 실적 발표 (2026년 1월)"
+    "timeline_source": "삼성전자 2025년 4분기 실적 발표 (2026년 1월)",
+    "price_as_of": null
   },
   "financials": {
     "stock_code": "005930",
@@ -127,6 +128,7 @@
         }
       ]
     },
+    "indicators_as_of": "2025년 사업보고서",
     "indicators": {
       "roe": {
         "value": 9.2,
