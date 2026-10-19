@@ -23,16 +23,6 @@
   gap: var(--sp-2) var(--sp-4);
 }
 
-.crosswordLink {
-  color: var(--brand);
-  font-size: var(--fs-sm);
-  font-weight: 700;
-}
-
-.crosswordLink:hover {
-  text-decoration: underline;
-}
-
 .subtitle {
   margin-top: var(--sp-1);
   color: var(--text-3);

@@ -15,7 +15,7 @@ export function TermGameBanner() {
         <Link to="/terms?mode=game" className={styles.go}>
           용어 게임 {GAME_ROUND_SIZE}문제 <Icon name="chevronRight" size={16} />
         </Link>
-        <Link to="/learn/crossword" className={styles.go}>
+        <Link to="/terms?mode=crossword" className={styles.go}>
           가로세로 낱말퀴즈 <Icon name="chevronRight" size={16} />
         </Link>
       </span>

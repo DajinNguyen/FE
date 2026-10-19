@@ -74,10 +74,7 @@ export function CrosswordComplete({
           다시 하기
         </Button>
         <Link to="/terms" className={styles.textLink}>
-          용어 카드로 복습하기
-        </Link>
-        <Link to="/learn/crossword" className={styles.textLink}>
-          다른 퍼즐 풀기
+          카드 학습으로 복습하기
         </Link>
       </div>
     </section>

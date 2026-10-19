@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { Button } from '../components/Button';
 import { SegmentedControl } from '../components/SegmentedControl';
+import { CrosswordPanel } from '../features/crossword/CrosswordPanel';
 import {
   termCategories,
   termCategoryLabels,
@@ -13,12 +14,22 @@ import { useTermProgress, type TermMark } from '../hooks/useTermProgress';
 import { useTerms } from '../hooks/useTerms';
 import styles from './TermCardsPage.module.css';
 
-type PageMode = 'cards' | 'game';
+type PageMode = 'cards' | 'game' | 'crossword';
 
 const modeOptions = [
   { value: 'cards', label: '카드 학습' },
   { value: 'game', label: '게임' },
+  { value: 'crossword', label: '낱말퀴즈' },
 ] as const;
+
+const modeSubtitle: Record<PageMode, string> = {
+  cards: '카드를 눌러 뒤집으면 쉬운 뜻이 나와요',
+  game: '문제를 풀면서 용어를 익혀요',
+  crossword: '열쇠를 보고 용어를 가로세로 칸에 채워요',
+};
+
+const isPageMode = (value: string | null): value is PageMode =>
+  modeOptions.some((o) => o.value === value);
 
 /** 게임은 분류 안에 용어가 이만큼은 있어야 보기 4개를 만들 수 있어요. */
 const MIN_GAME_TERMS = 4;
@@ -27,7 +38,8 @@ export function TermCardsPage() {
   const { data: allTerms } = useTerms();
   const { mark, reset, marks } = useTermProgress();
   const [searchParams, setSearchParams] = useSearchParams();
-  const mode: PageMode = searchParams.get('mode') === 'game' ? 'game' : 'cards';
+  const modeParam = searchParams.get('mode');
+  const mode: PageMode = isPageMode(modeParam) ? modeParam : 'cards';
   const [category, setCategory] = useState<TermCategoryFilter>('all');
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -46,8 +58,9 @@ export function TermCardsPage() {
     setSearchParams(
       (prev) => {
         const params = new URLSearchParams(prev);
-        if (next === 'game') params.set('mode', 'game');
-        else params.delete('mode');
+        if (next === 'cards') params.delete('mode');
+        else params.set('mode', next);
+        if (next !== 'crossword') params.delete('puzzle');
         return params;
       },
       { replace: true },
@@ -87,11 +100,7 @@ export function TermCardsPage() {
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>용어 카드</h1>
-          <p className={styles.subtitle}>
-            {mode === 'game'
-              ? '문제를 풀면서 용어를 익혀요'
-              : '카드를 눌러 뒤집으면 쉬운 뜻이 나와요'}
-          </p>
+          <p className={styles.subtitle}>{modeSubtitle[mode]}</p>
         </div>
         <div className={styles.headerActions}>
           <SegmentedControl
@@ -100,28 +109,41 @@ export function TermCardsPage() {
             value={mode}
             onChange={changeMode}
           />
-          <Link to="/learn/crossword" className={styles.crosswordLink}>
-            가로세로 낱말퀴즈 →
-          </Link>
         </div>
       </header>
 
-      <div className={styles.filters} role="group" aria-label="용어 분류">
-        {(['all', ...termCategories] as TermCategoryFilter[]).map((value) => (
-          <button
-            key={value}
-            type="button"
-            className={styles.filterChip}
-            aria-pressed={category === value}
-            onClick={() => changeCategory(value)}
-          >
-            {value === 'all' ? '전체' : termCategoryLabels[value]}
-            <span className={styles.filterCount}>{categoryCount(value)}</span>
-          </button>
-        ))}
-      </div>
+      {mode !== 'crossword' && (
+        <div className={styles.filters} role="group" aria-label="용어 분류">
+          {(['all', ...termCategories] as TermCategoryFilter[]).map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={styles.filterChip}
+              aria-pressed={category === value}
+              onClick={() => changeCategory(value)}
+            >
+              {value === 'all' ? '전체' : termCategoryLabels[value]}
+              <span className={styles.filterCount}>{categoryCount(value)}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
-      {mode === 'game' ? (
+      {mode === 'crossword' ? (
+        <CrosswordPanel
+          puzzleId={searchParams.get('puzzle')}
+          onSelect={(id) =>
+            setSearchParams(
+              (prev) => {
+                const params = new URLSearchParams(prev);
+                params.set('puzzle', id);
+                return params;
+              },
+              { replace: true },
+            )
+          }
+        />
+      ) : mode === 'game' ? (
         <div className={styles.gameWrap}>
           {allTerms && allTerms.length >= MIN_GAME_TERMS && (
             <TermGame

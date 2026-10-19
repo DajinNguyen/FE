@@ -2,8 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router';
 import { describe, expect, it } from 'vitest';
-import { CrosswordListPage } from '../src/pages/CrosswordListPage';
-import { CrosswordPage } from '../src/pages/CrosswordPage';
+import { TermCardsPage } from '../src/pages/TermCardsPage';
 import { renderWithProviders } from './testUtils';
 
 // 쉬움 5×5 "주식 기초"
@@ -11,9 +10,9 @@ import { renderWithProviders } from './testUtils';
 const renderPuzzle = () =>
   renderWithProviders(
     <Routes>
-      <Route path="/learn/crossword/:puzzleId" element={<CrosswordPage />} />
+      <Route path="/terms" element={<TermCardsPage />} />
     </Routes>,
-    { route: '/learn/crossword/basics-easy' },
+    { route: '/terms?mode=crossword&puzzle=basics-easy' },
   );
 
 const input = () => screen.getByRole('textbox');
@@ -105,10 +104,29 @@ describe('가로세로 낱말퀴즈', () => {
     ).toBeInTheDocument();
   });
 
-  it('퍼즐 목록에 난이도·단어 수·상태를 보여줘요', async () => {
-    renderWithProviders(<CrosswordListPage />);
-    const list = await screen.findByRole('list', { name: '퍼즐 목록' });
-    expect(await within(list).findAllByRole('link')).toHaveLength(3);
-    expect(within(list).getByText(/5×5 · 8단어 · 시작 전/)).toBeInTheDocument();
+  it('용어 카드 화면에서 [낱말퀴즈]를 누르면 목록 없이 바로 퍼즐이 나오고, 위에서 퍼즐을 바꿀 수 있어요', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <Routes>
+        <Route path="/terms" element={<TermCardsPage />} />
+      </Routes>,
+      { route: '/terms' },
+    );
+
+    await user.click(await screen.findByRole('radio', { name: '낱말퀴즈' }));
+    const picker = await screen.findByRole('group', { name: '퍼즐 고르기' });
+    expect(within(picker).getAllByRole('button')).toHaveLength(3);
+    expect(within(picker).getByRole('button', { name: /주식 기초/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(await screen.findByText('가로 3번')).toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: '용어 분류' })).not.toBeInTheDocument();
+
+    await user.click(within(picker).getByRole('button', { name: /시장과 산업/ }));
+    const clues = await screen.findByRole('complementary', { name: '열쇠 목록' });
+    expect(within(clues).getByRole('region', { name: '가로 열쇠' })).toHaveTextContent(
+      '한국은행이 정하는 이자율 기준',
+    );
   });
 });
