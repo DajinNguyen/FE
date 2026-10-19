@@ -33,7 +33,7 @@
 }
 
 .input::placeholder {
-  color: var(--text-4);
+  color: var(--text-3);
 }
 
 .input::-webkit-search-cancel-button {
@@ -59,7 +59,7 @@
 }
 
 .hero .icon {
-  left: var(--sp-5);
+  left: var(--sp-6);
 }
 
 .hero .input {
@@ -204,7 +204,7 @@
 }
 
 .empty {
-  padding: var(--sp-5) var(--sp-4);
+  padding: var(--sp-6) var(--sp-4);
   color: var(--text-2);
   font-size: var(--fs-sm);
   line-height: 1.6;

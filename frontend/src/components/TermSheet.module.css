@@ -27,7 +27,7 @@
 .handle {
   width: 40px;
   height: 4px;
-  margin: 0 auto var(--sp-5);
+  margin: 0 auto var(--sp-6);
   border-radius: var(--radius-full);
   background: var(--surface-strong);
 }
@@ -54,7 +54,7 @@
 }
 
 .example {
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
   padding: var(--sp-4);
   border-radius: var(--radius-md);
   background: var(--surface);

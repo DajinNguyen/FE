@@ -8,7 +8,7 @@
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
   color: var(--brand);
   font-size: var(--fs-sm);
   font-weight: 700;
@@ -28,7 +28,7 @@
 
 .modePicker {
   max-width: 100%;
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
   overflow-x: auto;
 }
 
@@ -36,7 +36,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--sp-2);
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
 }
 
 .recordRow > div {
@@ -58,7 +58,7 @@
 }
 
 .startButton {
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
   margin-bottom: var(--sp-2);
 }
 
@@ -97,7 +97,7 @@
 }
 
 .questionTitle {
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
   color: var(--text-2);
   font-size: var(--fs-sm);
   font-weight: 700;
@@ -105,7 +105,7 @@
 
 .prompt {
   margin-top: var(--sp-2);
-  padding: var(--sp-5);
+  padding: var(--sp-6);
   border-radius: var(--radius-md);
   background: var(--bg);
 }
@@ -265,7 +265,7 @@
 }
 
 .wrongSection {
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
 }
 
 .wrongTitle {
@@ -301,7 +301,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--sp-2);
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
 }
 
 .link {
@@ -314,7 +314,7 @@
 
 @media (max-width: 719px) {
   .card {
-    padding: var(--sp-5) var(--sp-4);
+    padding: var(--sp-6) var(--sp-4);
   }
 }
 

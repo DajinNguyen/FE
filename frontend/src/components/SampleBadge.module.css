@@ -4,7 +4,7 @@
   border-radius: 6px;
   background: var(--surface-strong);
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   line-height: 1.5;
   vertical-align: middle;

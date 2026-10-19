@@ -1,5 +1,5 @@
 .header {
-  padding: var(--sp-4) 0 var(--sp-5);
+  padding: var(--sp-4) 0 var(--sp-6);
 }
 
 .identity {
@@ -25,7 +25,7 @@
 }
 
 .alert {
-  padding: 2px 8px;
+  padding: 2px var(--sp-2);
   border-radius: var(--radius-full);
   background: var(--caution-weak);
   color: var(--caution);
@@ -59,7 +59,7 @@
 .price {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--sp-2);
   font-size: var(--fs-md);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
@@ -68,13 +68,13 @@
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--sp-2);
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
   padding: 3px 10px;
   border-radius: var(--radius-full);
   background: var(--surface);

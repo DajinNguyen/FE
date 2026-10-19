@@ -1,6 +1,6 @@
 .page {
   padding-top: var(--sp-8);
-  padding-bottom: var(--sp-10);
+  padding-bottom: var(--sp-12);
 }
 
 .hero {
@@ -154,7 +154,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 4px var(--sp-2);
+  gap: var(--sp-1) var(--sp-2);
   margin-top: auto;
   font-size: var(--fs-xs);
 }
@@ -170,7 +170,7 @@
 .rate {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
 }
 
 .aiCard {
@@ -181,7 +181,7 @@
 .aiEyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
   color: var(--brand-strong);
   font-size: var(--fs-xs);
   font-weight: 800;
@@ -203,7 +203,7 @@
 }
 
 .emptyRail {
-  padding: var(--sp-5);
+  padding: var(--sp-6);
   color: var(--text-3);
   font-size: var(--fs-sm);
 }
