@@ -42,6 +42,8 @@ describe('기업 화면: AI 핵심 분석 중심', () => {
     expect(first).toHaveTextContent('6.6배');
     expect(within(now).getAllByText('왜 그런가요?')[0]).not.toBeVisible();
     expect(screen.getByText('이 분석의 근거')).toBeInTheDocument();
+    // 기업 헤더에는 한 줄 소개 문장을 쓰지 않아요.
+    expect(screen.queryByText('스마트폰과 반도체를 만드는 회사예요')).not.toBeInTheDocument();
   });
 
   it('한 줄을 누르면 과거 → 현재 숫자, 이유·의미, 출처·날짜가 붙은 근거가 펼쳐져요', async () => {

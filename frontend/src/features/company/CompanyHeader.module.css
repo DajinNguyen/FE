@@ -41,12 +41,6 @@
   font-weight: 600;
 }
 
-.oneLiner {
-  margin-top: var(--sp-3);
-  color: var(--text-1);
-  font-size: var(--fs-md);
-  font-weight: 600;
-}
 
 .quote {
   display: flex;
@@ -95,9 +89,5 @@
 @media (max-width: 719px) {
   .name {
     font-size: var(--fs-2xl);
-  }
-
-  .oneLiner {
-    font-size: var(--fs-base);
   }
 }
