@@ -52,7 +52,7 @@ describe('가로세로 낱말퀴즈', () => {
     await user.click(shared);
     expect(screen.getByText('세로 3번')).toBeInTheDocument();
     // 세로 3번(주주총회)의 첫 칸은 이미 "주"가 들어 있어요.
-    expect(input()).toHaveAttribute('placeholder', '주○○○');
+    expect(input().getAttribute('placeholder')).toMatch(/^주○○○/);
   });
 
   it('[확인]은 틀린 칸만 표시하고, 끝까지 맞히면 완료 화면과 용어 목록을 보여줘요', async () => {

@@ -7,7 +7,6 @@ import styles from './Crossword.module.css';
 interface WordInputProps {
   word: WordRef;
   state: CrosswordState;
-  hint: string | null;
   dispatch: (action: CrosswordAction) => void;
 }
 
@@ -16,7 +15,7 @@ interface WordInputProps {
  * (한글 조합 입력이 칸마다 끊기지 않게) 조합 중 Enter 는 조합이 끝난 뒤 채워요.
  */
 export const WordInput = forwardRef<HTMLInputElement, WordInputProps>(function WordInput(
-  { word, state, hint, dispatch },
+  { word, state, dispatch },
   ref,
 ) {
   const [value, setValue] = useState('');
@@ -51,12 +50,6 @@ export const WordInput = forwardRef<HTMLInputElement, WordInputProps>(function W
 
   return (
     <form className={styles.wordInput} onSubmit={onSubmit}>
-      <p className={styles.currentClue}>
-        <strong>
-          {directionText} {word.word.number}번
-        </strong>{' '}
-        {word.word.clue} <span className={styles.clueLength}>({word.cells.length}글자)</span>
-      </p>
       <div className={styles.inputRow}>
         <label htmlFor="crossword-input" className="visually-hidden">
           {directionText} {word.word.number}번 답 입력 ({word.cells.length}글자)
@@ -66,7 +59,7 @@ export const WordInput = forwardRef<HTMLInputElement, WordInputProps>(function W
           ref={ref}
           className={styles.input}
           value={value}
-          placeholder={pattern}
+          placeholder={`${pattern}  입력 후 Enter`}
           onChange={(e) => setValue(e.target.value)}
           onCompositionStart={() => {
             composing.current = true;
@@ -86,16 +79,9 @@ export const WordInput = forwardRef<HTMLInputElement, WordInputProps>(function W
           채우기
         </Button>
       </div>
-      <p className={styles.inputNote} aria-live="polite">
-        {state.message ? (
-          <span className={styles.message}>{state.message}</span>
-        ) : hint ? (
-          <>
-            힌트 <strong className={styles.hintText}>{hint}</strong>
-          </>
-        ) : (
-          '단어 전체를 입력하고 Enter 를 누르면 칸에 채워져요'
-        )}
+      {/* 글자 수가 다를 때만 안내해요. */}
+      <p className={styles.message} aria-live="polite">
+        {state.message}
       </p>
     </form>
   );

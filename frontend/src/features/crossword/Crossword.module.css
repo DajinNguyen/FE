@@ -10,7 +10,37 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: var(--sp-4);
+  gap: var(--sp-3);
+}
+
+/* 위쪽 한 줄: 왼쪽 시간·힌트 수, 오른쪽 풀이 도구 */
+.topBar {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-6);
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.status {
+  align-self: center;
+}
+
+.tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-2);
+  margin-left: auto;
+}
+
+.toolNote {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  text-align: right;
 }
 
 .status {
@@ -90,6 +120,10 @@
   gap: var(--sp-2);
 }
 
+.currentClue {
+  min-height: 3em;
+}
+
 .currentClue strong {
   margin-right: var(--sp-1);
 }
@@ -125,13 +159,10 @@
   height: 48px;
 }
 
-.inputNote {
-  color: var(--text-3);
-  font-size: var(--fs-sm);
-}
-
 .message {
+  min-height: 1.5em;
   color: var(--caution);
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 
@@ -145,12 +176,8 @@
 .toolbar {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: var(--sp-2);
-}
-
-.checkNote {
-  color: var(--text-2);
-  font-size: var(--fs-sm);
 }
 
 .confirm {
@@ -345,6 +372,20 @@
 
   .letter {
     font-size: var(--fs-lg);
+  }
+
+  .tools {
+    align-items: stretch;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .toolbar {
+    justify-content: flex-start;
+  }
+
+  .toolNote {
+    text-align: left;
   }
 }
 
