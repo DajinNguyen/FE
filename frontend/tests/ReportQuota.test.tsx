@@ -44,7 +44,9 @@ describe('AI 리포트 이용 제한 (임시 정책: 비로그인 하루 1회, �
     );
     renderCompanyPage('005930');
 
-    expect(await screen.findByRole('list', { name: '핵심 포인트' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('region', { name: '지금 어떤 상황인가요?' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '다시 만들기' })).toBeDisabled();
     expect(screen.getByText(/같은 기업은 10분마다 만들 수 있어요/)).toBeInTheDocument();
   });

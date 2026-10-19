@@ -25,90 +25,68 @@
 }
 
 .asOf {
-  margin-top: var(--sp-2);
   color: var(--text-3);
   font-size: var(--fs-xs);
 }
 
-/* 핵심 포인트: 선 대신 여백으로 나눠요. 왼쪽 번호, 오른쪽 내용 */
+/* 질문 3개로 묶은 핵심 포인트 */
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  margin: var(--sp-6) 0 var(--sp-4);
+}
+
+.groupTitle {
+  margin-bottom: var(--sp-1);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 800;
+}
+
 .points {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-8);
-  margin: var(--sp-8) 0;
+  border-top: 1px solid var(--line-strong);
 }
 
 .point {
-  display: grid;
-  grid-template-columns: var(--sp-8) minmax(0, 1fr);
-  align-items: baseline;
+  border-bottom: 1px solid var(--line-strong);
 }
 
-.pointIndex {
-  color: var(--text-3);
-  font-size: var(--fs-lg);
-  font-weight: 800;
-}
-
-.pointBody {
+/* 한 줄: 결론 문장 ··· 핵심 숫자 ▾ */
+.pointHead {
   display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: var(--sp-2);
+  width: 100%;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  text-align: left;
 }
 
-.pointCategory {
-  color: var(--text-3);
-  font-size: var(--fs-xs);
-  font-weight: 700;
+.pointHead:hover .pointTitle {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .pointTitle {
-  margin-top: calc(var(--sp-1) * -1);
-  font-size: var(--fs-lg);
-  font-weight: 800;
+  flex: 1;
+  font-weight: 700;
 }
 
-/* 숫자 한 줄: 영업이익 6.57조 원(2023) → 43.6조 원(2025) ▲6.6배 */
-.metric {
-  display: flex;
-  flex-wrap: wrap;
+.keyValue {
+  display: inline-flex;
+  flex-shrink: 0;
   align-items: baseline;
-  gap: var(--sp-1) var(--sp-2);
-  margin-bottom: var(--sp-1);
-}
-
-.metricLabel {
-  margin-right: var(--sp-1);
-  color: var(--text-2);
-  font-size: var(--fs-sm);
-}
-
-.before strong {
-  color: var(--text-2);
-  font-weight: 600;
-}
-
-.after strong {
-  font-size: var(--fs-lg);
+  gap: var(--sp-2);
   font-weight: 800;
-}
-
-.period {
-  margin-left: 2px;
-  color: var(--text-3);
-  font-size: var(--fs-xs);
-}
-
-.arrow {
-  color: var(--text-3);
+  white-space: nowrap;
 }
 
 .delta {
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
-  margin-left: var(--sp-1);
   font-size: var(--fs-sm);
   font-weight: 800;
 }
@@ -125,17 +103,58 @@
   color: var(--fall);
 }
 
-/* 이유·의미: 굵은 머리말을 문단 앞에 붙여요. */
-.explain {
+.chevron {
+  flex-shrink: 0;
+  color: var(--text-3);
+  transition: transform var(--dur) var(--ease);
+}
+
+.pointHead[aria-expanded='true'] .chevron {
+  transform: rotate(180deg);
+}
+
+/* 펼친 내용 (접혀 있을 때는 hidden 이 이겨야 해요) */
+.pointBody[hidden] {
+  display: none;
+}
+
+.pointBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: 0 0 var(--sp-4);
+}
+
+.metric {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.metric strong {
   color: var(--text-1);
 }
 
-.lead {
-  margin-right: var(--sp-1);
-  font-weight: 800;
+.period {
+  color: var(--text-3);
 }
 
-/* 근거: 작은 글자 링크 */
+.explain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin: 0;
+}
+
+.explain dt {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.explain dd {
+  margin: 0;
+}
+
 .evidence {
   display: flex;
   flex-wrap: wrap;
@@ -257,7 +276,16 @@
     font-size: var(--fs-xl);
   }
 
-  .after strong {
-    font-size: var(--fs-xl);
+  .pointHead {
+    flex-wrap: wrap;
+  }
+
+  .pointTitle {
+    flex-basis: calc(100% - 30px);
+  }
+
+  .keyValue {
+    order: 3;
+    width: 100%;
   }
 }

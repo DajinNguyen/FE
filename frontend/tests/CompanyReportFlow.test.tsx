@@ -19,7 +19,7 @@ afterEach(() => {
 });
 
 describe('기업 화면: AI 핵심 분석 중심', () => {
-  it('처음에는 개요 탭에서 AI 한 줄 결론과 핵심 포인트 5개를 보여줘요', async () => {
+  it('처음에는 AI 한 줄 결론과, 질문 3개로 묶은 핵심 포인트 5줄을 보여줘요', async () => {
     renderCompanyPage('005930');
 
     expect(await screen.findByRole('tab', { name: '개요', selected: true })).toBeInTheDocument();
@@ -29,32 +29,34 @@ describe('기업 화면: AI 핵심 분석 중심', () => {
       }),
     ).toBeInTheDocument();
 
-    const points = screen.getByRole('list', { name: '핵심 포인트' });
-    const items = within(points).getAllByRole('listitem');
-    expect(items).toHaveLength(5);
-    expect(within(points).getByText('실적 특징')).toBeInTheDocument();
-    expect(within(points).getByText('핵심 경쟁력')).toBeInTheDocument();
-    // 과거 → 현재
-    expect(within(items[0]).getByText('6.57조 원')).toBeInTheDocument();
-    expect(within(items[0]).getByText('43.6조 원')).toBeInTheDocument();
+    const company = screen.getByRole('region', { name: '어떤 회사인가요?' });
+    const now = screen.getByRole('region', { name: '지금 어떤 상황인가요?' });
+    const watch = screen.getByRole('region', { name: '무엇을 조심해야 하나요?' });
+    expect(within(company).getAllByRole('listitem')).toHaveLength(2);
+    expect(within(now).getAllByRole('listitem')).toHaveLength(2);
+    expect(within(watch).getAllByRole('listitem')).toHaveLength(1);
+
+    // 한 줄에는 결론 문장과 핵심 숫자만, 이유는 접혀 있어요.
+    const first = within(now).getByRole('button', { name: /3년 동안 매출과 이익이 함께 늘었어요/ });
+    expect(first).toHaveTextContent('43.6조 원');
+    expect(first).toHaveTextContent('6.6배');
+    expect(within(now).getAllByText('왜 그런가요?')[0]).not.toBeVisible();
     expect(screen.getByText('이 분석의 근거')).toBeInTheDocument();
   });
 
-  it('이유·의미와 출처·날짜가 붙은 근거 칩을 처음부터 보여주고, 맨 위에 자료 기준일을 알려줘요', async () => {
+  it('한 줄을 누르면 과거 → 현재 숫자, 이유·의미, 출처·날짜가 붙은 근거가 펼쳐져요', async () => {
+    const user = userEvent.setup();
     renderCompanyPage('005930');
 
-    const points = await screen.findByRole('list', { name: '핵심 포인트' });
-    const items = within(points).getAllByRole('listitem');
-    expect(within(items[0]).getByText('왜 그런가요?')).toBeVisible();
-    expect(within(items[0]).getByText('무슨 뜻인가요?')).toBeVisible();
-    expect(
-      within(items[0]).getByRole('button', { name: '재무제표 2025 사업보고서' }),
-    ).toBeVisible();
-    expect(within(points).getAllByRole('button', { name: '뉴스 01.29' })[0]).toBeVisible();
-    // 영업이익 6.57조 → 43.6조: 증가 방향과 크기
-    expect(within(items[0]).getByText(/6\.6배/)).toBeInTheDocument();
-    expect(within(items[0]).getByText('증가')).toBeInTheDocument();
+    const now = await screen.findByRole('region', { name: '지금 어떤 상황인가요?' });
+    const first = within(now).getByRole('button', { name: /3년 동안 매출과 이익이 함께 늘었어요/ });
+    await user.click(first);
 
+    expect(first).toHaveAttribute('aria-expanded', 'true');
+    const item = first.closest('li')!;
+    expect(within(item).getByText('왜 그런가요?')).toBeVisible();
+    expect(within(item).getByText(/6\.57조 원/)).toBeVisible();
+    expect(within(item).getByRole('button', { name: '재무제표 2025 사업보고서' })).toBeVisible();
     expect(
       screen.getByText(/이 리포트는 재무 2025년 사업보고서 · 주가 10월 5일 · 뉴스 1월 29일 기준/),
     ).toBeInTheDocument();
@@ -83,7 +85,7 @@ describe('기업 화면: AI 핵심 분석 중심', () => {
     expect(
       await screen.findByText('리포트를 다시 만들지 못했어요. 기존 리포트를 보여드릴게요.'),
     ).toBeInTheDocument();
-    expect(screen.getByRole('list', { name: '핵심 포인트' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: '지금 어떤 상황인가요?' })).toBeInTheDocument();
   });
 
   it('상세 탭에는 안내와 "개요로 돌아가기"가 있어요', async () => {
