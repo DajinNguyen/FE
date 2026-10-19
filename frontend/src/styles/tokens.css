@@ -14,6 +14,9 @@
   --brand-card: #1d3a64;
   --on-brand: #ffffff;
   --on-brand-sub: rgba(255, 255, 255, 0.78);
+  /* 강조색 면(용어 카드 앞면 등) 위의 글자 */
+  --on-brand-card: #ffffff;
+  --on-brand-card-sub: rgba(255, 255, 255, 0.78);
 
   /* 배경·면 */
   --bg: #ffffff;
@@ -21,7 +24,10 @@
   --surface: #f5f7fa;
   --surface-strong: #eceff4;
   --line: #e3e7ed;
-  --line-strong: #cfd5de;
+  --line-strong: #c2c9d3;
+
+  /* 그래프: 강조 막대는 brand, 나머지 막대는 chart-muted (바탕 대비 3:1 이상) */
+  --chart-muted: #7d90ae;
 
   /* 글자 */
   --text-1: #111827;
@@ -112,15 +118,18 @@
     --brand-strong: #c0d3ee;
     --brand-weak: #1a2536;
     --brand-muted: #34496a;
-    --brand-card: #9db8e0;
+    --brand-card: #24406b;
+    --on-brand-card: #e8ecf2;
+    --on-brand-card-sub: rgba(232, 236, 242, 0.75);
     --on-brand: #0f1319;
     --on-brand-sub: rgba(15, 19, 25, 0.72);
     --bg: #0f1319;
     --bg-outside: #0a0d11;
     --surface: #171c24;
     --surface-strong: #212833;
-    --line: #29303b;
-    --line-strong: #3a4250;
+    --line: #313946;
+    --line-strong: #4a5363;
+    --chart-muted: #5a7399;
     --text-1: #e8ecf2;
     --text-2: #bcc4cf;
     --text-3: #939cab;
@@ -151,15 +160,18 @@
   --brand-strong: #c0d3ee;
   --brand-weak: #1a2536;
   --brand-muted: #34496a;
-  --brand-card: #9db8e0;
+  --brand-card: #24406b;
+  --on-brand-card: #e8ecf2;
+  --on-brand-card-sub: rgba(232, 236, 242, 0.75);
   --on-brand: #0f1319;
   --on-brand-sub: rgba(15, 19, 25, 0.72);
   --bg: #0f1319;
   --bg-outside: #0a0d11;
   --surface: #171c24;
   --surface-strong: #212833;
-  --line: #29303b;
-  --line-strong: #3a4250;
+  --line: #313946;
+  --line-strong: #4a5363;
+  --chart-muted: #5a7399;
   --text-1: #e8ecf2;
   --text-2: #bcc4cf;
   --text-3: #939cab;

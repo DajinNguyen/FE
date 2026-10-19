@@ -91,6 +91,13 @@ input {
   white-space: nowrap;
 }
 
+/* 테마를 바꾸는 순간에는 색이 천천히 바뀌며 깜빡이지 않게 전환 효과를 꺼요. */
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

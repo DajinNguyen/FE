@@ -9,6 +9,13 @@
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231d3a64'/%3E%3Cpath d='M9 21h14M11 16h10M13 11h6' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"
     />
     <title>다진 · 쉬운 기업 분석</title>
+    <script>
+      // 저장된 테마를 화면을 그리기 전에 적용해서 라이트/다크가 깜빡이지 않게 해요. (useTheme 과 같은 키)
+      try {
+        var mode = JSON.parse(localStorage.getItem('dajin:theme') || '"system"');
+        if (mode === 'light' || mode === 'dark') document.documentElement.dataset.theme = mode;
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
