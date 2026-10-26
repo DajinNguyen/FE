@@ -9,11 +9,10 @@ export interface AuthUser {
 export interface AuthContextValue {
   user: AuthUser | null;
   isLoggedIn: boolean;
-  /**
-   * Google OAuth 연결 예정. 지금은 아무것도 하지 않고 false 를 돌려줘요.
-   * 연결 후에는 로그인 성공 시 true 를 돌려주도록 AuthProvider 에서 구현해요.
-   */
-  loginWithGoogle: () => Promise<boolean>;
+  /** 처음 열었을 때 로그인 여부를 서버에 물어보는 중이에요. */
+  isLoading: boolean;
+  /** Google 로그인 화면으로 이동해요 (페이지를 벗어나요, 값을 돌려주지 않아요). */
+  loginWithGoogle: () => void;
   logout: () => Promise<void>;
 }
 

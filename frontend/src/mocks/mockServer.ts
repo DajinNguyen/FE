@@ -10,6 +10,7 @@ import crosswordsJson from './crosswords.json';
 import samsungJson from './samsungElectronics.json';
 import termsJson from './terms.json';
 import { ApiError } from '../api/errors';
+import type { AuthUser } from '../features/auth/AuthContext';
 import type {
   CompanyDetail,
   CompanyReport,
@@ -366,4 +367,14 @@ export async function getCrosswordPuzzle(puzzleId: string): Promise<CrosswordPuz
   const puzzle = crosswords.find((p) => p.id === puzzleId);
   if (!puzzle) throw new ApiError('퍼즐을 찾지 못했어요', 404, 'PUZZLE_NOT_FOUND');
   return puzzle;
+}
+
+/** 목 모드는 실제 로그인이 없어서 항상 로그아웃 상태로 둬요. */
+export async function getMe(): Promise<AuthUser | null> {
+  await wait(80);
+  return null;
+}
+
+export async function logout(): Promise<void> {
+  await wait(80);
 }
