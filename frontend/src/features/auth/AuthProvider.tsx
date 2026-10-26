@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
+import { setSessionUser } from '../../api/session';
 import { apiConfig } from '../../api/client';
 import { AuthContext, DEV_USER, type AuthContextValue, type AuthUser } from './AuthContext';
 
@@ -11,6 +12,8 @@ export function AuthProvider({
   initialUser?: AuthUser | null;
 }) {
   const [user, setUser] = useState<AuthUser | null>(initialUser);
+  // 목 서버가 "내 글"을 알 수 있게 지금 사용자를 알려줘요. (실제 서버는 로그인 쿠키로 알아요)
+  setSessionUser(user);
 
   const value = useMemo<AuthContextValue>(
     () => ({

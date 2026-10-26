@@ -399,3 +399,21 @@ export async function getCrosswordPuzzle(puzzleId: string): Promise<CrosswordPuz
   if (!puzzle) throw new ApiError('퍼즐을 찾지 못했어요', 404, 'PUZZLE_NOT_FOUND');
   return puzzle;
 }
+
+/* ------------------------------------------------------------------ */
+/* 커뮤니티 (메모리 저장)                                               */
+/* ------------------------------------------------------------------ */
+
+export {
+  createComment,
+  createPost,
+  deleteComment,
+  deletePost,
+  getComments,
+  getPost,
+  getPosts,
+  likePost,
+  reportTarget,
+  unlikePost,
+  updatePost,
+} from './community';
