@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { CommunityTab } from '../src/features/community/CommunityTab';
 import { CommunityPostPage } from '../src/pages/CommunityPostPage';
+import { CommunityWritePage } from '../src/pages/CommunityWritePage';
 import { renderWithProviders } from './testUtils';
 
 describe('커뮤니티 탭', () => {
@@ -119,5 +120,64 @@ describe('글 보기', () => {
     renderPost('p12');
     expect(await screen.findByText('신고로 숨겨진 글이에요')).toBeInTheDocument();
     expect(screen.queryByText('오늘 꼭 사세요 무조건 오릅니다')).not.toBeInTheDocument();
+  });
+});
+
+const renderWrite = () =>
+  renderWithProviders(
+    <Routes>
+      <Route path="/companies/:stockCode/community/write" element={<CommunityWritePage />} />
+      <Route path="/companies/:stockCode/community/:postId" element={<CommunityPostPage />} />
+      <Route path="/companies/:stockCode" element={<p>기업 화면</p>} />
+    </Routes>,
+    { route: '/companies/005930/community/write' },
+  );
+
+async function loginOnWritePage(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole('button', { name: '로그인하기' }));
+  await user.click(screen.getByRole('button', { name: '개발용으로 로그인' }));
+}
+
+describe('글쓰기', () => {
+  it('로그인해야 쓸 수 있고, 제목은 50자까지만 들어가요', async () => {
+    const user = userEvent.setup();
+    renderWrite();
+    expect(screen.getByText('로그인하면 글을 쓸 수 있어요')).toBeInTheDocument();
+    await loginOnWritePage(user);
+
+    const title = screen.getByLabelText('제목');
+    await user.type(title, '가'.repeat(60));
+    expect(title).toHaveValue('가'.repeat(50));
+    expect(screen.getByText('50/50')).toBeInTheDocument();
+  });
+
+  it('금지어가 있으면 등록하지 않고 안내해요. 고치면 등록되고 글 보기로 이동해요', async () => {
+    const user = userEvent.setup();
+    renderWrite();
+    await loginOnWritePage(user);
+
+    await user.type(screen.getByLabelText('제목'), '같이 공부해요');
+    await user.type(screen.getByLabelText('본문'), '리딩방 들어오시면 알려드려요');
+    await user.click(screen.getByRole('button', { name: '등록' }));
+    expect(screen.getByRole('alert')).toHaveTextContent('쓸 수 없는 표현이 있어요');
+
+    await user.clear(screen.getByLabelText('본문'));
+    await user.type(screen.getByLabelText('본문'), '재무제표 같이 공부해요');
+    await user.click(screen.getByRole('button', { name: '등록' }));
+    expect(
+      await screen.findByRole('heading', { level: 1, name: '같이 공부해요' }),
+    ).toBeInTheDocument();
+  });
+
+  it('쓰던 중 [취소]를 누르면 화면 안에서 한 번 더 물어봐요', async () => {
+    const user = userEvent.setup();
+    renderWrite();
+    await loginOnWritePage(user);
+
+    await user.type(screen.getByLabelText('제목'), '쓰는 중');
+    await user.click(screen.getByRole('button', { name: '취소' }));
+    expect(screen.getByRole('dialog', { name: '작성 중인 글이 사라져요' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '계속 쓰기' }));
+    expect(screen.getByLabelText('제목')).toHaveValue('쓰는 중');
   });
 });
