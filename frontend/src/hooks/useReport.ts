@@ -22,7 +22,7 @@ export function useReport() {
     onError: (error) => {
       showToast(
         error instanceof ApiError && error.code === 'ALREADY_REPORTED'
-          ? '이미 신고한 글이에요.'
+          ? '이미 신고했어요. 같은 글·댓글은 한 번만 신고할 수 있어요.'
           : '신고하지 못했어요. 잠시 후 다시 시도해 주세요.',
       );
     },
