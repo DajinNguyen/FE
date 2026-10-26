@@ -130,6 +130,25 @@
   - 제한에 걸리면 `POST /report` 가 `429` + `code: "DAILY_LIMIT" | "REGENERATE_TOO_SOON"` 으로 알려 주기
 - 이미 만들어진 리포트 보기(`GET /report`)는 제한하지 않아요.
 
+## 4-1. 뉴스 (2026-10-26 형식 변경)
+
+자세한 요청은 `docs/news-api-request.md` 를 봐 주세요.
+
+| 칸 | 상태 | 타입 | 쓰는 화면 | 없을 때 |
+|---|---|---|---|---|
+| `press` | 이름 변경 (이전 `source`) | string | 뉴스 목록 "언론사 · 시간" | 필수 |
+| `published_at` | 형식 변경 (이전 "2026년 1월" 글자) | ISO 8601 | "3시간 전" / "10월 19일" | 필수 |
+| `url` | null 금지로 변경 | string | 원문 새 탭 | 필수 |
+| `summary_short` | 이름 변경 (이전 `summary`) | string | 목록 한 줄 요약 | 빈 문자열이면 숨김 |
+| `summary_long` | 추가 | string \| null | (리포트 근거 확장용) | null |
+| `company_stock_code` | 추가 | string \| null | 기업·시장 기사 구분 | 시장 기사면 null |
+| `related_metric` | 이름 변경 (이전 `financial_link`) | `{label, value}` \| null | 뉴스 탭 "관련 숫자" | null 이면 숨김 |
+| `is_placeholder` | 삭제 | — | — | — |
+
+- 기업 뉴스는 `GET /api/companies/{stock_code}/news?page=&size=` 로 페이지 단위(`{ items, page, size, has_next }`)로 받아요.
+- 리포트의 `evidence.news` 도 같은 `NewsItem` 형식이에요. (이전 `NewsEvidence` 삭제)
+- 에러 응답은 `{ "error": { "code", "message" } }` 를 읽어요. (예전 `{ detail, code }` 도 함께 읽어요)
+
 ## 확인이 필요한 것
 
 1. `sector_group` 분류 기준 (예: 삼성전기·LG전자를 반도체로 볼지 기타로 볼지)
