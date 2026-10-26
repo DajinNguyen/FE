@@ -181,3 +181,21 @@ describe('글쓰기', () => {
     expect(screen.getByLabelText('제목')).toHaveValue('쓰는 중');
   });
 });
+
+describe('신고', () => {
+  it('사유를 골라 신고하면 완료 토스트가 뜨고, 같은 글은 다시 신고할 수 없어요', async () => {
+    const user = userEvent.setup();
+    renderPost('p2');
+
+    await user.click(await screen.findByRole('button', { name: '신고' }));
+    await user.click(screen.getByRole('button', { name: '개발용으로 로그인' }));
+
+    const sheet = await screen.findByRole('dialog', { name: '글 신고' });
+    expect(within(sheet).getByRole('button', { name: '신고하기' })).toBeDisabled();
+    await user.click(within(sheet).getByRole('radio', { name: '투자 권유·리딩방' }));
+    await user.click(within(sheet).getByRole('button', { name: '신고하기' }));
+
+    expect(await screen.findByText('신고했어요. 확인 후 처리할게요.')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: '신고함' })).toBeDisabled();
+  });
+});

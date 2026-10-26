@@ -5,6 +5,7 @@ import { useComments } from '../../hooks/useComments';
 import { useRequireLogin } from '../../hooks/useRequireLogin';
 import { formatRelativeTime } from '../../utils/format';
 import { HIDDEN_COMMENT_TEXT } from './communityLabels';
+import { ReportSheet } from './ReportSheet';
 import styles from './CommunityPost.module.css';
 
 /** 댓글 목록 + 입력 (쓰기·지우기는 로그인 필요) */
@@ -14,6 +15,7 @@ export function CommentSection({ postId }: { postId: string }) {
   const { comments, isPending, create, remove } = useComments(postId);
   const [text, setText] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [reportingId, setReportingId] = useState<string | null>(null);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
@@ -61,6 +63,15 @@ export function CommentSection({ postId }: { postId: string }) {
                         삭제
                       </button>
                     )}
+                    {!comment.is_mine && (
+                      <button
+                        type="button"
+                        className={styles.textButton}
+                        onClick={() => requireLogin(() => setReportingId(comment.id))}
+                      >
+                        신고
+                      </button>
+                    )}
                   </p>
                   <p className={styles.commentBody}>{comment.body}</p>
                 </>
@@ -100,6 +111,10 @@ export function CommentSection({ postId }: { postId: string }) {
           </p>
         )}
       </form>
+      <ReportSheet
+        target={reportingId ? { target_type: 'comment', target_id: reportingId } : null}
+        onClose={() => setReportingId(null)}
+      />
     </section>
   );
 }
