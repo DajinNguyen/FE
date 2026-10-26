@@ -183,6 +183,21 @@
 - 응답이 실패하면 메인에 "시장 정보를 불러오지 못했어요"만 보여주고 검색창부터는 그대로 써요.
 - 확인 필요: 한마디·이유를 누가(AI) 언제 만드는지, 업종 이름을 메인 업종 탭(반도체·자동차 등)과 같은 기준으로 쓸지.
 
+## 4-3. 커뮤니티 (2026-10-26 추가)
+
+자세한 요청은 `docs/community-api-request.md` 를 봐 주세요. 타입은 `frontend/src/types/community.ts`.
+
+| 형식 | 칸 | 쓰는 화면 |
+|---|---|---|
+| `Post` | `id, stock_code, category, title, body, author{id, nickname}, created_at, updated_at, like_count, comment_count, liked_by_me, reported_by_me, is_mine, is_hidden` | 글 목록, 글 보기 |
+| `Comment` | `id, post_id, body, author, created_at, is_mine, is_hidden` | 글 보기 댓글 |
+| `PostPage` | `items, page, has_next` | 글 목록 [더 보기] |
+| `PostInput` | `category, title(≤50), body(≤2,000)` | 글쓰기·수정 |
+| `ReportInput` | `target_type('post'\|'comment'), target_id, reason` | 신고 |
+
+- 로그인 사용자(`AuthUser`)에 `id`, `nickname` 을 추가했어요. 커뮤니티에는 실명 대신 닉네임을 보여줘요.
+- 숨긴 글·댓글(`is_hidden: true`)은 `title`·`body` 를 빈 문자열로 주세요.
+
 ## 확인이 필요한 것
 
 1. `sector_group` 분류 기준 (예: 삼성전기·LG전자를 반도체로 볼지 기타로 볼지)
