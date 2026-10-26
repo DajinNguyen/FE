@@ -1,10 +1,11 @@
 import { useMarketSummary } from '../../hooks/useMarketSummary';
 import { formatMarketDate } from '../../utils/format';
 import { MarketIndexes } from './MarketIndexes';
+import { MarketReasons } from './MarketReasons';
 import styles from './Market.module.css';
 
 /**
- * 메인 맨 위 "오늘의 시장": 한마디(페이지 제목) → 지수
+ * 메인 맨 위 "오늘의 시장": 한마디(페이지 제목) → 지수 → 왜 움직였나요?
  * 불러오지 못하면 안내만 보여주고, 아래 검색창은 그대로 쓸 수 있어요.
  */
 export function MarketToday() {
@@ -45,6 +46,7 @@ export function MarketToday() {
         </p>
       </div>
       <MarketIndexes indexes={data.indices} />
+      <MarketReasons reasons={data.reasons} />
     </section>
   );
 }
