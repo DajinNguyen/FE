@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useParams } from 'react-router';
 import { AppLayout } from './components/AppLayout';
+import { CommunityPostPage } from './pages/CommunityPostPage';
 import { CompanyPage } from './pages/CompanyPage';
 import { HomePage } from './pages/HomePage';
 import { TermCardsPage } from './pages/TermCardsPage';
@@ -12,6 +13,7 @@ export function App() {
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
         <Route path="companies/:stockCode" element={<CompanyPage />} />
+        <Route path="companies/:stockCode/community/:postId" element={<CommunityPostPage />} />
         <Route path="rankings/trading" element={<TradingRankingPage />} />
         <Route path="terms" element={<TermCardsPage />} />
         {/* 낱말퀴즈는 용어 카드 화면 안에서 해요. 예전 주소는 그쪽으로 보내요. */}
