@@ -25,11 +25,12 @@ const categoryOptions = postCategories.map((value) => ({ value, label: categoryL
 /** 글쓰기(/write)·수정(/edit/:postId) — 로그인 필요 */
 export function CommunityWritePage() {
   const { stockCode = '', postId } = useParams();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isChecking } = useAuth();
   const requireLogin = useRequireLogin();
   const editing = Boolean(postId);
   const { data: post, isPending } = useCommunityPost(postId ?? '', { enabled: editing });
 
+  if (isChecking) return <div className={styles.page} />;
   if (!isLoggedIn) {
     return (
       <div className={styles.page}>

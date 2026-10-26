@@ -14,6 +14,7 @@ import samsungJson from './samsungElectronics.json';
 import termsJson from './terms.json';
 import { ApiError } from '../api/errors';
 import type {
+  AuthUser,
   CompanyDetail,
   CompanyReport,
   CompanySummary,
@@ -398,6 +399,19 @@ export async function getCrosswordPuzzle(puzzleId: string): Promise<CrosswordPuz
   const puzzle = crosswords.find((p) => p.id === puzzleId);
   if (!puzzle) throw new ApiError('퍼즐을 찾지 못했어요', 404, 'PUZZLE_NOT_FOUND');
   return puzzle;
+}
+
+/* ------------------------------------------------------------------ */
+/* 로그인 (목 데이터 모드는 Google 로그인 대신 개발용 로그인을 써요)       */
+/* ------------------------------------------------------------------ */
+
+export async function getMe(): Promise<AuthUser | null> {
+  await wait(50);
+  return null;
+}
+
+export async function logout(): Promise<void> {
+  await wait(50);
 }
 
 /* ------------------------------------------------------------------ */

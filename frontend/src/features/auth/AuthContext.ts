@@ -1,20 +1,16 @@
 import { createContext } from 'react';
+import type { AuthUser } from '../../types';
 
-/** 로그인 후 받을 정보는 이메일과 이름뿐이에요. (전화번호 등 민감 정보는 받지 않아요) */
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  /** 커뮤니티에 보이는 이름 (실명 대신) */
-  nickname: string;
-}
+export type { AuthUser };
 
 export interface AuthContextValue {
   user: AuthUser | null;
   isLoggedIn: boolean;
+  /** 처음 열 때 로그인 쿠키로 사용자를 확인하는 중 (실제 API 모드에서만 잠깐 true) */
+  isChecking: boolean;
   /**
-   * Google OAuth 연결 예정. 지금은 아무것도 하지 않고 false 를 돌려줘요.
-   * 연결 후에는 로그인 성공 시 true 를 돌려주도록 AuthProvider 에서 구현해요.
+   * Google 로그인 페이지로 이동해요. 로그인을 마치면 지금 화면으로 돌아와요.
+   * 목 데이터 모드에서는 이동하지 않고 false 를 돌려줘요. (개발용 로그인을 써요)
    */
   loginWithGoogle: () => Promise<boolean>;
   logout: () => Promise<void>;
@@ -33,4 +29,14 @@ export const DEV_USER: AuthUser = {
   email: 'dev@dajin.local',
   name: '개발용 사용자',
   nickname: '개발용 사용자',
+};
+
+/** 목 데이터 모드에서 [Google로 로그인]을 눌렀을 때 안내 */
+export const GOOGLE_LOGIN_UNAVAILABLE =
+  '목 데이터 모드에서는 Google 로그인이 동작하지 않아요. [개발용 로그인]으로 확인해 주세요.';
+
+/** 백엔드가 로그인 실패 후 ?login_error= 로 돌려보낼 때 안내 */
+export const loginErrorMessages: Record<string, string> = {
+  cancelled: '로그인을 취소했어요.',
+  failed: 'Google 로그인에 실패했어요. 잠시 후 다시 시도해 주세요.',
 };

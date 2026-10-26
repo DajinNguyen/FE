@@ -198,6 +198,19 @@
 - 로그인 사용자(`AuthUser`)에 `id`, `nickname` 을 추가했어요. 커뮤니티에는 실명 대신 닉네임을 보여줘요.
 - 숨긴 글·댓글(`is_hidden: true`)은 `title`·`body` 를 빈 문자열로 주세요.
 
+## 4-4. 로그인 (2026-10-26 추가)
+
+Google 로그인 + 쿠키(JWT). 자세한 흐름은 `docs/auth-api-request.md`.
+
+| API | 응답 |
+|---|---|
+| `GET /api/auth/google/login?redirect=` | 302 (Google 로그인) |
+| `GET /api/auth/me` | `AuthUser { id, email, name, nickname }` / 401 |
+| `POST /api/auth/logout` | 204 |
+
+- `AuthUser.nickname` (추가, 필수): 커뮤니티에 보이는 이름. 실명 대신 써요.
+- `AuthUser.id` 는 커뮤니티 `author.id` 와 같은 값이어야 해요.
+
 ## 확인이 필요한 것
 
 1. `sector_group` 분류 기준 (예: 삼성전기·LG전자를 반도체로 볼지 기타로 볼지)

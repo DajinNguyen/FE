@@ -9,6 +9,16 @@ export const apiConfig = {
   baseUrl: (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, ''),
 };
 
+const unauthorizedListeners = new Set<() => void>();
+
+/** 로그인 쿠키가 만료돼서 401 을 받으면 알려줘요. (AuthProvider 가 로그아웃 상태로 바꿔요) */
+export function onUnauthorized(listener: () => void) {
+  unauthorizedListeners.add(listener);
+  return () => {
+    unauthorizedListeners.delete(listener);
+  };
+}
+
 interface RequestOptions<T> {
   /** 실제 API 경로 (예: /api/companies?query=삼성) */
   path: string;
@@ -34,6 +44,7 @@ export async function request<T>({
   });
 
   if (!response.ok) {
+    if (response.status === 401) unauthorizedListeners.forEach((listener) => listener());
     // 에러 응답은 { error: { code, message } } 형식이에요. (예전 형식 { detail, code } 도 읽어요)
     let body:
       { error?: { code?: string; message?: string }; detail?: string; code?: string } | undefined;

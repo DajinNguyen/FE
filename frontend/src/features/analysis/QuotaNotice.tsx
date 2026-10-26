@@ -1,4 +1,5 @@
 import { USAGE_POLICY } from '../../config/usagePolicy';
+import { GOOGLE_LOGIN_UNAVAILABLE } from '../auth/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import type { ReportQuota } from '../../hooks/useReportQuota';
 import { useToast } from '../../hooks/useToast';
@@ -11,7 +12,7 @@ export function QuotaNotice({ quota }: { quota: ReportQuota }) {
 
   const login = async () => {
     const ok = await loginWithGoogle();
-    if (!ok) showToast('Google 로그인은 곧 연결할 예정이에요. 지금은 둘러보기만 할 수 있어요.');
+    if (!ok) showToast(GOOGLE_LOGIN_UNAVAILABLE);
   };
 
   if (quota.blocked === 'guest-daily') {

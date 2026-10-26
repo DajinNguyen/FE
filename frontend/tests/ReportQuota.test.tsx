@@ -57,6 +57,7 @@ describe('AI 리포트 이용 제한 (임시 정책: 비로그인 하루 1회, �
         value={{
           user: { id: 'u1', email: 'test@example.com', name: '테스트', nickname: '테스트' },
           isLoggedIn: true,
+          isChecking: false,
           loginWithGoogle: async () => true,
           logout: async () => {},
         }}

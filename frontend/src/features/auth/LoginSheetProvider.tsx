@@ -4,6 +4,7 @@ import { Sheet } from '../../components/Sheet';
 import { useAuth } from '../../hooks/useAuth';
 import { LoginSheetContext } from '../../hooks/useRequireLogin';
 import { useToast } from '../../hooks/useToast';
+import { GOOGLE_LOGIN_UNAVAILABLE } from './AuthContext';
 
 /**
  * 로그인이 필요한 동작(글쓰기·수정·삭제·댓글·좋아요·신고)을 비로그인으로 누르면 띄우는 시트.
@@ -44,7 +45,7 @@ export function LoginSheetProvider({ children }: { children: ReactNode }) {
 
   const google = async () => {
     const ok = await loginWithGoogle();
-    if (!ok) showToast('Google 로그인은 곧 연결할 예정이에요.');
+    if (!ok) showToast(GOOGLE_LOGIN_UNAVAILABLE);
   };
 
   const value = useMemo(() => ({ requireLogin }), [requireLogin]);

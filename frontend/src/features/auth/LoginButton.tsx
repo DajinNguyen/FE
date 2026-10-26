@@ -1,27 +1,29 @@
 import { useAuth } from '../../hooks/useAuth';
+import { GOOGLE_LOGIN_UNAVAILABLE } from './AuthContext';
 import { useToast } from '../../hooks/useToast';
 import styles from './LoginButton.module.css';
 
 export function LoginButton() {
-  const { isLoggedIn, user, loginWithGoogle, logout, devLogin } = useAuth();
+  const { isLoggedIn, isChecking, user, loginWithGoogle, logout, devLogin } = useAuth();
   const { showToast } = useToast();
+
+  // 로그인 확인 중에는 버튼이 깜빡이지 않게 비워 둬요.
+  if (isChecking) return <span className={styles.signedIn} aria-hidden="true" />;
 
   if (isLoggedIn && user) {
     return (
       <span className={styles.signedIn}>
         <span className={styles.user}>{user.nickname}님</span>
-        {devLogin && (
-          <button type="button" className={styles.devButton} onClick={() => void logout()}>
-            로그아웃
-          </button>
-        )}
+        <button type="button" className={styles.devButton} onClick={() => void logout()}>
+          로그아웃
+        </button>
       </span>
     );
   }
 
   const handleClick = async () => {
     const ok = await loginWithGoogle();
-    if (!ok) showToast('Google 로그인은 곧 연결할 예정이에요. 지금은 둘러보기만 할 수 있어요.');
+    if (!ok) showToast(GOOGLE_LOGIN_UNAVAILABLE);
   };
 
   return (
