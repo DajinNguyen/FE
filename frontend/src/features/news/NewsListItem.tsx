@@ -6,7 +6,7 @@ import styles from './News.module.css';
 
 interface NewsListItemProps {
   item: NewsItem;
-  /** 작게 (메인 "왜 움직였나요?" 근거, 리포트 근거) */
+  /** 작게: 제목·언론사·시간만 (메인 "왜 움직였나요?" 근거, 리포트 근거) */
   compact?: boolean;
 }
 
@@ -23,7 +23,7 @@ export function NewsListItem({ item, compact = false }: NewsListItemProps) {
         {item.press} ·{' '}
         <time dateTime={item.published_at}>{formatRelativeTime(item.published_at)}</time>
       </p>
-      {item.summary_short && (
+      {!compact && item.summary_short && (
         <p className={styles.summary}>
           <TermText text={item.summary_short} />
         </p>

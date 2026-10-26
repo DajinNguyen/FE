@@ -1,7 +1,7 @@
 /** 메인 화면 설정값 */
 
-/** 메인에 보여줄 거래대금 순위 개수 (전체 보기는 응답 전체) */
-export const HOME_TRADING_LIMIT = 10;
+/** 메인 "기업 둘러보기"에 보여줄 거래대금 순위 개수 (전체 보기는 응답 전체) */
+export const HOME_TRADING_LIMIT = 5;
 
 /** 업종 탭마다 보여줄 기업 수 */
 export const HOME_SECTOR_LIMIT = 5;

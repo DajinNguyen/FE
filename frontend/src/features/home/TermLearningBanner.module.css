@@ -27,12 +27,6 @@
   font-weight: 700;
 }
 
-.links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-1) var(--sp-4);
-}
-
-.go:hover {
+.banner:hover .go {
   text-decoration: underline;
 }
