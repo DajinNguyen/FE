@@ -78,9 +78,10 @@ describe('기업 검색', () => {
     renderSearch();
 
     await user.type(input(), '카카오');
-    await screen.findByRole('option', { name: /카카오/ });
+    // 카카오뱅크·카카오페이 등도 나오지만, 첫 줄은 카카오예요.
+    const [first] = await screen.findAllByRole('option', { name: /카카오/ });
     await user.keyboard('{ArrowDown}');
-    expect(screen.getByRole('option', { name: /카카오/ })).toHaveAttribute('aria-selected', 'true');
+    expect(first).toHaveAttribute('aria-selected', 'true');
     await user.keyboard('{Enter}');
 
     expect(await screen.findByText('열린 기업: 035720')).toBeInTheDocument();
