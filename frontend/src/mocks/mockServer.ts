@@ -6,6 +6,7 @@
  * - ?mock_report=fail : 리포트 생성이 실패하는 경우를 흉내 내요.
  */
 import companiesJson from './companies.json';
+import { companyNews, marketNews } from './news';
 import crosswordsJson from './crosswords.json';
 import samsungJson from './samsungElectronics.json';
 import termsJson from './terms.json';
@@ -19,6 +20,7 @@ import type {
   Financials,
   HomeDashboard,
   NewsItem,
+  NewsPage,
   PriceHistory,
   PricePeriod,
   SectorGroup,
@@ -34,12 +36,11 @@ const terms = termsJson as Term[];
 /** 재무·뉴스·리포트 원본이 있는 회사. 다른 회사를 추가하려면 JSON을 만들고 여기에 등록해요. */
 const companyData: Record<
   string,
-  { company: CompanyDetail; financials: Financials; news: NewsItem[]; report: CompanyReport }
+  { company: CompanyDetail; financials: Financials; report: CompanyReport }
 > = {
   '005930': samsungJson as unknown as {
     company: CompanyDetail;
     financials: Financials;
-    news: NewsItem[];
     report: CompanyReport;
   },
 };
@@ -108,9 +109,23 @@ export async function getFinancials(stockCode: string): Promise<Financials> {
   return getData(stockCode).financials;
 }
 
-export async function getNews(stockCode: string): Promise<NewsItem[]> {
+/** 기업 뉴스: 최신순, 페이지 단위 */
+export async function getCompanyNews(
+  stockCode: string,
+  page: number,
+  size: number,
+): Promise<NewsPage> {
   await wait(250);
-  return getData(stockCode).news;
+  const all = companyNews(findCompany(stockCode));
+  const start = (page - 1) * size;
+  return { items: all.slice(start, start + size), page, size, has_next: start + size < all.length };
+}
+
+/** 시장 뉴스 (목 데이터는 날짜와 상관없이 같은 목록) */
+export async function getMarketNews(date: string): Promise<NewsItem[]> {
+  await wait(200);
+  void date;
+  return marketNews();
 }
 
 /* ------------------------------------------------------------------ */

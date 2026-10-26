@@ -40,3 +40,20 @@ export function formatMarketDate(value: string) {
   const afterClose = Number(hour) * 60 + Number(minute) >= 15 * 60 + 30;
   return afterClose ? `${date} 장 마감` : `${date} ${hour}:${minute}`;
 }
+
+/**
+ * 기사·글 시각을 쉽게: "방금 전", "15분 전", "3시간 전", 하루가 넘으면 "10월 19일"
+ * (올해가 아니면 "2025년 10월 19일"). 읽을 수 없는 값은 그대로 돌려줘요.
+ */
+export function formatRelativeTime(iso: string, now: Date = new Date()) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  const diffMs = now.getTime() - date.getTime();
+  const minutes = Math.floor(diffMs / 60_000);
+  if (diffMs >= 0 && minutes < 1) return '방금 전';
+  if (diffMs >= 0 && minutes < 60) return `${minutes}분 전`;
+  const hours = Math.floor(minutes / 60);
+  if (diffMs >= 0 && hours < 24) return `${hours}시간 전`;
+  const sameYear = date.getFullYear() === now.getFullYear();
+  return `${sameYear ? '' : `${date.getFullYear()}년 `}${date.getMonth() + 1}월 ${date.getDate()}일`;
+}

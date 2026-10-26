@@ -2,14 +2,15 @@ import { EmptyState } from '../../components/EmptyState';
 import { Icon } from '../../components/Icon';
 import { Section } from '../../components/Section';
 import { TermText } from '../../components/TermText';
-import { useNews } from '../../hooks/useNews';
+import { useCompanyNews } from '../../hooks/useNews';
+import { formatRelativeTime } from '../../utils/format';
 import styles from './NewsTab.module.css';
 
 export function NewsTab({ stockCode }: { stockCode: string }) {
-  const { data: news, isPending, isError } = useNews(stockCode);
+  const { items: news, isPending, isError } = useCompanyNews(stockCode);
 
   if (isPending) return <p className={styles.loading}>최근 소식을 불러오고 있어요…</p>;
-  if (isError || !news || news.length === 0)
+  if (isError || news.length === 0)
     return (
       <EmptyState
         title="자료를 찾지 못했어요"
@@ -21,10 +22,7 @@ export function NewsTab({ stockCode }: { stockCode: string }) {
     <Section title="최근 소식" description="기사 제목을 누르면 원문으로 이동해요">
       <ul className={styles.list}>
         {news.map((item) => (
-          <li
-            key={item.id}
-            className={`${styles.item} ${item.is_placeholder ? styles.placeholder : ''}`}
-          >
+          <li key={item.id} className={styles.item}>
             {item.url ? (
               <a href={item.url} target="_blank" rel="noopener noreferrer" className={styles.title}>
                 {item.title}
@@ -35,15 +33,15 @@ export function NewsTab({ stockCode }: { stockCode: string }) {
               <p className={styles.title}>{item.title}</p>
             )}
             <p className={styles.meta}>
-              {item.source} · {item.published_at}
+              {item.press} · {formatRelativeTime(item.published_at)}
             </p>
             <p className={styles.summary}>
-              <TermText text={item.summary} />
+              <TermText text={item.summary_short} />
             </p>
-            {item.financial_link && (
+            {item.related_metric && (
               <p className={styles.link}>
                 <span className={styles.linkBadge}>재무 연결</span>
-                {item.financial_link.label} <strong>{item.financial_link.value}</strong>
+                {item.related_metric.label} <strong>{item.related_metric.value}</strong>
               </p>
             )}
           </li>
