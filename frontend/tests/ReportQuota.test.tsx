@@ -1,5 +1,4 @@
-import { act, renderHook, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { act, renderHook, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { Route, Routes } from 'react-router';
 import { describe, expect, it } from 'vitest';
@@ -22,19 +21,13 @@ const today = () => {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 };
 
-describe('AI 리포트 이용 제한 (임시 정책: 비로그인 하루 1회, 로그인 3회, 같은 기업 10분)', () => {
-  it('남은 횟수를 보여주고, 다 쓰면 버튼을 막고 로그인을 안내해요', async () => {
-    const user = userEvent.setup();
+describe('AI 리포트 이용 제한 (임시 정책: 하루 횟수 제한 없음, 같은 기업 10분)', () => {
+  it('하루 횟수 제한이 없어서 남은 횟수 안내를 보여주지 않아요', async () => {
     renderCompanyPage('000660');
 
-    expect(await screen.findByText('오늘 1번 더 만들 수 있어요')).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'AI 리포트 만들기' }));
-
-    // 목 데이터에는 SK하이닉스 자료가 없어서 실패해요. 횟수는 이미 썼어요.
-    const alert = await screen.findByRole('alert');
-    expect(within(alert).getByRole('button', { name: /다시 시도/ })).toBeDisabled();
-    expect(within(alert).getByText(/오늘 만들 수 있는 리포트를 다 썼어요/)).toBeInTheDocument();
-    expect(within(alert).getByRole('button', { name: 'Google로 로그인' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'AI 리포트 만들기' })).toBeInTheDocument();
+    expect(screen.queryByText(/오늘.*번 더 만들 수 있어요/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/오늘 만들 수 있는 리포트를 다 썼어요/)).not.toBeInTheDocument();
   });
 
   it('같은 기업은 10분이 지나야 다시 만들 수 있고, 리포트 보기는 막지 않아요', async () => {
@@ -51,13 +44,14 @@ describe('AI 리포트 이용 제한 (임시 정책: 비로그인 하루 1회, �
     expect(screen.getByText(/같은 기업은 10분마다 만들 수 있어요/)).toBeInTheDocument();
   });
 
-  it('로그인 사용자는 하루 3번까지, 다 쓰면 "내일 다시"로 안내해요', () => {
+  it('로그인 사용자도 하루 횟수 제한 없이 계속 만들 수 있어요', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
       <AuthContext.Provider
         value={{
           user: { email: 'test@example.com', name: '테스트' },
           isLoggedIn: true,
-          loginWithGoogle: async () => true,
+          isLoading: false,
+          loginWithGoogle: () => {},
           logout: async () => {},
         }}
       >
@@ -70,10 +64,10 @@ describe('AI 리포트 이용 제한 (임시 정책: 비로그인 하루 1회, �
     );
     const { result } = renderHook(() => useReportQuota('000660'), { wrapper });
 
-    expect(result.current.limit).toBe(3);
-    expect(result.current.remaining).toBe(1);
+    expect(result.current.limit).toBe(Infinity);
+    expect(result.current.remaining).toBe(Infinity);
     act(() => result.current.consume());
-    expect(result.current.remaining).toBe(0);
-    expect(result.current.blocked).toBe('member-daily');
+    expect(result.current.remaining).toBe(Infinity);
+    expect(result.current.blocked).toBeNull();
   });
 });
