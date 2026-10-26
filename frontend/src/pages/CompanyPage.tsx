@@ -123,7 +123,7 @@ export function CompanyPage() {
               {id === 'analysis' && <AnalysisTab flow={report} onGoToTab={goToTab} />}
               {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
               {id === 'news' && <NewsTab stockCode={stockCode} />}
-              {id === 'community' && <CommunityTab />}
+              {id === 'community' && <CommunityTab stockCode={stockCode} />}
             </div>
           ))}
         </div>
