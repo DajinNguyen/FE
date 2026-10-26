@@ -122,7 +122,7 @@ export function CompanyPage() {
               {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
               {id === 'news' && <NewsTab stockCode={stockCode} />}
               {id === 'info' && <CompanyInfoTab stockCode={stockCode} onGoToTab={goToTab} />}
-              {id === 'community' && <CommunityTab />}
+              {id === 'community' && <CommunityTab stockCode={stockCode} />}
             </div>
           ))}
         </div>

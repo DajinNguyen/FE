@@ -1,0 +1,130 @@
+/* 커뮤니티: 구분선 리스트, 읽는 폭 720px */
+.community {
+  display: flex;
+  max-width: var(--reading-max-width);
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding-top: var(--sp-6);
+}
+
+.notice {
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.notice strong {
+  margin-right: var(--sp-2);
+  color: var(--text-1);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.filters {
+  display: flex;
+  gap: var(--sp-2);
+  margin: 0 calc(var(--page-gutter) * -1);
+  padding: 0 var(--page-gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filter {
+  flex-shrink: 0;
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-full);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.filter[aria-pressed='true'] {
+  border-color: var(--text-1);
+  background: var(--text-1);
+  color: var(--bg);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.list > li {
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-3) 0;
+}
+
+.row:hover .rowTitle {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.rowTitle {
+  font-weight: 800;
+}
+
+.category {
+  margin-right: var(--sp-2);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.preview {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.hiddenRow {
+  padding: var(--sp-3) 0;
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.loading {
+  height: 240px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.emptyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-8) 0;
+}
+
+.emptyTitle {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+
+.empty {
+  color: var(--text-3);
+}
