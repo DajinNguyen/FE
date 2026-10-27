@@ -34,3 +34,32 @@
     display: inline;
   }
 }
+
+.signedIn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+/* 개발용 버튼: 실제 기능과 헷갈리지 않게 점선 테두리 */
+.devButton {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 var(--sp-3);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-full);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.devButton:hover {
+  color: var(--text-1);
+}
+
+@media (max-width: 479px) {
+  .devButton {
+    display: none;
+  }
+}

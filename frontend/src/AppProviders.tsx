@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { ToastProvider } from './components/ToastProvider';
 import { TermSheetProvider } from './components/TermSheetProvider';
 import { AuthProvider } from './features/auth/AuthProvider';
+import { LoginSheetProvider } from './features/auth/LoginSheetProvider';
 import { createQueryClient } from './queryClient';
 
 export function AppProviders({
@@ -17,7 +18,9 @@ export function AppProviders({
     <QueryClientProvider client={client}>
       <ToastProvider>
         <AuthProvider>
-          <TermSheetProvider>{children}</TermSheetProvider>
+          <LoginSheetProvider>
+            <TermSheetProvider>{children}</TermSheetProvider>
+          </LoginSheetProvider>
         </AuthProvider>
       </ToastProvider>
     </QueryClientProvider>
