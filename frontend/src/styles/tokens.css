@@ -6,12 +6,12 @@
  * - text-1~3 은 바탕(bg, surface) 위에서 4.5:1 이상이에요. text-4 는 글자에 쓰지 않아요(테두리·비활성 표시용).
  */
 :root {
-  /* 강조색 (짙은 남색) */
-  --brand: #1d3a64;
-  --brand-strong: #142a49;
-  --brand-weak: #e9eef5;
-  --brand-muted: #c3d0e2;
-  --brand-card: #1d3a64;
+  /* 강조색 (인디고) */
+  --brand: #4338ca;
+  --brand-strong: #3730a3;
+  --brand-weak: #eef0fb;
+  --brand-muted: #c9cdf2;
+  --brand-card: #4338ca;
   --on-brand: #ffffff;
   --on-brand-sub: rgba(255, 255, 255, 0.78);
   /* 강조색 면(용어 카드 앞면 등) 위의 글자 */
@@ -20,24 +20,24 @@
 
   /* 배경·면 */
   --bg: #ffffff;
-  --bg-outside: #f0f2f5;
-  --surface: #f5f7fa;
-  --surface-strong: #eceff4;
-  --line: #e3e7ed;
-  --line-strong: #c2c9d3;
+  --bg-outside: #f1f2f7;
+  --surface: #f6f7fb;
+  --surface-strong: #eceef6;
+  --line: #e3e5ee;
+  --line-strong: #c3c7d6;
 
   /* 낱말퀴즈: 막힌 칸 / 글자 칸 */
-  --cw-block: #2b3442;
+  --cw-block: #272a45;
   --cw-cell: #ffffff;
 
   /* 그래프: 강조 막대는 brand, 나머지 막대는 chart-muted (바탕 대비 3:1 이상) */
-  --chart-muted: #7d90ae;
+  --chart-muted: #8a90bf;
 
   /* 글자 */
-  --text-1: #111827;
-  --text-2: #374151;
-  --text-3: #5b6472;
-  --text-4: #9aa3af;
+  --text-1: #14162a;
+  --text-2: #373a52;
+  --text-3: #5b5f76;
+  --text-4: #9a9db0;
 
   /* 상태 */
   --good: #1b7a46;
@@ -49,19 +49,19 @@
 
   /* 시세 (한국 관례: 상승 빨강 / 하락 파랑) */
   --rise: #cc2f36;
-  --fall: #2a5fc4;
+  --fall: #1565c0;
 
   /* 아바타 (강조색을 늘리지 않도록 회색 한 가지) */
-  --avatar-1: #eceff4;
-  --avatar-2: #eceff4;
-  --avatar-3: #eceff4;
-  --avatar-4: #eceff4;
-  --avatar-5: #eceff4;
-  --avatar-text: #1d3a64;
+  --avatar-1: #eceef6;
+  --avatar-2: #eceef6;
+  --avatar-3: #eceef6;
+  --avatar-4: #eceef6;
+  --avatar-5: #eceef6;
+  --avatar-text: #4338ca;
 
-  --overlay: rgba(10, 14, 20, 0.45);
-  --shadow-float: 0 4px 16px rgba(17, 24, 39, 0.08);
-  --shadow-pop: 0 12px 32px rgba(17, 24, 39, 0.14);
+  --overlay: rgba(12, 13, 28, 0.45);
+  --shadow-float: 0 4px 16px rgba(20, 22, 42, 0.08);
+  --shadow-pop: 0 12px 32px rgba(20, 22, 42, 0.14);
 
   /* 글자 크기 — 12px 이하는 쓰지 않아요. */
   --fs-xs: 13px; /* 출처·기준일 같은 보조 글자 */
@@ -118,28 +118,28 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --brand: #9db8e0;
-    --brand-strong: #c0d3ee;
-    --brand-weak: #1a2536;
-    --brand-muted: #34496a;
-    --brand-card: #24406b;
-    --on-brand-card: #e8ecf2;
-    --on-brand-card-sub: rgba(232, 236, 242, 0.75);
-    --on-brand: #0f1319;
-    --on-brand-sub: rgba(15, 19, 25, 0.72);
-    --bg: #0f1319;
-    --bg-outside: #0a0d11;
-    --surface: #171c24;
-    --surface-strong: #212833;
-    --line: #313946;
-    --line-strong: #4a5363;
-    --chart-muted: #5a7399;
-    --cw-block: #04060a;
-    --cw-cell: #1f2631;
-    --text-1: #e8ecf2;
-    --text-2: #bcc4cf;
-    --text-3: #939cab;
-    --text-4: #5d6675;
+    --brand: #a5b0fb;
+    --brand-strong: #c7cdfd;
+    --brand-weak: #1c1f3a;
+    --brand-muted: #353b70;
+    --brand-card: #30368a;
+    --on-brand-card: #e8e9f3;
+    --on-brand-card-sub: rgba(232, 233, 243, 0.75);
+    --on-brand: #0e1018;
+    --on-brand-sub: rgba(14, 16, 24, 0.72);
+    --bg: #0e1018;
+    --bg-outside: #090a10;
+    --surface: #161925;
+    --surface-strong: #20233a;
+    --line: #2e3247;
+    --line-strong: #474c66;
+    --chart-muted: #5f66a5;
+    --cw-block: #05060a;
+    --cw-cell: #1e2133;
+    --text-1: #e8e9f3;
+    --text-2: #bfc2d6;
+    --text-3: #9598ae;
+    --text-4: #5d6076;
     --good: #5fc98b;
     --good-weak: #173224;
     --normal: #e2a64a;
@@ -147,13 +147,13 @@
     --caution: #f08a5d;
     --caution-weak: #3b2219;
     --rise: #ff6b70;
-    --fall: #78a6ff;
-    --avatar-1: #212833;
-    --avatar-2: #212833;
-    --avatar-3: #212833;
-    --avatar-4: #212833;
-    --avatar-5: #212833;
-    --avatar-text: #c0d3ee;
+    --fall: #6cb6ff;
+    --avatar-1: #20233a;
+    --avatar-2: #20233a;
+    --avatar-3: #20233a;
+    --avatar-4: #20233a;
+    --avatar-5: #20233a;
+    --avatar-text: #c7cdfd;
     --overlay: rgba(0, 0, 0, 0.6);
     --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.4);
     --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
@@ -162,28 +162,28 @@
 }
 
 :root[data-theme='dark'] {
-  --brand: #9db8e0;
-  --brand-strong: #c0d3ee;
-  --brand-weak: #1a2536;
-  --brand-muted: #34496a;
-  --brand-card: #24406b;
-  --on-brand-card: #e8ecf2;
-  --on-brand-card-sub: rgba(232, 236, 242, 0.75);
-  --on-brand: #0f1319;
-  --on-brand-sub: rgba(15, 19, 25, 0.72);
-  --bg: #0f1319;
-  --bg-outside: #0a0d11;
-  --surface: #171c24;
-  --surface-strong: #212833;
-  --line: #313946;
-  --line-strong: #4a5363;
-  --chart-muted: #5a7399;
-  --cw-block: #04060a;
-  --cw-cell: #1f2631;
-  --text-1: #e8ecf2;
-  --text-2: #bcc4cf;
-  --text-3: #939cab;
-  --text-4: #5d6675;
+  --brand: #a5b0fb;
+  --brand-strong: #c7cdfd;
+  --brand-weak: #1c1f3a;
+  --brand-muted: #353b70;
+  --brand-card: #30368a;
+  --on-brand-card: #e8e9f3;
+  --on-brand-card-sub: rgba(232, 233, 243, 0.75);
+  --on-brand: #0e1018;
+  --on-brand-sub: rgba(14, 16, 24, 0.72);
+  --bg: #0e1018;
+  --bg-outside: #090a10;
+  --surface: #161925;
+  --surface-strong: #20233a;
+  --line: #2e3247;
+  --line-strong: #474c66;
+  --chart-muted: #5f66a5;
+  --cw-block: #05060a;
+  --cw-cell: #1e2133;
+  --text-1: #e8e9f3;
+  --text-2: #bfc2d6;
+  --text-3: #9598ae;
+  --text-4: #5d6076;
   --good: #5fc98b;
   --good-weak: #173224;
   --normal: #e2a64a;
@@ -191,13 +191,13 @@
   --caution: #f08a5d;
   --caution-weak: #3b2219;
   --rise: #ff6b70;
-  --fall: #78a6ff;
-  --avatar-1: #212833;
-  --avatar-2: #212833;
-  --avatar-3: #212833;
-  --avatar-4: #212833;
-  --avatar-5: #212833;
-  --avatar-text: #c0d3ee;
+  --fall: #6cb6ff;
+  --avatar-1: #20233a;
+  --avatar-2: #20233a;
+  --avatar-3: #20233a;
+  --avatar-4: #20233a;
+  --avatar-5: #20233a;
+  --avatar-text: #c7cdfd;
   --overlay: rgba(0, 0, 0, 0.6);
   --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
