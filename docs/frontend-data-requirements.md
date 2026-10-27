@@ -142,7 +142,7 @@
 
 ### 숨김·미사용 칸
 
-- `rising` (떠오르는 기업): 화면에서 삭제했어요. (대신 "지금 관심이 몰리는 산업")
+- `rising` (떠오르는 기업): 화면에서 삭제했어요. (대신 "관심이 몰리는 산업")
 - `most_viewed`, `ai_analyzed`: 메인 섹션을 5개 이하로 줄이면서 화면에서 뺐어요. 계속 보내도 문제없어요.
 
 ## 3. AI 리포트 `GET·POST /api/companies/{code}/report`
@@ -206,7 +206,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | API | 응답 | 쓰는 화면 |
 |---|---|---|
 | `GET /api/companies/{stock_code}/news?page=1&size=10` | `NewsPage { items, page, size, has_next }` | 기업 상세 > 뉴스 상세 (10개씩 + [더 보기]) |
-| `GET /api/market/news?date=YYYY-MM-DD` | `NewsItem[]` | 메인 "오늘 시장이 왜 이렇게 움직였나요?" |
+| `GET /api/market/news?date=YYYY-MM-DD` | `NewsItem[]` | 메인 "오늘 시장, 왜 움직였나요?" |
 | `GET /api/industries/{industry_id}/news?size=5` | `NewsItem[]` | 산업 페이지 "관련 뉴스" (5개) |
 
 리포트의 `evidence.news` 도 같은 `NewsItem` 형식이에요. (이전 `NewsEvidence` 삭제)
@@ -262,7 +262,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 
 ### 6-1. 뜨는 산업 `GET /api/industries/hot?period=1w|1m`
 
-메인 "지금 관심이 몰리는 산업" 아이콘 8~10개. 점수 높은 순으로 주세요.
+메인 "관심이 몰리는 산업" 아이콘 8~10개. 점수 높은 순으로 주세요.
 
 ```json
 [
@@ -286,7 +286,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | `icon_key` | string | 선 아이콘 (`ai`, `semiconductor`, `battery`, `bio`, `internet`, `auto`, `shipbuilding`, `defense`, `finance`, `game`) | 모르는 값이면 기본 아이콘 |
 | `heat_score` | number | (순서 확인용) | 필수 |
 | `heat_level` | `"high" \| "mid" \| "low"` | 아이콘 크기 (크게·중간·작게) | 필수 |
-| `headline_metric` | `{ label, value, unit }` | "최근 1주 +6.2%" | 필수 (숫자 없는 아이콘은 안 보여줘요) |
+| `headline_metric` | `{ label, value, unit }` | 아이콘 아래 "+6.2%" (label 은 화면 낭독용 "최근 1주 6.2% 상승") | 필수 (숫자 없는 아이콘은 안 보여줘요) |
 | `as_of` | ISO 8601 | 기준 시각 (DataAsOf) | 필수 |
 | `is_sample` | boolean | "예시 값" 배지 | false 로 보면 돼요 |
 
@@ -357,7 +357,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | `indices[].value`, `change`, `change_rate` | number | 지수, 어제 대비 등락폭·등락률 (상승 빨강 ▲, 하락 파랑 ▼) | 필수 |
 | `indices[].is_sample` | boolean (요청 형식에 추가) | true 면 "예시 값" 배지 | 필수 |
 | `indices[].intraday` | `{ time, value }[]` | 작은 당일 흐름 선 그래프 | 없으면 그래프 숨김 |
-| `reasons[]` | 최대 3개 | "오늘 시장이 왜 이렇게 움직였나요?" 카드 | 빈 배열이면 섹션 숨김 |
+| `reasons[]` | 최대 3개 | "오늘 시장, 왜 움직였나요?" 카드 | 빈 배열이면 섹션 숨김 |
 | `reasons[].industries` | `{ industry_id, name, change_rate }[]` | 관련 산업 칩 (예: 반도체 ▲2.1%), 누르면 산업 페이지 | 빈 배열이면 숨김 |
 | `reasons[].news` | `NewsItem[]` | 근거 뉴스 (언론사·시간·원문 링크) | 빈 배열이면 숨김 |
 

@@ -54,7 +54,7 @@ export function marketSummary(): MarketSummary {
     reasons: [
       {
         title: 'AI 서버용 메모리 기대가 커졌어요',
-        description: '빅테크의 데이터센터 투자 소식에 메모리 반도체 회사들이 주목받았어요.',
+        description: '빅테크 데이터센터 투자 소식에 메모리 반도체가 주목받았어요.',
         industries: [
           { industry_id: 'semiconductor', name: '반도체', change_rate: 2.1 },
           { industry_id: 'ai', name: 'AI', change_rate: 1.8 },
@@ -62,8 +62,8 @@ export function marketSummary(): MarketSummary {
         news: pick('market-chip', 'market-chip-2'),
       },
       {
-        title: '외국인 투자자가 대형주를 많이 샀어요',
-        description: '환율이 내리면서 외국인이 대형주를 산 금액이 더 많았어요.',
+        title: '외국인이 대형주를 샀어요',
+        description: '환율이 내려 외국인 매수가 늘었어요.',
         industries: [
           { industry_id: 'finance', name: '금융', change_rate: 0.8 },
           { industry_id: 'auto', name: '자동차', change_rate: 0.6 },
@@ -72,7 +72,7 @@ export function marketSummary(): MarketSummary {
       },
       {
         title: '2차전지는 약했어요',
-        description: '배터리 원재료 가격이 내려 관련 기업 주가가 내렸어요.',
+        description: '배터리 원재료 값이 내려 주가도 내렸어요.',
         industries: [
           { industry_id: 'battery', name: '2차전지', change_rate: -1.3 },
           { industry_id: 'bio', name: '바이오', change_rate: -0.4 },

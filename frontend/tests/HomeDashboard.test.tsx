@@ -32,7 +32,7 @@ describe('메인 화면', () => {
       'href',
       '/rankings/trading',
     );
-    expect(screen.getByRole('link', { name: /가로세로 낱말퀴즈/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /낱말퀴즈/ })).toHaveAttribute(
       'href',
       '/terms?mode=crossword',
     );

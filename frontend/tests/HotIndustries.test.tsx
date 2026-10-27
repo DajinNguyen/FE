@@ -25,7 +25,7 @@ describe('지금 관심이 몰리는 산업', () => {
     const ai = links[0];
     expect(ai).toHaveAttribute('aria-label', 'AI 산업, 최근 1주 6.2% 상승, 관심도 높음');
     expect(ai).toHaveAttribute('href', '/industries/ai');
-    expect(ai).toHaveTextContent('최근 1주 +6.2%');
+    expect(ai).toHaveTextContent('+6.2%');
     // 모든 아이콘에 대표 숫자가 있어요.
     links.forEach((link) => expect(link).toHaveTextContent(/[+-]?\d+\.\d%/));
     expect(screen.getByText(/장 마감 기준|기준$/)).toBeInTheDocument();

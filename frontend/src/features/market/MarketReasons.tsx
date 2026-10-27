@@ -22,13 +22,13 @@ function IndustryChip({ id, name, changeRate }: { id: string; name: string; chan
   );
 }
 
-/** 오늘 시장이 왜 이렇게 움직였나요? 이유 3개: 제목 → 설명 → 근거 뉴스 → 관련 산업 */
+/** 오늘 시장, 왜 움직였나요? 이유 3개: 제목 → 설명 → 근거 뉴스 → 관련 산업 */
 export function MarketReasons({ reasons }: { reasons: MarketReason[] }) {
   if (reasons.length === 0) return null;
   return (
     <section aria-labelledby="market-reasons" className={styles.reasons}>
       <h2 id="market-reasons" className={styles.reasonsTitle}>
-        오늘 시장이 왜 이렇게 움직였나요?
+        오늘 시장, 왜 움직였나요?
       </h2>
       <ol className={styles.reasonList}>
         {reasons.slice(0, 3).map((reason) => (
@@ -38,7 +38,11 @@ export function MarketReasons({ reasons }: { reasons: MarketReason[] }) {
             {reason.news.length > 0 && (
               <div className={styles.reasonNews}>
                 <p className={styles.reasonNewsLabel}>근거 뉴스</p>
-                <NewsList items={reason.news.slice(0, 1)} compact label={`${reason.title} 근거 뉴스`} />
+                <NewsList
+                  items={reason.news.slice(0, 1)}
+                  compact
+                  label={`${reason.title} 근거 뉴스`}
+                />
               </div>
             )}
             {reason.industries.length > 0 && (

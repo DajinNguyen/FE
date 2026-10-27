@@ -37,9 +37,7 @@ describe('메인 오늘의 시장', () => {
   it('한마디 아래에 기준 시각과 AI 정리 안내, 지수와 예시 값 배지를 보여줘요', async () => {
     renderWithProviders(<MarketToday />);
     expect(await screen.findByText(SERVICE_INTRO)).toBeInTheDocument();
-    expect(
-      await screen.findByText(/기준 · AI가 뉴스와 지수를 바탕으로 정리했어요/),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/기준 · AI 정리/)).toBeInTheDocument();
     const indexes = screen.getByLabelText('시장 지수');
     expect(within(indexes).getByText('코스피')).toBeInTheDocument();
     expect(within(indexes).getByText('코스닥')).toBeInTheDocument();
@@ -49,7 +47,7 @@ describe('메인 오늘의 시장', () => {
   it('오늘 시장이 왜 움직였는지 이유 3개와 근거 뉴스, 산업 페이지로 가는 산업 칩을 보여줘요', async () => {
     renderWithProviders(<MarketToday />);
     const section = await screen.findByRole('region', {
-      name: '오늘 시장이 왜 이렇게 움직였나요?',
+      name: '오늘 시장, 왜 움직였나요?',
     });
     const reasons = within(section).getAllByRole('heading', { level: 3 });
     expect(reasons).toHaveLength(3);

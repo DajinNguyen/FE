@@ -32,8 +32,8 @@ function IndustryIcon({ industry }: { industry: IndustrySummary }) {
           <Icon size={iconSize[industry.heat_level]} strokeWidth={1.75} />
         </span>
         <span className={styles.hotName}>{industry.name}</span>
-        <span className={styles.hotMetric}>
-          {metric.label} <span className={styles[direction]}>{signedPercent(metric.value)}</span>
+        <span className={`${styles.hotMetric} ${styles[direction]}`}>
+          {signedPercent(metric.value)}
         </span>
       </Link>
     </li>
@@ -52,7 +52,7 @@ export function HotIndustries() {
       <div className={styles.hotHead}>
         <div>
           <h2 id="hot-industries" className={styles.hotTitle}>
-            지금 관심이 몰리는 산업
+            관심이 몰리는 산업
           </h2>
           {first && (
             <p className={styles.hotNote}>
