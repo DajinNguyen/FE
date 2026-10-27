@@ -7,3 +7,4 @@ export type * from './term';
 export type * from './price';
 export type * from './home';
 export type * from './crossword';
+export type * from './industry';
