@@ -38,7 +38,7 @@ export function MarketReasons({ reasons }: { reasons: MarketReason[] }) {
             {reason.news.length > 0 && (
               <div className={styles.reasonNews}>
                 <p className={styles.reasonNewsLabel}>근거 뉴스</p>
-                <NewsList items={reason.news} compact label={`${reason.title} 근거 뉴스`} />
+                <NewsList items={reason.news.slice(0, 1)} compact label={`${reason.title} 근거 뉴스`} />
               </div>
             )}
             {reason.industries.length > 0 && (

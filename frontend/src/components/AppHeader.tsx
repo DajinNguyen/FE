@@ -47,12 +47,11 @@ export function AppHeader() {
           })}
         </nav>
 
+        <div className={styles.search}>
+          <CompanySearch variant="header" />
+        </div>
+
         <div className={styles.actions}>
-          {pathname !== '/' && (
-            <div className={styles.search}>
-              <CompanySearch variant="header" />
-            </div>
-          )}
           <button
             type="button"
             className={styles.iconButton}

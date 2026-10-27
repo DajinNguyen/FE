@@ -14,6 +14,13 @@
   gap: var(--sp-4);
 }
 
+/* 900px 이상은 위쪽 메뉴에 검색창이 있어요. (AppHeader.module.css 와 같은 기준) */
+@media (min-width: 900px) {
+  .hero {
+    display: none;
+  }
+}
+
 .hint {
   color: var(--text-3);
 }

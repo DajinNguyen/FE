@@ -15,7 +15,7 @@ import styles from './HomePage.module.css';
 /**
  * 메인 화면 (위에서 아래로)
  * 1. 오늘의 시장: 한마디(페이지 제목) · 서비스 소개 한 줄 · 지수 · 왜 움직였나요?
- * 2. 기업 검색 (시장 정보가 없어도 항상 써요)
+ * 2. 기업 검색 (넓은 화면은 위쪽 메뉴에, 좁은 화면은 여기에)
  * 3. 지금 관심이 몰리는 산업
  * 4. 거래 많은 기업 TOP 3 (작게)
  * 5. 용어 학습
@@ -28,6 +28,7 @@ export function HomePage() {
     <div className={styles.page}>
       <MarketToday />
 
+      {/* 넓은 화면은 위쪽 메뉴(관심 기업 옆)에 검색창이 있어서, 좁은 화면에서만 보여줘요. */}
       <section className={styles.hero} aria-label="기업 검색">
         <CompanySearch variant="hero" />
       </section>
