@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { EmptyState } from '../../components/EmptyState';
 import { Icon } from '../../components/Icon';
 import { SampleBadge } from '../../components/SampleBadge';
@@ -9,6 +10,35 @@ import { formatTrillion } from '../../utils/format';
 import styles from './CompanyInfo.module.css';
 
 const marketLabel = { KOSPI: '코스피', KOSDAQ: '코스닥' } as const;
+
+/** 업종 + 소속 산업 칩 (산업 페이지로) */
+function IndustryLine({
+  sector,
+  industries,
+}: {
+  sector: string;
+  industries: { industry_id: string; name: string }[];
+}) {
+  return (
+    <p className={styles.industryLine}>
+      <span className={styles.industryLabel}>업종</span> {sector}
+      {industries.length > 0 && (
+        <>
+          <span className={styles.industryLabel}>소속 산업</span>
+          {industries.map((industry) => (
+            <Link
+              key={industry.industry_id}
+              to={`/industries/${industry.industry_id}`}
+              className={styles.industryChip}
+            >
+              {industry.name} 산업 보기
+            </Link>
+          ))}
+        </>
+      )}
+    </p>
+  );
+}
 
 /** 개요 탭의 기업 정보: 무슨 사업을 하나요? · 회사의 방향 · 기본 정보 */
 export function CompanyInfo({ stockCode }: { stockCode: string }) {
@@ -26,6 +56,7 @@ export function CompanyInfo({ stockCode }: { stockCode: string }) {
               <TermText text={company.business_description} />
             </p>
           )}
+          <IndustryLine sector={company.sector} industries={company.industries} />
           <ul className={styles.segments}>
             {company.business_segments.map((segment) => (
               <li key={segment.code} className={styles.segment}>
@@ -39,6 +70,7 @@ export function CompanyInfo({ stockCode }: { stockCode: string }) {
         </Section>
       ) : (
         <Section title="무슨 사업을 하나요?">
+          <IndustryLine sector={company.sector} industries={company.industries} />
           <EmptyState
             title="자료를 찾지 못했어요"
             description="사업보고서 내용을 아직 불러오지 못했어요."

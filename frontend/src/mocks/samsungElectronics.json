@@ -73,7 +73,8 @@
       }
     ],
     "timeline_source": "삼성전자 2025년 4분기 실적 발표 (2026년 1월)",
-    "price_as_of": null
+    "price_as_of": null,
+    "industries": []
   },
   "financials": {
     "stock_code": "005930",
@@ -145,6 +146,50 @@
       "pbr": {
         "value": 1.9,
         "is_sample": true
+      }
+    },
+    "recent_performance": {
+      "period_label": "2025년 4분기 실적",
+      "announced_at": "2026-01-29",
+      "revenue": {
+        "value": 93.8,
+        "unit": "조 원",
+        "yoy_change_rate": 23.7,
+        "yoy_is_sample": true
+      },
+      "operating_income": {
+        "value": 20.1,
+        "unit": "조 원",
+        "yoy_change_rate": 209.2,
+        "yoy_is_sample": true
+      },
+      "summary": "AI용 메모리(HBM) 판매가 늘면서 분기 기준 가장 많은 매출을 냈어요.",
+      "segments": [
+        {
+          "name": "DS(반도체)",
+          "revenue": 44.0,
+          "unit": "조 원"
+        },
+        {
+          "name": "MX·네트워크(스마트폰 등)",
+          "revenue": 29.3,
+          "unit": "조 원"
+        },
+        {
+          "name": "SDC(디스플레이)",
+          "revenue": 9.5,
+          "unit": "조 원"
+        },
+        {
+          "name": "하만(전장·오디오)",
+          "revenue": 4.6,
+          "unit": "조 원"
+        }
+      ],
+      "source": {
+        "title": "삼성전자 2025년 4분기 실적 발표",
+        "date": "2026-01-29",
+        "url": "https://dart.fss.or.kr/"
       }
     }
   },
@@ -277,9 +322,21 @@
     "evidence": {
       "financials": {
         "unit": "조 원",
-        "years": ["2023", "2024", "2025"],
-        "revenue": [258.94, 300.9, 333.6],
-        "operating_income": [6.57, 32.7, 43.6],
+        "years": [
+          "2023",
+          "2024",
+          "2025"
+        ],
+        "revenue": [
+          258.94,
+          300.9,
+          333.6
+        ],
+        "operating_income": [
+          6.57,
+          32.7,
+          43.6
+        ],
         "highlights": [
           {
             "label": "매출",
@@ -370,24 +427,40 @@
     "quiz": [
       {
         "question": "삼성전자의 2025년 매출은 얼마였을까요?",
-        "options": ["258.94조 원", "300.9조 원", "333.6조 원"],
+        "options": [
+          "258.94조 원",
+          "300.9조 원",
+          "333.6조 원"
+        ],
         "answer_index": 2,
         "explanation": "2025년 매출은 333.6조 원이에요. 2023년 258.94조 원 → 2024년 300.9조 원 → 2025년 333.6조 원으로 해마다 늘었어요."
       },
       {
         "question": "2025년 4분기에 가장 많은 매출을 낸 사업은 무엇일까요?",
-        "options": ["DS(반도체)", "MX·네트워크(스마트폰 등)", "하만(전장·오디오)"],
+        "options": [
+          "DS(반도체)",
+          "MX·네트워크(스마트폰 등)",
+          "하만(전장·오디오)"
+        ],
         "answer_index": 0,
         "explanation": "DS(반도체)가 44.0조 원으로 가장 많았어요. 스마트폰 등 MX·네트워크는 29.3조 원, 하만은 4.6조 원이었어요."
       },
       {
         "question": "2023~2025년 중 영업이익이 가장 적었던 해는 언제일까요?",
-        "options": ["2023년", "2024년", "2025년"],
+        "options": [
+          "2023년",
+          "2024년",
+          "2025년"
+        ],
         "answer_index": 0,
         "explanation": "2023년 영업이익은 6.57조 원으로 가장 적었어요. 2024년 32.7조 원, 2025년 43.6조 원으로 다시 늘었어요. 이처럼 반도체 경기에 따라 이익이 크게 달라질 수 있어요."
       }
     ],
-    "sources": ["금융감독원 DART", "한국거래소", "삼성전자 실적 발표"],
+    "sources": [
+      "금융감독원 DART",
+      "한국거래소",
+      "삼성전자 실적 발표"
+    ],
     "failure_reason": null,
     "data_as_of": {
       "financials": "2025년 사업보고서",

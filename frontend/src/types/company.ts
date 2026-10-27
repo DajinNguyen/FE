@@ -42,6 +42,8 @@ export interface TimelineItem {
 export interface CompanyDetail extends CompanySummary {
   /** 시가총액 (조 원). 아직 자료가 없으면 null */
   market_cap: SampleNumber | null;
+  /** 이 회사가 속한 산업 (칩을 누르면 산업 페이지). 없으면 빈 배열 */
+  industries: { industry_id: string; name: string }[];
   homepage_url: string;
   dart_url: string;
   business_description: string;
