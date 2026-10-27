@@ -5,14 +5,15 @@ import { DetailNotice } from '../components/DetailNotice';
 import { EmptyState } from '../components/EmptyState';
 import { Icon } from '../components/Icon';
 import { Tabs } from '../components/Tabs';
+import { AnalysisTab } from '../features/analysis/AnalysisTab';
 import { CommunityTab } from '../features/community/CommunityTab';
 import { CompanyAside } from '../features/company/CompanyAside';
 import { CompanyHeader } from '../features/company/CompanyHeader';
-import { CompanyInfoTab } from '../features/company-info/CompanyInfoTab';
 import {
   companyTabs,
   DEFAULT_COMPANY_TAB,
   isCompanyTabId,
+  isDetailTab,
   type CompanyTabId,
   type GoToTab,
 } from '../features/companyTabs';
@@ -117,11 +118,11 @@ export function CompanyPage() {
               hidden={tab !== id}
               className={styles.panel}
             >
-              {id !== 'overview' && <DetailNotice onBack={() => goToTab('overview')} />}
-              {id === 'overview' && <OverviewTab flow={report} onGoToTab={goToTab} />}
+              {isDetailTab(id) && <DetailNotice onBack={() => goToTab('overview')} />}
+              {id === 'overview' && <OverviewTab stockCode={stockCode} onGoToTab={goToTab} />}
+              {id === 'analysis' && <AnalysisTab flow={report} onGoToTab={goToTab} />}
               {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
               {id === 'news' && <NewsTab stockCode={stockCode} />}
-              {id === 'info' && <CompanyInfoTab stockCode={stockCode} onGoToTab={goToTab} />}
               {id === 'community' && <CommunityTab />}
             </div>
           ))}

@@ -6,23 +6,46 @@ import { EvidenceSection } from '../src/features/evidence/EvidenceSection';
 import { CompanyPage } from '../src/pages/CompanyPage';
 import { renderWithProviders } from './testUtils';
 
-const renderCompanyPage = (stockCode: string) =>
+const renderCompanyPage = (stockCode: string, tab = 'analysis') =>
   renderWithProviders(
     <Routes>
       <Route path="/companies/:stockCode" element={<CompanyPage />} />
     </Routes>,
-    { route: `/companies/${stockCode}` },
+    { route: tab ? `/companies/${stockCode}?tab=${tab}` : `/companies/${stockCode}` },
   );
 
 afterEach(() => {
   window.history.replaceState(null, '', '/');
 });
 
-describe('기업 화면: AI 핵심 분석 중심', () => {
-  it('처음에는 AI 한 줄 결론과, 질문 3개로 묶은 핵심 포인트 5줄을 보여줘요', async () => {
-    renderCompanyPage('005930');
+describe('기업 화면 탭', () => {
+  it('검색 후 들어오면 개요가 기본이고, 탭은 개요·AI 분석·재무 상세·뉴스 상세·커뮤니티예요', async () => {
+    const user = userEvent.setup();
+    renderCompanyPage('005930', '');
 
     expect(await screen.findByRole('tab', { name: '개요', selected: true })).toBeInTheDocument();
+    expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual([
+      '개요',
+      'AI 분석',
+      '재무 상세',
+      '뉴스 상세',
+      '커뮤니티',
+    ]);
+    expect(await screen.findByRole('heading', { name: '무슨 사업을 하나요?' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'AI 분석 보기' }));
+    expect(screen.getByRole('tab', { name: 'AI 분석', selected: true })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('region', { name: '지금 어떤 상황인가요?' }),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('기업 화면: AI 분석', () => {
+  it('AI 한 줄 결론과, 질문 3개로 묶은 핵심 포인트 5줄을 보여줘요', async () => {
+    renderCompanyPage('005930');
+
+    expect(await screen.findByRole('tab', { name: 'AI 분석', selected: true })).toBeInTheDocument();
     expect(
       await screen.findByText('AI용 메모리가 잘 팔리면서 3년 만에 이익이 크게 늘어난 회사예요', {
         exact: false,
@@ -92,7 +115,7 @@ describe('기업 화면: AI 핵심 분석 중심', () => {
 
   it('상세 탭에는 안내와 "개요로 돌아가기"가 있어요', async () => {
     const user = userEvent.setup();
-    renderCompanyPage('005930');
+    renderCompanyPage('005930', '');
 
     await user.click(await screen.findByRole('tab', { name: '재무 상세' }));
     const panel = screen.getByRole('tabpanel', { name: '재무 상세' });
