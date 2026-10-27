@@ -1,4 +1,3 @@
-import { SampleBadge } from '../../components/SampleBadge';
 import { StatusBadge } from '../../components/StatusBadge';
 import { TermText } from '../../components/TermText';
 import type { Indicator } from './indicators';
@@ -16,9 +15,7 @@ export function IndicatorSignals({ indicators }: { indicators: Indicator[] }) {
             </span>
             <StatusBadge status={indicator.status} />
           </div>
-          <p className={styles.signalValue}>
-            {indicator.display} <SampleBadge isSample={indicator.is_sample} />
-          </p>
+          <p className={styles.signalValue}>{indicator.display}</p>
           <p className={styles.signalDescription}>{indicator.description}</p>
           <p className={styles.signalCriteria}>기준: {indicator.criteria}</p>
         </li>

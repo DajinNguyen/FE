@@ -18,12 +18,12 @@ describe('메인 화면', () => {
     expect(screen.queryByText('이렇게 찾아보세요')).not.toBeInTheDocument();
   });
 
-  it('거래 많은 기업은 기준일과 함께 TOP 3만 작게 보여줘요 (순위·기업명·한 줄 소개·거래대금)', async () => {
+  it('거래 많은 기업은 기준일과 함께 TOP 5만 작게 보여줘요 (순위·기업명·한 줄 소개·거래대금)', async () => {
     renderWithProviders(<HomePage />);
 
     const list = await screen.findByRole('list', { name: '거래 많은 기업' });
     const rows = within(list).getAllByRole('listitem');
-    expect(rows).toHaveLength(3);
+    expect(rows).toHaveLength(5);
     expect(rows[0]).toHaveTextContent('1삼성전자');
     expect(rows[0]).toHaveTextContent('거래대금');
     expect(within(rows[0]).queryByText('AI 결론')).not.toBeInTheDocument();
@@ -38,9 +38,7 @@ describe('메인 화면', () => {
     );
     expect(screen.queryByRole('list', { name: '다진이 하는 일' })).not.toBeInTheDocument();
     expect(within(list).queryByText('예시 값')).not.toBeInTheDocument();
-    expect(screen.getByRole('complementary', { name: '다진 사용 방법' })).toHaveTextContent(
-      '기업을 검색하면 AI가 재무제표·뉴스를 근거로 쉽게 설명해요',
-    );
+    expect(screen.queryByText('다진 사용 방법')).not.toBeInTheDocument();
   });
 
   it('업종별 기업 탭 대신 관심이 몰리는 산업 아이콘을 보여줘요', async () => {

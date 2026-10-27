@@ -2,7 +2,6 @@ import type { CompanySummary } from '../types';
 import { formatPrice } from '../utils/format';
 import { CompanyAvatar } from './CompanyAvatar';
 import { PriceChange } from './PriceChange';
-import { SampleBadge } from './SampleBadge';
 import styles from './CompanyRow.module.css';
 
 interface CompanyRowProps {
@@ -12,7 +11,6 @@ interface CompanyRowProps {
 }
 
 export function CompanyRow({ company, onSelect, rank }: CompanyRowProps) {
-  const isSample = company.current_price.is_sample || company.change_rate.is_sample;
   return (
     <li>
       <button type="button" className={styles.row} onClick={() => onSelect(company)}>
@@ -28,7 +26,6 @@ export function CompanyRow({ company, onSelect, rank }: CompanyRowProps) {
           <span className={styles.priceValue}>{formatPrice(company.current_price.value)}</span>
           <span className={styles.priceSub}>
             <PriceChange rate={company.change_rate.value} />
-            <SampleBadge isSample={isSample} />
           </span>
         </span>
       </button>

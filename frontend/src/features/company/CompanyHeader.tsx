@@ -1,7 +1,6 @@
 import { CompanyAvatar } from '../../components/CompanyAvatar';
 import { DataAsOf } from '../../components/DataAsOf';
 import { PriceChange } from '../../components/PriceChange';
-import { SampleBadge } from '../../components/SampleBadge';
 import { TermText } from '../../components/TermText';
 import type { CompanyDetail } from '../../types';
 import { formatPrice } from '../../utils/format';
@@ -40,9 +39,6 @@ export function CompanyHeader({ company }: { company: CompanyDetail }) {
         <span className={styles.price}>
           {formatPrice(company.current_price.value)}
           <PriceChange rate={company.change_rate.value} />
-          <SampleBadge
-            isSample={company.current_price.is_sample || company.change_rate.is_sample}
-          />
           <DataAsOf value={company.price_as_of} />
         </span>
         {indicators.length > 0 && (
@@ -53,7 +49,6 @@ export function CompanyHeader({ company }: { company: CompanyDetail }) {
                   <TermText text={item.label} />
                 </span>
                 {item.display}
-                <SampleBadge isSample={item.value.is_sample} />
               </li>
             ))}
           </ul>

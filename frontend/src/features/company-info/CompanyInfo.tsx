@@ -1,7 +1,7 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { EmptyState } from '../../components/EmptyState';
 import { Icon } from '../../components/Icon';
-import { SampleBadge } from '../../components/SampleBadge';
 import { Section } from '../../components/Section';
 import { TermText } from '../../components/TermText';
 import { useCompany } from '../../hooks/useCompanies';
@@ -41,7 +41,14 @@ function IndustryLine({
 }
 
 /** 개요 탭의 기업 정보: 무슨 사업을 하나요? · 회사의 방향 · 기본 정보 */
-export function CompanyInfo({ stockCode }: { stockCode: string }) {
+export function CompanyInfo({
+  stockCode,
+  afterBusiness,
+}: {
+  stockCode: string;
+  /** "무슨 사업을 하나요?" 바로 아래에 넣을 내용 (개요의 최근 사업 성과) */
+  afterBusiness?: ReactNode;
+}) {
   const { data: company } = useCompany(stockCode);
   const { data: financials } = useFinancials(stockCode);
 
@@ -77,6 +84,8 @@ export function CompanyInfo({ stockCode }: { stockCode: string }) {
           />
         </Section>
       )}
+
+      {afterBusiness}
 
       {company.timeline.length > 0 && (
         <Section title="회사의 방향" description={`출처: ${company.timeline_source}`}>
@@ -123,10 +132,7 @@ export function CompanyInfo({ stockCode }: { stockCode: string }) {
               <dt>
                 <TermText text="시가총액" />
               </dt>
-              <dd>
-                {formatTrillion(company.market_cap.value, { min: 0, max: 0 })}{' '}
-                <SampleBadge isSample={company.market_cap.is_sample} />
-              </dd>
+              <dd>{formatTrillion(company.market_cap.value, { min: 0, max: 0 })}</dd>
             </div>
           )}
           {financials && (
@@ -134,10 +140,7 @@ export function CompanyInfo({ stockCode }: { stockCode: string }) {
               <dt>
                 <TermText text="PBR" />
               </dt>
-              <dd>
-                {financials.indicators.pbr.value}배{' '}
-                <SampleBadge isSample={financials.indicators.pbr.is_sample} />
-              </dd>
+              <dd>{financials.indicators.pbr.value}배</dd>
             </div>
           )}
         </dl>

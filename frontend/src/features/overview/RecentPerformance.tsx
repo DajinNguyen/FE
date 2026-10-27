@@ -1,7 +1,6 @@
 import { DataAsOf } from '../../components/DataAsOf';
 import { HorizontalBars } from '../../components/HorizontalBars';
 import { Icon } from '../../components/Icon';
-import { SampleBadge } from '../../components/SampleBadge';
 import { Section } from '../../components/Section';
 import { useFinancials } from '../../hooks/useFinancials';
 import type { PerformanceMetric } from '../../types';
@@ -31,7 +30,6 @@ function Metric({ label, metric }: { label: string; metric: PerformanceMetric })
             <span className="visually-hidden">{rate >= 0 ? '늘었어요' : '줄었어요'}</span>
             {formatSignedPercent(rate, 1)}
           </span>{' '}
-          <SampleBadge isSample={metric.yoy_is_sample} />
         </dd>
       )}
     </div>
