@@ -34,16 +34,18 @@ export async function request<T>({
   });
 
   if (!response.ok) {
-    let detail: { detail?: string; code?: string } | undefined;
+    // 에러 응답은 { error: { code, message } } 형식이에요. (예전 형식 { detail, code } 도 읽어요)
+    let body:
+      { error?: { code?: string; message?: string }; detail?: string; code?: string } | undefined;
     try {
-      detail = await response.json();
+      body = await response.json();
     } catch {
-      detail = undefined;
+      body = undefined;
     }
     throw new ApiError(
-      detail?.detail ?? `요청을 처리하지 못했어요 (${response.status})`,
+      body?.error?.message ?? body?.detail ?? `요청을 처리하지 못했어요 (${response.status})`,
       response.status,
-      detail?.code,
+      body?.error?.code ?? body?.code,
     );
   }
 

@@ -1,6 +1,6 @@
 # 프론트엔드 데이터 요구사항 (클라이언트 피드백 반영분)
 
-> 작성: 프론트엔드 · 2026-10-19
+> 작성: 프론트엔드 · 2026-10-19 (2026-10-27 PM·클라이언트 피드백 반영분 추가)
 > 이번 화면 개편에 필요한 데이터 칸을 정리했어요. 프론트는 `src/types/`와 `src/mocks/`에 먼저 반영했고,
 > `src/api/` 함수(요청 주소·방식)는 바꾸지 않았어요. 백엔드는 아래 칸을 기존 응답에 추가하면 돼요.
 >
@@ -22,6 +22,16 @@
 | `GET /api/home` | `rising`, `most_viewed`, `ai_analyzed` | 화면에서 숨김·미사용 (보내도 됨) |
 | `GET·POST /api/companies/{code}/report` (`CompanyReport`) | `key_points[].evidence` | **형식 변경** |
 | `GET·POST /api/companies/{code}/report` | `data_as_of` | 추가 (선택) |
+
+## 0. 공통 에러 형식 (2026-10-27 추가)
+
+모든 API의 에러 응답은 아래 형식으로 맞춰 주세요. `message` 는 화면에 그대로 보여줄 수 있는 쉬운 문장이에요.
+
+```json
+{ "error": { "code": "COMPANY_NOT_FOUND", "message": "회사를 찾지 못했어요" } }
+```
+
+- 프론트 공통 요청 함수(`src/api/client.ts`)가 이 형식을 읽어요. 예전 형식 `{ "detail", "code" }` 도 함께 읽어서 옮기는 동안 깨지지 않아요.
 
 ## 1. 기업 목록·상세
 
@@ -129,6 +139,66 @@
   - 리포트 응답 또는 별도 응답에 `{ limit: number; remaining: number; next_available_at: string | null }`
   - 제한에 걸리면 `POST /report` 가 `429` + `code: "DAILY_LIMIT" | "REGENERATE_TOO_SOON"` 으로 알려 주기
 - 이미 만들어진 리포트 보기(`GET /report`)는 제한하지 않아요.
+
+## 5. 뉴스 (2026-10-27 형식 변경)
+
+메인 "왜 움직였나요?", 산업 페이지, 기업 상세(리포트 근거·뉴스 상세)가 같은 `NewsItem` 형식과 같은 목록 화면을 써요.
+타입 원본: `frontend/src/types/news.ts` · 프론트 함수: `frontend/src/api/news.ts`
+
+### 필요한 API
+
+| API | 응답 | 쓰는 화면 |
+|---|---|---|
+| `GET /api/companies/{stock_code}/news?page=1&size=10` | `NewsPage { items, page, size, has_next }` | 기업 상세 > 뉴스 상세 (10개씩 + [더 보기]) |
+| `GET /api/market/news?date=YYYY-MM-DD` | `NewsItem[]` | 메인 "오늘 시장이 왜 이렇게 움직였나요?" |
+| `GET /api/industries/{industry_id}/news?size=5` | `NewsItem[]` | 산업 페이지 "관련 뉴스" (5개) |
+
+리포트의 `evidence.news` 도 같은 `NewsItem` 형식이에요. (이전 `NewsEvidence` 삭제)
+
+### `NewsItem`
+
+```json
+{
+  "id": "a1b2c3",
+  "title": "삼성전자, HBM4 공급 시작 계획 발표",
+  "press": "삼성전자 뉴스룸",
+  "published_at": "2026-01-29T10:00:00+09:00",
+  "url": "https://news.samsung.com/kr/...",
+  "summary_short": "다음 세대 AI 메모리인 HBM4 공급을 시작할 계획이라고 밝혔어요.",
+  "summary_long": null,
+  "company_stock_code": "005930",
+  "related_metric": { "label": "반도체(DS) 매출", "value": "44.0조 원" }
+}
+```
+
+| 칸 | 타입 | 상태 | 쓰는 곳 | 없을 때 |
+|---|---|---|---|---|
+| `id` | string | 필수 | 목록 키, 중복 제거 기준 | — |
+| `title` | string | 필수 | 제목(원문 링크) | — |
+| `press` | string | 이름 변경 (이전 `source`) | "언론사 · 3시간 전" | — |
+| `published_at` | ISO 8601 (시간대 포함) | 형식 변경 (이전 "2026년 1월" 글자) | "3시간 전", 하루 넘으면 "10월 19일" | — |
+| `url` | string | null 금지로 변경 | 원문 새 탭 | — |
+| `summary_short` | string (한 문장) | 이름 변경 (이전 `summary`) | 목록 한 줄 요약 | 빈 문자열이면 요약 줄 숨김 |
+| `summary_long` | string \| null | 추가 | (리포트 근거 확장용, 지금은 화면에 안 써요) | null |
+| `company_stock_code` | string \| null | 추가 | 기업 기사·시장 기사 구분 | 시장·산업 기사면 null |
+| `related_metric` | `{ label, value }` \| null | 이름 변경 (이전 `financial_link`) | 뉴스 상세 "관련 숫자" | null 이면 숨김 |
+| `is_placeholder` | — | 삭제 | — | — |
+
+### 지켜 주세요
+
+1. **중복 제거**: 같은 기사(같은 원문 주소, 거의 같은 제목)는 한 번만.
+2. **관련 기사만**: 그 기업·산업이 주제인 기사만. 이름만 스치는 기사는 빼 주세요.
+3. **최신순**: `published_at` 내림차순.
+4. **외부 뉴스 API는 서버에서만**: API 키는 서버에만 두고 브라우저로 내려보내지 않아요.
+5. **기사 전문 저장·전달 금지**: 제목·요약·원문 링크만. 화면에서도 전문은 보여주지 않아요(저작권).
+6. **요약 문장**: 쉬운 말로, 예측("오를 것")·투자 권유("사세요") 표현 없이.
+7. 기사가 0건이면 에러 대신 빈 배열(`items: []`). 화면에 "아직 관련 뉴스가 없어요"가 나와요.
+
+| 상황 | HTTP | code |
+|---|---|---|
+| 없는 종목코드·산업 | 404 | `COMPANY_NOT_FOUND`, `INDUSTRY_NOT_FOUND` |
+| 잘못된 page·size·date | 400 | `INVALID_PARAM` |
+| 외부 뉴스 API 실패 | 502 | `NEWS_SOURCE_UNAVAILABLE` |
 
 ## 확인이 필요한 것
 
