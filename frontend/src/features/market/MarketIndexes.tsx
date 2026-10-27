@@ -1,4 +1,3 @@
-import { SampleBadge } from '../../components/SampleBadge';
 import type { MarketIndex } from '../../types';
 import { Sparkline } from './Sparkline';
 import styles from './Market.module.css';
@@ -33,9 +32,7 @@ export function MarketIndexes({ indexes }: { indexes: MarketIndex[] }) {
     <div className={styles.indexes} aria-label="시장 지수">
       {kospi && (
         <div className={styles.main}>
-          <p className={styles.indexName}>
-            {indexName.KOSPI} <SampleBadge isSample={kospi.is_sample} />
-          </p>
+          <p className={styles.indexName}>{indexName.KOSPI}</p>
           <p className={styles.mainValue}>
             <strong>{formatNumber(kospi.value)}</strong>
             <IndexChange index={kospi} />
@@ -47,9 +44,7 @@ export function MarketIndexes({ indexes }: { indexes: MarketIndex[] }) {
       )}
       {others.map((index) => (
         <div key={index.code} className={styles.sub}>
-          <p className={styles.indexName}>
-            {indexName[index.code]} <SampleBadge isSample={index.is_sample} />
-          </p>
+          <p className={styles.indexName}>{indexName[index.code]}</p>
           <p className={styles.subValue}>
             <strong>{formatNumber(index.value)}</strong>
             <IndexChange index={index} />
