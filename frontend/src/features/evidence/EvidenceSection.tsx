@@ -8,6 +8,7 @@ import { TermText } from '../../components/TermText';
 import type { CompanyReport, EvidenceKind } from '../../types';
 import { evidenceAnchorId } from '../analysis/reportMeta';
 import type { CompanyTabId, GoToTab } from '../companyTabs';
+import { formatRelativeTime } from '../../utils/format';
 import styles from './EvidenceSection.module.css';
 
 interface EvidenceSectionProps {
@@ -54,7 +55,11 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
           title="뉴스"
           detail={{ tab: 'news', label: '뉴스 상세 보기' }}
           onGoToTab={onGoToTab}
-          meta={news.length > 0 && <DataAsOf prefix="최근 뉴스" value={news[0].published_at} />}
+          meta={
+            news.length > 0 && (
+              <DataAsOf prefix="최근 뉴스" value={news[0].published_at.slice(0, 10)} />
+            )
+          }
         >
           {news.length > 0 ? (
             <ul className={styles.news}>
@@ -67,9 +72,9 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
                   >
                     <span className={styles.newsTitle}>{item.title}</span>
                     <span className={styles.meta}>
-                      {item.press} · {item.published_at}
+                      {item.press} · {formatRelativeTime(item.published_at)}
                     </span>
-                    <span className={styles.newsSummary}>{item.summary}</span>
+                    <span className={styles.newsSummary}>{item.summary_short}</span>
                   </button>
                 </li>
               ))}

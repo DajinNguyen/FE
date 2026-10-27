@@ -5,7 +5,6 @@ import type {
   CompanyReport,
   CompanySummary,
   Financials,
-  NewsItem,
   PriceHistory,
   PricePeriod,
 } from '../types';
@@ -38,13 +37,6 @@ export function getFinancials(stockCode: string) {
   return request<Financials>({
     path: `/api/companies/${stockCode}/financials`,
     mock: async () => (await loadMockServer()).getFinancials(stockCode),
-  });
-}
-
-export function getNews(stockCode: string) {
-  return request<NewsItem[]>({
-    path: `/api/companies/${stockCode}/news`,
-    mock: async () => (await loadMockServer()).getNews(stockCode),
   });
 }
 
