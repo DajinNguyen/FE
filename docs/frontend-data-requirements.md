@@ -200,6 +200,43 @@
 | 잘못된 page·size·date | 400 | `INVALID_PARAM` |
 | 외부 뉴스 API 실패 | 502 | `NEWS_SOURCE_UNAVAILABLE` |
 
+## 6. 산업 (2026-10-27 추가)
+
+타입 원본: `frontend/src/types/industry.ts` · 프론트 함수: `frontend/src/api/industries.ts` · 임시 기준: `frontend/src/config/industryHeat.ts`
+
+### 6-1. 뜨는 산업 `GET /api/industries/hot?period=1w|1m`
+
+메인 "지금 관심이 몰리는 산업" 아이콘 8~10개. 점수 높은 순으로 주세요.
+
+```json
+[
+  {
+    "industry_id": "ai",
+    "name": "AI",
+    "icon_key": "ai",
+    "heat_score": 35.6,
+    "heat_level": "high",
+    "headline_metric": { "label": "최근 1주", "value": 6.2, "unit": "%" },
+    "as_of": "2026-10-26T15:30:00+09:00",
+    "is_sample": false
+  }
+]
+```
+
+| 칸 | 타입 | 쓰는 곳 | 없을 때 |
+|---|---|---|---|
+| `industry_id` | string | 산업 페이지 주소 `/industries/{industry_id}` | 필수 |
+| `name` | string | 아이콘 아래 산업명 | 필수 |
+| `icon_key` | string | 선 아이콘 (`ai`, `semiconductor`, `battery`, `bio`, `internet`, `auto`, `shipbuilding`, `defense`, `finance`, `game`) | 모르는 값이면 기본 아이콘 |
+| `heat_score` | number | (순서 확인용) | 필수 |
+| `heat_level` | `"high" \| "mid" \| "low"` | 아이콘 크기 (크게·중간·작게) | 필수 |
+| `headline_metric` | `{ label, value, unit }` | "최근 1주 +6.2%" | 필수 (숫자 없는 아이콘은 안 보여줘요) |
+| `as_of` | ISO 8601 | 기준 시각 (DataAsOf) | 필수 |
+| `is_sample` | boolean | "예시 값" 배지 | false 로 보면 돼요 |
+
+**임시 기준 (확정 필요)**: 기간 최근 1주(1주/1개월 전환), 점수 = 주가 상승률 40% + 거래대금 증가율 30% + 뉴스 언급 증가율 30%, 상위 3개 `high`, 다음 3개 `mid`, 나머지 `low`.
+산업 목록 초안: AI, 반도체, 2차전지, 바이오, 인터넷·플랫폼, 자동차, 조선, 방산, 금융, 게임.
+
 ## 확인이 필요한 것
 
 1. `sector_group` 분류 기준 (예: 삼성전기·LG전자를 반도체로 볼지 기타로 볼지)
