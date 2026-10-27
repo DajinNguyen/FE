@@ -134,7 +134,8 @@ const renderWrite = () =>
   );
 
 async function loginOnWritePage(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole('button', { name: '로그인하기' }));
+  // 처음에는 로그인 여부를 확인하는 동안 잠깐 비어 있어요.
+  await user.click(await screen.findByRole('button', { name: '로그인하기' }));
   await user.click(screen.getByRole('button', { name: '개발용으로 로그인' }));
 }
 
@@ -142,7 +143,7 @@ describe('글쓰기', () => {
   it('로그인해야 쓸 수 있고, 제목은 50자까지만 들어가요', async () => {
     const user = userEvent.setup();
     renderWrite();
-    expect(screen.getByText('로그인하면 글을 쓸 수 있어요')).toBeInTheDocument();
+    expect(await screen.findByText('로그인하면 글을 쓸 수 있어요')).toBeInTheDocument();
     await loginOnWritePage(user);
 
     const title = screen.getByLabelText('제목');
