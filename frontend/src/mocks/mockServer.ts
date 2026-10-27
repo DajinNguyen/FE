@@ -441,3 +441,21 @@ export async function getMe(): Promise<AuthUser | null> {
 export async function logout(): Promise<void> {
   await wait(80);
 }
+
+/* ------------------------------------------------------------------ */
+/* 커뮤니티 (메모리 저장)                                               */
+/* ------------------------------------------------------------------ */
+
+export {
+  createComment,
+  createPost,
+  deleteComment,
+  deletePost,
+  getComments,
+  getPost,
+  getPosts,
+  likePost,
+  reportTarget,
+  unlikePost,
+  updatePost,
+} from './community';
