@@ -28,12 +28,6 @@
   font-size: var(--fs-sm);
 }
 
-.intro {
-  margin-top: var(--sp-2);
-  color: var(--text-2);
-  font-size: var(--fs-sm);
-}
-
 /* 지수 */
 .indexes {
   display: flex;

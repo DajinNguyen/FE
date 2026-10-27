@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { IndexChange } from '../src/features/market/MarketIndexes';
-import { MarketToday, SERVICE_INTRO } from '../src/features/market/MarketToday';
+import { MarketToday } from '../src/features/market/MarketToday';
 import { HomePage } from '../src/pages/HomePage';
 import type { MarketIndex } from '../src/types';
 import { renderWithProviders } from './testUtils';
@@ -34,14 +34,13 @@ describe('메인 오늘의 시장', () => {
     expect(change).toHaveTextContent('(-0.26%)');
   });
 
-  it('한마디 아래에 기준 시각과 AI 정리 안내, 지수와 예시 값 배지를 보여줘요', async () => {
+  it('한마디 아래에 기준 시각과 AI 정리 안내, 지수를 보여주고 예시 값 배지는 없어요', async () => {
     renderWithProviders(<MarketToday />);
-    expect(await screen.findByText(SERVICE_INTRO)).toBeInTheDocument();
     expect(await screen.findByText(/기준 · AI 정리/)).toBeInTheDocument();
     const indexes = screen.getByLabelText('시장 지수');
     expect(within(indexes).getByText('코스피')).toBeInTheDocument();
     expect(within(indexes).getByText('코스닥')).toBeInTheDocument();
-    expect(within(indexes).getAllByText('예시 값').length).toBeGreaterThan(0);
+    expect(within(indexes).queryByText('예시 값')).not.toBeInTheDocument();
   });
 
   it('오늘 시장이 왜 움직였는지 이유 3개와 근거 뉴스, 산업 페이지로 가는 산업 칩을 보여줘요', async () => {

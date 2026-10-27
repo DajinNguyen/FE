@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { DataAsOf } from '../../components/DataAsOf';
-import { SampleBadge } from '../../components/SampleBadge';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { DEFAULT_HEAT_PERIOD, HEAT_PERIODS } from '../../config/industryHeat';
 import { industryIcon } from '../../config/industryIcons';
@@ -56,7 +55,7 @@ export function HotIndustries() {
           </h2>
           {first && (
             <p className={styles.hotNote}>
-              <DataAsOf value={first.as_of} /> <SampleBadge isSample={first.is_sample} />
+              <DataAsOf value={first.as_of} />
             </p>
           )}
         </div>
