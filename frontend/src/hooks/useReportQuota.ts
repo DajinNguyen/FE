@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { USAGE_POLICY } from '../config/usagePolicy';
 import { useAuth } from './useAuth';
+import { useUsageCredits } from './useUsageCredits';
 import { createPersistentStore, usePersistentStore } from './persistentStore';
 
 /**
@@ -40,8 +41,11 @@ export type QuotaBlock = 'guest-daily' | 'member-daily' | 'interval';
 export function useReportQuota(stockCode: string) {
   const record = usePersistentStore(usageStore);
   const { isLoggedIn } = useAuth();
+  const { bonus, canEarnMore } = useUsageCredits();
 
-  const limit = isLoggedIn ? USAGE_POLICY.memberDailyReports : USAGE_POLICY.guestDailyReports;
+  // 로그인 사용자는 낱말퀴즈 보상만큼 더 만들 수 있어요.
+  const limit =
+    (isLoggedIn ? USAGE_POLICY.memberDailyReports : USAGE_POLICY.guestDailyReports) + bonus;
   const used = record.date === todayString() ? record.count : 0;
   const remaining = Math.max(0, limit - used);
 
@@ -78,6 +82,8 @@ export function useReportQuota(stockCode: string) {
     /** interval 로 막혔을 때 남은 분 (올림) */
     waitMinutes: Math.max(0, Math.ceil(waitMs / MINUTE)),
     consume,
+    /** 오늘 낱말퀴즈로 횟수를 더 받을 수 있는지 */
+    canEarnMore,
   };
 }
 

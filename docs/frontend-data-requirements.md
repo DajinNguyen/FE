@@ -221,6 +221,13 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
   - 제한에 걸리면 `POST /report` 가 `429` + `code: "DAILY_LIMIT" | "REGENERATE_TOO_SOON"` 으로 알려 주기
 - 이미 만들어진 리포트 보기(`GET /report`)는 제한하지 않아요.
 
+### 낱말퀴즈 완료 보상 (2026-10-27 추가, 임시값 확정 필요)
+
+- 퍼즐 1개를 [정답 보기] 없이 다 풀면 리포트 만들기 1회 추가, 하루 최대 2회, 로그인 사용자만. 같은 퍼즐은 하루 한 번만.
+- 값: `frontend/src/config/usagePolicy.ts` 의 `PUZZLE_REWARD`. 지금은 기기(localStorage)에 기록해요 (`useUsageCredits`).
+- 서버로 옮길 때 필요한 것: `POST /api/crosswords/{puzzle_id}/complete` (body `{ "revealed": false }`) → `{ "granted": true, "bonus_today": 1 }`, 남은 횟수 응답에 보상 횟수 포함.
+- 하루 횟수 제한은 지금 임시로 무제한이라 보상 안내 문구는 숨겨져 있어요. 제한 값이 생기면 저절로 보여요.
+
 ## 5. 뉴스 (2026-10-27 형식 변경)
 
 메인 "왜 움직였나요?", 산업 페이지, 기업 상세(리포트 근거·뉴스 상세)가 같은 `NewsItem` 형식과 같은 목록 화면을 써요.

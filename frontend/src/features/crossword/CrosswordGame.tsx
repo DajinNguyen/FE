@@ -1,5 +1,8 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Button } from '../../components/Button';
+import { hasDailyLimit } from '../../config/usagePolicy';
+import { useToast } from '../../hooks/useToast';
+import { useUsageCredits } from '../../hooks/useUsageCredits';
 import type { CrosswordPuzzle } from '../../types';
 import { ClueList } from './ClueList';
 import { CrosswordGrid } from './CrosswordGrid';
@@ -17,6 +20,20 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
   const { model, state, dispatch, word, finished } = game;
   const inputRef = useRef<HTMLInputElement>(null);
   const hintLevel = state.hintLevels[word.index] ?? 0;
+  const { onPuzzleComplete } = useUsageCredits();
+  const { showToast } = useToast();
+
+  // 다 풀면 리포트 만들기 1회 보상 (정답 보기를 썼으면 없어요). 같은 퍼즐은 하루 한 번만.
+  // 이미 끝난 판을 다시 열었을 때는 보상하지 않아요. (이번에 다 푼 순간에만)
+  const finishedAtOpen = useRef(finished);
+  const usedReveal = state.revealed || state.revealedKeys.length > 0;
+  useEffect(() => {
+    if (!finished || finishedAtOpen.current) return;
+    const result = onPuzzleComplete(puzzle.id, { revealed: usedReveal });
+    if (result === 'granted' && hasDailyLimit()) {
+      showToast('낱말퀴즈를 다 풀었어요! AI 리포트를 한 번 더 만들 수 있어요.');
+    }
+  }, [finished, usedReveal, puzzle.id, onPuzzleComplete, showToast]);
 
   return (
     <div className={styles.game}>
