@@ -156,20 +156,3 @@
   font-size: var(--fs-sm);
   font-weight: 700;
 }
-
-.quizCta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  padding: var(--sp-4) 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.quizCtaTitle {
-  margin: 0;
-  font-size: var(--fs-md);
-  font-weight: 800;
-}
