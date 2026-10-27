@@ -106,7 +106,7 @@
 
 ### 숨김·미사용 칸
 
-- `rising` (떠오르는 기업): 선정 기준이 정해질 때까지 숨겨요. `VITE_FEATURE_RISING_COMPANIES=true` 로 켤 수 있어요.
+- `rising` (떠오르는 기업): 화면에서 삭제했어요. (대신 "지금 관심이 몰리는 산업")
 - `most_viewed`, `ai_analyzed`: 메인 섹션을 5개 이하로 줄이면서 화면에서 뺐어요. 계속 보내도 문제없어요.
 
 ## 3. AI 리포트 `GET·POST /api/companies/{code}/report`

@@ -31,7 +31,7 @@ export interface HomeDashboard {
   trading_value_top: TradingCompany[];
   /** 업종 탭별 기업. 탭 이름·순서는 프론트 상수에서 가져와요. 빈 배열이면 "아직 없어요" 안내 */
   sector_companies: Record<SectorGroup, CompanySummary[]>;
-  /** 메인에서 숨김 (VITE_FEATURE_RISING_COMPANIES=true 일 때만 보여줘요) */
+  /** 화면에서 쓰지 않아요 (떠오르는 기업 삭제) */
   rising: CompanyRanking;
   /** 메인 재구성 후 화면에서 쓰지 않아요. (백엔드는 계속 보내도 돼요) */
   most_viewed: CompanyRanking;
