@@ -5,9 +5,9 @@
  */
 export const USAGE_POLICY = {
   /** 로그인하지 않은 사용자가 하루에 만들 수 있는 리포트 수 */
-  guestDailyReports: 1,
+  guestDailyReports: Infinity,
   /** 로그인한 사용자가 하루에 만들 수 있는 리포트 수 */
-  memberDailyReports: 3,
+  memberDailyReports: Infinity,
   /** 같은 기업 리포트를 다시 만들 수 있는 간격 (분) */
   regenerateIntervalMinutes: 10,
 } as const;

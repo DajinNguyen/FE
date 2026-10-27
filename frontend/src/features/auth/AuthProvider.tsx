@@ -1,18 +1,40 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { getMe, googleLoginUrl, logout as logoutRequest } from '../../api/auth';
 import { AuthContext, type AuthContextValue, type AuthUser } from './AuthContext';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 화면을 열 때마다 로그인 쿠키가 있는지 서버에 물어봐요.
+  useEffect(() => {
+    let active = true;
+    getMe()
+      .then((me) => {
+        if (active) setUser(me);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       isLoggedIn: user !== null,
-      // TODO: Google OAuth 연결 (예: 백엔드 /api/auth/google 로 이동 → JWT 쿠키 발급 → /api/auth/me 로 user 조회)
-      loginWithGoogle: async () => false,
-      logout: async () => setUser(null),
+      isLoading,
+      loginWithGoogle: () => {
+        window.location.href = googleLoginUrl();
+      },
+      logout: async () => {
+        await logoutRequest();
+        setUser(null);
+      },
     }),
-    [user],
+    [user, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
