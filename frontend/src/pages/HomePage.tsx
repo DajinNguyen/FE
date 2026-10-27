@@ -5,6 +5,7 @@ import { DataAsOf } from '../components/DataAsOf';
 import { Icon } from '../components/Icon';
 import { FEATURE_RISING_COMPANIES, HOME_TRADING_LIMIT } from '../config/home';
 import { CompanyListRow } from '../features/home/CompanyListRow';
+import { MarketToday } from '../features/market/MarketToday';
 import { HowItWorks } from '../features/home/HowItWorks';
 import { SectorCompanies } from '../features/home/SectorCompanies';
 import { TermGameBanner } from '../features/home/TermGameBanner';
@@ -15,11 +16,12 @@ import styles from './HomePage.module.css';
 
 /**
  * 메인 화면 (위에서 아래로)
- * 1. 서비스 한 줄 설명 + 큰 검색창
- * 2. 다진이 하는 일 3단계
- * 3. 오늘 거래가 많은 기업 (순위 리스트)
- * 4. 업종별 기업
- * 5. 용어 게임 배너
+ * 1. 오늘의 시장: 한마디(페이지 제목) + 지수
+ * 2. 큰 검색창
+ * 3. 다진이 하는 일 3단계
+ * 4. 오늘 거래가 많은 기업 (순위 리스트)
+ * 5. 업종별 기업
+ * 6. 용어 게임 배너
  */
 export function HomePage() {
   const { data, isPending, isError } = useHomeDashboard();
@@ -27,12 +29,11 @@ export function HomePage() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.hero} aria-labelledby="home-title">
-        <h1 id="home-title" className={styles.title}>
-          궁금한 기업을 검색하면, AI가 재무제표·뉴스·사업 방향을 근거로 쉽게 설명해 드려요
-        </h1>
+      <MarketToday />
+
+      <section className={styles.hero} aria-label="기업 검색">
         <div className={styles.searchBox}>
-          <CompanySearch variant="hero" autoFocus />
+          <CompanySearch variant="hero" />
         </div>
       </section>
 

@@ -1,0 +1,169 @@
+/* 메인 "오늘의 시장": 한마디가 가장 크고, 지수는 그보다 작게 */
+.today {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.headlineBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.headline {
+  max-width: 760px;
+  font-size: var(--fs-3xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.failTitle {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.asOf {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.intro {
+  margin-top: var(--sp-2);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+/* 지수 */
+.indexes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--sp-4) var(--sp-8);
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.main {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: end;
+  gap: var(--sp-1) var(--sp-6);
+}
+
+.main .indexName {
+  grid-column: 1 / -1;
+}
+
+.indexName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.mainValue,
+.subValue {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-3);
+}
+
+.mainValue strong {
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+}
+
+.subValue strong {
+  font-size: var(--fs-md);
+  font-weight: 800;
+}
+
+.sub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding-left: var(--sp-8);
+  border-left: 1px solid var(--line);
+}
+
+.change {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.change > span:first-child {
+  font-size: 0.75em;
+}
+
+.rise {
+  color: var(--rise);
+}
+
+.fall {
+  color: var(--fall);
+}
+
+.flat {
+  color: var(--text-3);
+}
+
+.sparkline {
+  width: 120px;
+  height: 36px;
+  color: var(--text-3);
+}
+
+/* 불러오는 중 */
+.skeleton {
+  border-radius: var(--radius-xs);
+  background: var(--surface-strong);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonHeadline {
+  width: 70%;
+  height: 40px;
+}
+
+.skeletonIndex {
+  width: 40%;
+  height: 56px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+@media (max-width: 719px) {
+  .headline {
+    font-size: var(--fs-2xl);
+  }
+
+  .indexes {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sub {
+    padding-left: 0;
+    padding-top: var(--sp-3);
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
