@@ -64,6 +64,42 @@
 | 쓰는 화면 | 기업 상세 오른쪽 "주요 지표"(PER·PBR·ROE·부채비율) 아래 "2025년 사업보고서 기준" |
 | 없을 때 | `null` 이면 기준 표시를 숨겨요 |
 
+### `CompanyDetail.industries` (추가, 2026-10-27)
+
+| 항목 | 내용 |
+|---|---|
+| 타입 | `{ industry_id: string; name: string }[]` |
+| 예시 | `[{ "industry_id": "ai", "name": "AI" }, { "industry_id": "semiconductor", "name": "반도체" }]` |
+| 쓰는 화면 | 기업 상세 > 개요 "소속 산업" 칩 → 산업 페이지 |
+| 없을 때 | 빈 배열이면 칩 숨김 (업종 글자만 보여요) |
+
+### `Financials.recent_performance` (추가, 2026-10-27)
+
+기업 상세 > 개요 "최근 사업 성과" (실적 발표 요약). `GET /api/companies/{code}/financials` 응답에 넣어 주세요.
+
+```json
+{
+  "period_label": "2025년 4분기 실적",
+  "announced_at": "2026-01-29",
+  "revenue": { "value": 93.8, "unit": "조 원", "yoy_change_rate": 23.7, "yoy_is_sample": false },
+  "operating_income": { "value": 20.1, "unit": "조 원", "yoy_change_rate": 209.2, "yoy_is_sample": false },
+  "summary": "AI용 메모리(HBM) 판매가 늘면서 분기 기준 가장 많은 매출을 냈어요.",
+  "segments": [{ "name": "DS(반도체)", "revenue": 44.0, "unit": "조 원" }],
+  "source": { "title": "DART 공시명", "date": "2026-01-29", "url": "https://dart.fss.or.kr/..." }
+}
+```
+
+| 칸 | 쓰는 곳 | 없을 때 |
+|---|---|---|
+| `period_label`, `announced_at` | "2025년 4분기 실적 · 2026년 1월 발표" | 필수 |
+| `revenue`, `operating_income` | 큰 숫자 + "작년 같은 분기보다 ▲23.7%" | `yoy_change_rate` 가 null 이면 비교 줄 숨김 |
+| `summary` | AI 한 줄 요약 (예측·권유 금지) | 필수 |
+| `segments` | 사업별 매출 가로 막대 (값 표시) | 빈 배열이면 숨김 |
+| `source` | 출처: DART 공시명 · 날짜 (링크) | 필수 |
+
+- `recent_performance` 가 null 이면 "최근 실적 발표 자료를 아직 불러오지 못했어요"를 보여줘요.
+- 목 데이터: 매출·영업이익·사업별 매출은 확인된 값, 작년 대비 변화율은 예시 값(`yoy_is_sample: true`)이에요.
+
 ## 2. 메인 대시보드 `GET /api/home`
 
 ### `trading_value_top` (개수 변경)
