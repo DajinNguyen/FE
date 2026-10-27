@@ -117,9 +117,7 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
               볼 수 있어요
             </p>
             <div className={styles.footer}>
-              <span>
-                숫자는 공식 자료, 문장은 AI가 썼어요. 교육용 정보이며 투자 추천이 아니에요.
-              </span>
+              <span>숫자는 공식 자료, 문장은 AI가 썼어요. 투자 추천이 아닌 교육용 정보예요.</span>
               <div className={styles.regenerateRow}>
                 <QuotaNotice quota={quota} />
                 <button
