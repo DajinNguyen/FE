@@ -8,6 +8,8 @@ interface CompanyListRowProps {
   company: CompanySummary | TradingCompany;
   onSelect: (company: CompanySummary) => void;
   rank?: number;
+  /** 메인 TOP 3: 순위·기업명·한 줄 소개·거래대금만 */
+  compact?: boolean;
 }
 
 const isTrading = (company: CompanySummary | TradingCompany): company is TradingCompany =>
@@ -15,9 +17,9 @@ const isTrading = (company: CompanySummary | TradingCompany): company is Trading
 
 /**
  * 기업 목록의 한 줄: 순위 · 기업명 · 한 줄 소개 · AI 한 줄 결론 · 거래대금 · 등락률(작게).
- * 메인 거래대금 순위, 전체 순위 화면, 업종 탭에서 같이 써요.
+ * 메인 TOP 3(compact), 전체 순위 화면에서 같이 써요.
  */
-export function CompanyListRow({ company, onSelect, rank }: CompanyListRowProps) {
+export function CompanyListRow({ company, onSelect, rank, compact }: CompanyListRowProps) {
   const trading = isTrading(company) ? company : null;
   const isSample = company.change_rate.is_sample || Boolean(trading?.trading_value.is_sample);
 
@@ -35,7 +37,7 @@ export function CompanyListRow({ company, onSelect, rank }: CompanyListRowProps)
             )}
           </span>
           <span className={styles.oneLiner}>{company.one_liner}</span>
-          {trading?.ai_headline && (
+          {!compact && trading?.ai_headline && (
             <span className={styles.ai}>
               <span className={styles.aiLabel}>AI 결론</span>
               {trading.ai_headline}
@@ -49,7 +51,7 @@ export function CompanyListRow({ company, onSelect, rank }: CompanyListRowProps)
             </span>
           )}
           <span className={styles.rate}>
-            <PriceChange rate={company.change_rate.value} />
+            {!compact && <PriceChange rate={company.change_rate.value} />}
             <SampleBadge isSample={isSample} />
           </span>
         </span>
