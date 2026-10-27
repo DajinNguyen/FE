@@ -191,6 +191,28 @@
         "date": "2026-01-29",
         "url": "https://dart.fss.or.kr/"
       }
+    },
+    "benchmarks": {
+      "operating_margin": {
+        "basis": "sector_median",
+        "basis_value": 7.5,
+        "basis_label": "반도체 업종 중앙값"
+      },
+      "roe": {
+        "basis": "sector_median",
+        "basis_value": 8.1,
+        "basis_label": "반도체 업종 중앙값"
+      },
+      "debt_ratio": {
+        "basis": "general",
+        "basis_value": 100,
+        "basis_label": "일반적인 기준"
+      }
+    },
+    "flags": {
+      "is_financial": false,
+      "is_loss": false,
+      "is_capital_impaired": false
     }
   },
   "report": {

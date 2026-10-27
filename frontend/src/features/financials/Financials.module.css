@@ -32,7 +32,7 @@
   font-weight: 700;
 }
 
-/* 지표 신호등 */
+/* 주요 지표 (높은 편·보통·낮은 편) */
 .signals {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -65,6 +65,13 @@
 .signalDescription {
   margin-top: var(--sp-1);
   font-weight: 500;
+}
+
+.signalComparison {
+  margin-top: var(--sp-1);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: 700;
 }
 
 .signalCriteria {
