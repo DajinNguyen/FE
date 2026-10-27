@@ -46,6 +46,24 @@ describe('메인 오늘의 시장', () => {
     expect(within(indexes).getAllByText('예시 값').length).toBeGreaterThan(0);
   });
 
+  it('오늘 시장이 왜 움직였는지 이유 3개와 근거 뉴스, 산업 페이지로 가는 산업 칩을 보여줘요', async () => {
+    renderWithProviders(<MarketToday />);
+    const section = await screen.findByRole('region', {
+      name: '오늘 시장이 왜 이렇게 움직였나요?',
+    });
+    const reasons = within(section).getAllByRole('heading', { level: 3 });
+    expect(reasons).toHaveLength(3);
+    const chips = within(section).getAllByRole('list', { name: '관련 산업' })[0];
+    expect(chips).toHaveTextContent('반도체');
+    expect(chips).toHaveTextContent('상승2.1%');
+    expect(within(chips).getByRole('link', { name: /반도체/ })).toHaveAttribute(
+      'href',
+      '/industries/semiconductor',
+    );
+    const news = within(section).getAllByRole('link');
+    expect(news[0]).toHaveAttribute('target', '_blank');
+  });
+
   it('시장 정보를 불러오지 못하면 안내를 보여주고, 검색창은 그대로 써요', async () => {
     window.history.replaceState(null, '', '/?mock_market=fail');
     renderWithProviders(<HomePage />);
