@@ -63,25 +63,43 @@ describe('기업 화면: AI 분석', () => {
     const first = within(now).getByRole('button', { name: /3년 동안 매출과 이익이 함께 늘었어요/ });
     expect(first).toHaveTextContent('43.6조 원');
     expect(first).toHaveTextContent('6.6배');
-    expect(within(now).getAllByText('왜 그런가요?')[0]).not.toBeVisible();
+    expect(within(now).queryByText('왜 그런가요?')).not.toBeInTheDocument();
     expect(screen.getByText('이 분석의 근거')).toBeInTheDocument();
     // 기업 헤더에는 한 줄 소개 문장을 쓰지 않아요.
     expect(screen.queryByText('스마트폰과 반도체를 만드는 회사예요')).not.toBeInTheDocument();
   });
 
-  it('한 줄을 누르면 과거 → 현재 숫자, 이유·의미, 출처·날짜가 붙은 근거가 펼쳐져요', async () => {
+  it('포인트를 누르면 상세 시트에 과거 → 현재 숫자, 이유·의미, 연도별 매출·영업이익 막대(값 표시), 근거 뉴스·공시가 나와요', async () => {
     const user = userEvent.setup();
     renderCompanyPage('005930');
 
     const now = await screen.findByRole('region', { name: '지금 어떤 상황인가요?' });
-    const first = within(now).getByRole('button', { name: /3년 동안 매출과 이익이 함께 늘었어요/ });
-    await user.click(first);
+    await user.click(
+      within(now).getByRole('button', { name: /3년 동안 매출과 이익이 함께 늘었어요/ }),
+    );
 
-    expect(first).toHaveAttribute('aria-expanded', 'true');
-    const item = first.closest('li')!;
-    expect(within(item).getByText('왜 그런가요?')).toBeVisible();
-    expect(within(item).getByText(/6\.57조 원/)).toBeVisible();
-    expect(within(item).getByRole('button', { name: '재무제표 2025 사업보고서' })).toBeVisible();
+    const sheet = screen.getByRole('dialog', { name: '3년 동안 매출과 이익이 함께 늘었어요' });
+    expect(within(sheet).getByText('왜 그런가요?')).toBeInTheDocument();
+    expect(within(sheet).getByText(/6\.57조 원/)).toBeInTheDocument();
+    const yearly = within(sheet).getByRole('region', { name: '연도별 매출과 영업이익' });
+    expect(within(yearly).getAllByRole('img')).toHaveLength(2);
+    expect(
+      within(yearly).getByRole('img', {
+        name: /연도별 매출 2023년 258\.94조 원, 2024년 300\.9조 원, 2025년 333\.6조 원/,
+      }),
+    ).toBeInTheDocument();
+    expect(within(sheet).getByRole('region', { name: '근거 뉴스' })).toHaveTextContent(
+      '2025년 4분기',
+    );
+    expect(within(sheet).getByRole('region', { name: '근거 공시' })).toHaveTextContent(
+      '2026.01.29',
+    );
+    expect(
+      within(sheet).getByRole('button', { name: '재무제표 2025 사업보고서' }),
+    ).toBeInTheDocument();
+
+    await user.click(within(sheet).getByRole('button', { name: '시트 닫기' }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(
       screen.getByText(/이 리포트는 재무 2025년 사업보고서 · 주가 10월 5일 · 뉴스 1월 29일 기준/),
     ).toBeInTheDocument();
