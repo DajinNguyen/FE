@@ -396,7 +396,19 @@ export async function getPriceHistory(
   return {
     stock_code: stockCode,
     period,
-    points: closes.map((close, i) => ({ date: dates[i], close })),
+    // 시가는 전날 종가 근처, 고가·저가는 시가·종가 바깥으로 조금씩 벌려요.
+    points: closes.map((close, i) => {
+      const prev = closes[i - 1] ?? close;
+      const open = Math.round((prev * (1 + (random() - 0.5) * volatility)) / tick) * tick;
+      const wick = () => random() * volatility * 0.6;
+      return {
+        date: dates[i],
+        open,
+        high: Math.round((Math.max(open, close) * (1 + wick())) / tick) * tick,
+        low: Math.round((Math.min(open, close) * (1 - wick())) / tick) * tick,
+        close,
+      };
+    }),
   };
 }
 

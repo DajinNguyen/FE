@@ -8,7 +8,13 @@ import { getTrend, getTrendColor } from '../src/utils/trend';
 import { renderWithProviders } from './testUtils';
 
 const points = (...closes: number[]) =>
-  closes.map((close, i) => ({ date: `2026-10-${String(i + 1).padStart(2, '0')}`, close }));
+  closes.map((close, i) => ({
+    date: `2026-10-${String(i + 1).padStart(2, '0')}`,
+    open: close,
+    high: close,
+    low: close,
+    close,
+  }));
 
 describe('주가 흐름 그래프 색', () => {
   it('시작보다 오르면 빨강, 내리면 파랑, 같으면 회색이에요', () => {
