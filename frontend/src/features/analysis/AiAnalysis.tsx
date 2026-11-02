@@ -1,5 +1,6 @@
 import { Button } from '../../components/Button';
 import { DataAsOf } from '../../components/DataAsOf';
+import { ErrorState } from '../../components/ErrorState';
 import { Icon } from '../../components/Icon';
 import { TermText } from '../../components/TermText';
 import type { CompanyReportFlow } from '../../hooks/useCompanyReport';
@@ -37,7 +38,18 @@ const formatGeneratedAt = (value: string | null) => {
 
 /** 기업 화면에서 가장 먼저, 가장 크게 보이는 AI 핵심 분석 */
 export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
-  const { view, report, isRegenerating, startedAt, failureReason, generate, cancel, quota } = flow;
+  const {
+    view,
+    report,
+    isRegenerating,
+    startedAt,
+    failureReason,
+    loadError,
+    reload,
+    generate,
+    cancel,
+    quota,
+  } = flow;
   const blocked = quota.blocked !== null;
   const [openPoint, setOpenPoint] = useState<KeyPoint | null>(null);
 
@@ -49,6 +61,14 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
         </p>
 
         {view === 'checking' && <ReportSkeleton />}
+
+        {view === 'load-failed' && (
+          <ErrorState
+            title="AI 리포트를 불러오지 못했어요"
+            error={loadError}
+            onRetry={() => reload()}
+          />
+        )}
 
         {view === 'none' && (
           <div className={styles.emptyCard}>
