@@ -61,7 +61,7 @@
   width: 100%;
   align-items: center;
   gap: var(--sp-3);
-  padding: var(--sp-3) 0;
+  padding: var(--sp-4) 0;
   text-align: left;
 }
 
@@ -72,7 +72,9 @@
 
 .pointTitle {
   flex: 1;
+  font-size: var(--fs-lg);
   font-weight: 700;
+  line-height: var(--lh-tight);
 }
 
 .keyValue {

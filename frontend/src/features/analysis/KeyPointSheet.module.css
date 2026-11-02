@@ -6,13 +6,33 @@
 }
 
 .change {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
   font-size: var(--fs-md);
   font-variant-numeric: tabular-nums;
 }
 
 .change strong {
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+}
+
+.arrow {
   font-size: var(--fs-xl);
   font-weight: 800;
+}
+
+/* 늘었으면 빨강, 줄었으면 파랑 (현재 숫자와 화살표만) */
+.up .arrow,
+.up strong {
+  color: var(--rise);
+}
+
+.down .arrow,
+.down strong {
+  color: var(--fall);
 }
 
 .period,
