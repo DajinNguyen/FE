@@ -112,6 +112,13 @@
   min-height: 3em;
 }
 
+.reward {
+  display: block;
+  margin-top: var(--sp-1);
+  color: var(--brand);
+  font-weight: 700;
+}
+
 .finished strong {
   margin-right: var(--sp-1);
   color: var(--good);
