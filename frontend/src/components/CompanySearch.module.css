@@ -106,6 +106,15 @@
   animation: drop 180ms var(--ease);
 }
 
+.header .box {
+  background: var(--bg);
+  box-shadow: none;
+}
+
+.header .box:focus-within {
+  box-shadow: 0 0 0 2px var(--point);
+}
+
 .header .panel {
   left: auto;
   width: min(380px, calc(100vw - 2 * var(--page-gutter)));

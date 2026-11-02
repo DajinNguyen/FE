@@ -6,10 +6,10 @@ export function getTrend(first: number | undefined, last: number | undefined): T
   return last > first ? 'rise' : 'fall';
 }
 
-/** 주가 그래프 공통 색 규칙: 상승 빨강, 하락 파랑, 같으면 회색 (디자인 토큰) */
+/** 주가 그래프 공통 색 규칙: 상승 빨강, 하락 파랑, 같으면 회색 (그래프 선용 토큰) */
 export const trendColor: Record<Trend, string> = {
-  rise: 'var(--rise)',
-  fall: 'var(--fall)',
+  rise: 'var(--rise-line)',
+  fall: 'var(--fall-line)',
   flat: 'var(--text-3)',
 };
 

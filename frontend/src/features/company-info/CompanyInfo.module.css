@@ -52,9 +52,10 @@
 
 .industryChip {
   padding: 0 var(--sp-3);
-  border: 1px solid var(--line-strong);
+  border: 1px solid transparent;
+  background: var(--brand-weak);
   border-radius: var(--radius-full);
-  color: var(--text-1);
+  color: var(--brand-strong);
   font-weight: 700;
   line-height: 1.9;
 }

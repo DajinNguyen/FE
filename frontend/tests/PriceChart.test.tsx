@@ -15,8 +15,8 @@ describe('주가 흐름 그래프 색', () => {
     expect(getTrend(100, 120)).toBe('rise');
     expect(getTrend(100, 80)).toBe('fall');
     expect(getTrend(100, 100)).toBe('flat');
-    expect(getTrendColor(points(100, 90, 120))).toBe('var(--rise)');
-    expect(getTrendColor(points(100, 130, 80))).toBe('var(--fall)');
+    expect(getTrendColor(points(100, 90, 120))).toBe('var(--rise-line)');
+    expect(getTrendColor(points(100, 130, 80))).toBe('var(--fall-line)');
     expect(getTrendColor(points(100, 150, 100))).toBe('var(--text-3)');
   });
 
