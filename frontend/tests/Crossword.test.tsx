@@ -126,10 +126,15 @@ describe('가로세로 낱말퀴즈', () => {
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
     expect(screen.getByText('정답을 채웠어요')).toBeInTheDocument();
     expect(cell(/^가로 3번, 4번째 칸/)).toHaveAttribute('data-mark', 'correct');
-    expect(cell(/^가로 7번, 1번째 칸, 세로 3번, 4번째 칸, 입력: 회/)).toHaveAttribute('data-mark', 'revealed');
+    expect(cell(/^가로 7번, 1번째 칸, 세로 3번, 4번째 칸, 입력: 회/)).toHaveAttribute(
+      'data-mark',
+      'revealed',
+    );
 
     await user.click(screen.getByRole('button', { name: '다시 하기' }));
-    expect(cell(/^가로 7번, 1번째 칸, 세로 3번, 4번째 칸, 비어 있음$/)).not.toHaveAttribute('data-mark');
+    expect(cell(/^가로 7번, 1번째 칸, 세로 3번, 4번째 칸, 비어 있음$/)).not.toHaveAttribute(
+      'data-mark',
+    );
   });
 
   it('나갔다 와도 입력한 글자와 색이 남아 있어 이어서 풀 수 있어요', async () => {

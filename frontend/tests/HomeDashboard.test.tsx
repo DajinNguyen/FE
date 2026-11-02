@@ -6,19 +6,17 @@ import { TradingRankingPage } from '../src/pages/TradingRankingPage';
 import { renderWithProviders } from './testUtils';
 
 describe('메인 화면', () => {
-  it('서비스 한 줄 설명, 검색창, 3단계 설명을 보여주고 검색 예시 칩은 없어요', () => {
+  it('맨 위에 오늘의 시장 한마디가 페이지 제목으로 나오고, 검색창이 있고 검색 예시 칩은 없어요', async () => {
     renderWithProviders(<HomePage />);
 
     expect(
-      screen.getByRole('heading', {
+      await screen.findByRole('heading', {
         level: 1,
-        name: '궁금한 기업을 검색하면, AI가 재무제표·뉴스·사업 방향을 근거로 쉽게 설명해 드려요',
+        name: '반도체 강세에 코스피가 1% 넘게 올랐어요',
       }),
     ).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: '기업 검색' })).toBeInTheDocument();
     expect(screen.queryByText('이렇게 찾아보세요')).not.toBeInTheDocument();
-    const steps = screen.getByRole('list', { name: '다진이 하는 일' });
-    expect(within(steps).getAllByRole('listitem')).toHaveLength(3);
   });
 
   it('거래가 많은 기업은 기준일과 함께 10개까지 순위 리스트로 보여주고, AI 결론이 없는 줄은 숨겨요', async () => {
