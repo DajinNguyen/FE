@@ -97,9 +97,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-.hotMetric .rise,
-.hotMetric .fall,
-.hotMetric .flat {
+.hotMetric {
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 

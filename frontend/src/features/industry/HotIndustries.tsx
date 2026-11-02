@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { DataAsOf } from '../../components/DataAsOf';
-import { SampleBadge } from '../../components/SampleBadge';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { DEFAULT_HEAT_PERIOD, HEAT_PERIODS } from '../../config/industryHeat';
 import { industryIcon } from '../../config/industryIcons';
@@ -32,8 +31,8 @@ function IndustryIcon({ industry }: { industry: IndustrySummary }) {
           <Icon size={iconSize[industry.heat_level]} strokeWidth={1.75} />
         </span>
         <span className={styles.hotName}>{industry.name}</span>
-        <span className={styles.hotMetric}>
-          {metric.label} <span className={styles[direction]}>{signedPercent(metric.value)}</span>
+        <span className={`${styles.hotMetric} ${styles[direction]}`}>
+          {signedPercent(metric.value)}
         </span>
       </Link>
     </li>
@@ -52,11 +51,11 @@ export function HotIndustries() {
       <div className={styles.hotHead}>
         <div>
           <h2 id="hot-industries" className={styles.hotTitle}>
-            지금 관심이 몰리는 산업
+            관심이 몰리는 산업
           </h2>
           {first && (
             <p className={styles.hotNote}>
-              <DataAsOf value={first.as_of} /> <SampleBadge isSample={first.is_sample} />
+              <DataAsOf value={first.as_of} />
             </p>
           )}
         </div>

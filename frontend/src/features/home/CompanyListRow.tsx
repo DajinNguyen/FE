@@ -8,7 +8,7 @@ interface CompanyListRowProps {
   company: CompanySummary | TradingCompany;
   onSelect: (company: CompanySummary) => void;
   rank?: number;
-  /** 메인 TOP 3: 순위·기업명·한 줄 소개·거래대금만 */
+  /** 메인 TOP 3: 순위·기업명·한 줄 소개·거래대금만 (예시 값 배지도 빼요) */
   compact?: boolean;
 }
 
@@ -52,7 +52,7 @@ export function CompanyListRow({ company, onSelect, rank, compact }: CompanyList
           )}
           <span className={styles.rate}>
             {!compact && <PriceChange rate={company.change_rate.value} />}
-            <SampleBadge isSample={isSample} />
+            {!compact && <SampleBadge isSample={isSample} />}
           </span>
         </span>
       </button>

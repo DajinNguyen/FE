@@ -28,12 +28,6 @@
   font-size: var(--fs-sm);
 }
 
-.intro {
-  margin-top: var(--sp-2);
-  color: var(--text-2);
-  font-size: var(--fs-sm);
-}
-
 /* 지수 */
 .indexes {
   display: flex;
@@ -121,7 +115,7 @@
   color: var(--text-3);
 }
 
-/* 오늘 시장이 왜 이렇게 움직였나요? */
+/* 오늘 시장, 왜 움직였나요? */
 .reasons {
   display: flex;
   flex-direction: column;

@@ -32,11 +32,15 @@ describe('메인 화면', () => {
       'href',
       '/rankings/trading',
     );
-    expect(screen.getByRole('link', { name: /가로세로 낱말퀴즈/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /낱말퀴즈/ })).toHaveAttribute(
       'href',
       '/terms?mode=crossword',
     );
     expect(screen.queryByRole('list', { name: '다진이 하는 일' })).not.toBeInTheDocument();
+    expect(within(list).queryByText('예시 값')).not.toBeInTheDocument();
+    expect(screen.getByRole('complementary', { name: '다진 사용 방법' })).toHaveTextContent(
+      '기업을 검색하면 AI가 재무제표·뉴스를 근거로 쉽게 설명해요',
+    );
   });
 
   it('업종별 기업 탭 대신 관심이 몰리는 산업 아이콘을 보여줘요', async () => {

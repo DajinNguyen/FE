@@ -23,7 +23,7 @@ export function NewsListItem({ item, compact = false }: NewsListItemProps) {
         {item.press} ·{' '}
         <time dateTime={item.published_at}>{formatRelativeTime(item.published_at)}</time>
       </p>
-      {item.summary_short && (
+      {!compact && item.summary_short && (
         <p className={styles.summary}>
           <TermText text={item.summary_short} />
         </p>
