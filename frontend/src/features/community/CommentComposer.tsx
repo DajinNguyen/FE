@@ -23,6 +23,8 @@ interface CommentComposerProps {
   /** 답글의 답글이면 대상 닉네임 */
   replyTo?: string;
   placeholder?: string;
+  /** 최대 글자 수. 기업 댓글은 2,000자, 답글은 500자 */
+  maxLength?: number;
   autoFocus?: boolean;
   onCancel?: () => void;
 }
@@ -34,6 +36,7 @@ export function CommentComposer({
   parentId,
   replyTo,
   placeholder = '댓글을 남겨 보세요',
+  maxLength = COMMUNITY_LIMITS.commentMax,
   autoFocus,
   onCancel,
 }: CommentComposerProps) {
@@ -128,7 +131,7 @@ export function CommentComposer({
         ref={textRef}
         className={styles.input}
         value={text}
-        maxLength={COMMUNITY_LIMITS.commentMax}
+        maxLength={maxLength}
         rows={2}
         placeholder={replyTo ? `@${replyTo} 님에게 답글` : placeholder}
         onChange={(e) => {
@@ -209,7 +212,7 @@ export function CommentComposer({
         </div>
         <div className={styles.tools}>
           <span className={styles.counter}>
-            {text.length}/{COMMUNITY_LIMITS.commentMax}
+            {text.length.toLocaleString('ko-KR')}/{maxLength.toLocaleString('ko-KR')}
           </span>
           {onCancel && (
             <Button variant="ghost" onClick={onCancel}>

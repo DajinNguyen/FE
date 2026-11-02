@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { getMe, googleLoginUrl, logout as logoutRequest } from '../../api/auth';
 import { AuthContext, DEV_USER, type AuthContextValue, type AuthUser } from './AuthContext';
 
+const DEV_LOGIN_ENABLED =
+  import.meta.env.MODE === 'test' ||
+  (import.meta.env.DEV && import.meta.env.VITE_DEV_LOGIN === 'true');
+
 export function AuthProvider({
   children,
   initialUser = null,
@@ -45,8 +49,9 @@ export function AuthProvider({
           setUser(null);
         }
       },
-      // 개발 서버(npm run dev)에서만 있어요. 배포 빌드에는 없어요.
-      devLogin: import.meta.env.DEV ? () => setUser(DEV_USER) : undefined,
+      // 화면만 로그인 상태로 바꾸는 버튼이라 서버에 쓰면 401 이 나요.
+      // 그래서 기본은 꺼 두고, 개발 서버에서 VITE_DEV_LOGIN=true 일 때(와 테스트)만 보여요.
+      devLogin: DEV_LOGIN_ENABLED ? () => setUser(DEV_USER) : undefined,
     }),
     [user, isLoading],
   );

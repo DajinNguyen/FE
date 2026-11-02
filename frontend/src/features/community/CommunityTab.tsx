@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '../../components/Button';
 import { ErrorState } from '../../components/ErrorState';
 import { SegmentedControl } from '../../components/SegmentedControl';
+import { COMMUNITY_LIMITS } from '../../config/communityRules';
 import { useCommunityPosts } from '../../hooks/useCommunityPosts';
 import { usePostMutations } from '../../hooks/usePostMutations';
 import { useToast } from '../../hooks/useToast';
@@ -32,6 +33,7 @@ export function CommunityTab({ stockCode }: { stockCode: string }) {
 
       <CommentComposer
         placeholder="이 기업에 대해 궁금한 점이나 공부한 내용을 남겨 보세요"
+        maxLength={COMMUNITY_LIMITS.bodyMax}
         onSubmit={(input, { onError }) =>
           create.mutate(
             { category: 'free', body: input.body, image_url: input.image_url ?? null },

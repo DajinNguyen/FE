@@ -12,11 +12,11 @@ export const COMMUNITY_LIMITS = {
 } as const;
 
 /**
- * 댓글 사진 첨부. ⚠️ 임시값, 확정 필요.
- * enabled: 업로드 API(POST /api/uploads)가 준비되면 true 로 바꿔요. 그 전에는 사진 버튼이 "준비 중"이에요.
+ * 댓글 사진 첨부 (업로드 API: POST /api/uploads). ⚠️ 형식·용량은 임시값, 확정 필요.
+ * enabled 를 false 로 바꾸면 사진 버튼이 "준비 중"이 돼요. (업로드 서버에 문제가 있을 때)
  */
 export const IMAGE_UPLOAD = {
-  enabled: false,
+  enabled: true,
   types: ['image/jpeg', 'image/png', 'image/webp'],
   /** 5MB */
   maxBytes: 5 * 1024 * 1024,
