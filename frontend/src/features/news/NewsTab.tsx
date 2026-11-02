@@ -12,6 +12,8 @@ export function NewsTab({ stockCode }: { stockCode: string }) {
         items={news.items}
         isPending={news.isPending}
         isError={news.isError}
+        error={news.error}
+        onRetry={() => news.refetch()}
         emptyText="이 기업의 최근 뉴스를 아직 찾지 못했어요"
         hasMore={news.hasNextPage}
         onMore={() => news.fetchNextPage()}

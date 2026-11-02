@@ -1,9 +1,9 @@
 /**
- * 산업 목 데이터. 숫자는 모두 예시 값이에요(is_sample: true).
+ * 산업 목 데이터. 테스트용 숫자예요.
  * 점수는 src/config/industryHeat.ts 의 임시 기준으로 계산해요. (실제로는 서버가 계산)
  */
-import { HEAT_LEVEL_RANKS, HEAT_WEIGHTS } from '../config/industryHeat';
-import type { HeatLevel, HeatPeriod, IndustrySummary } from '../types';
+import { HEAT_WEIGHTS } from '../../src/config/industryHeat';
+import type { HeatLevel, HeatPeriod, IndustrySummary } from '../../src/types';
 import { lastClose } from './marketClock';
 
 type Factors = Record<keyof typeof HEAT_WEIGHTS, number>;
@@ -18,10 +18,11 @@ export interface IndustryRecord {
   companies: string[];
 }
 
-const f = (price: number, trading: number, news: number): Factors => ({
+const f = (price: number, trading: number, news: number, community = news / 2): Factors => ({
   price_change_rate: price,
   trading_value_change_rate: trading,
   news_mention_change_rate: news,
+  community_activity_change_rate: community,
 });
 
 export const industryRecords: IndustryRecord[] = [
@@ -162,12 +163,7 @@ export const heatScore = (factors: Factors) =>
     ),
   );
 
-const levelOf = (rank: number): HeatLevel =>
-  rank < HEAT_LEVEL_RANKS.high
-    ? 'high'
-    : rank < HEAT_LEVEL_RANKS.high + HEAT_LEVEL_RANKS.mid
-      ? 'mid'
-      : 'low';
+const levelOf = (rank: number): HeatLevel => (rank < 3 ? 'high' : rank < 6 ? 'mid' : 'low');
 
 /** 점수 높은 순 + 단계 */
 export function hotIndustries(period: HeatPeriod): IndustrySummary[] {
@@ -187,6 +183,5 @@ export function hotIndustries(period: HeatPeriod): IndustrySummary[] {
         unit: '%',
       },
       as_of: asOf,
-      is_sample: true,
     }));
 }

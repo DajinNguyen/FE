@@ -2,9 +2,9 @@
  * 커뮤니티 목 서버 (메모리 저장). 새로고침 전까지 글쓰기·댓글·좋아요·신고가 실제처럼 남아요.
  * 실제 서버에서 지켜야 할 규칙(글자 수, 금지어, 도배 방지, 신고 3건 숨김, 본인만 수정·삭제)도 흉내 내요.
  */
-import { ApiError } from '../api/errors';
-import { getSessionUser } from '../api/session';
-import { COMMUNITY_LIMITS, findBannedWord } from '../config/communityRules';
+import { ApiError } from '../../src/api/errors';
+import { getSessionUser } from './session';
+import { COMMUNITY_LIMITS, findBannedWord } from '../../src/config/communityRules';
 import type {
   Comment,
   LikeResult,
@@ -14,7 +14,7 @@ import type {
   PostPage,
   PostSort,
   ReportInput,
-} from '../types';
+} from '../../src/types';
 
 interface StoredPost {
   id: string;

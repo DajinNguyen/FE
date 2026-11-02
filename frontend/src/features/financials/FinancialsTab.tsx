@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
+import { ApiError } from '../../api/errors';
 import { EmptyState } from '../../components/EmptyState';
+import { ErrorState } from '../../components/ErrorState';
 import { HorizontalBars } from '../../components/HorizontalBars';
 import { Section } from '../../components/Section';
 import { TermText } from '../../components/TermText';
@@ -11,18 +13,19 @@ import { buildIndicators } from './indicators';
 import styles from './Financials.module.css';
 
 export function FinancialsTab({ stockCode }: { stockCode: string }) {
-  const { data: financials, isPending, isError } = useFinancials(stockCode);
+  const { data: financials, isPending, isError, error, refetch } = useFinancials(stockCode);
   const [showRaw, setShowRaw] = useState(true);
 
   const indicators = useMemo(() => (financials ? buildIndicators(financials) : []), [financials]);
 
   if (isPending) return <p className={styles.loading}>재무제표를 불러오고 있어요…</p>;
+  if (isError && error instanceof ApiError && error.status === 404)
+    return (
+      <EmptyState title="자료를 찾지 못했어요" description="이 기업의 재무제표가 아직 없어요." />
+    );
   if (isError || !financials)
     return (
-      <EmptyState
-        title="자료를 찾지 못했어요"
-        description="이 기업의 재무제표를 아직 불러오지 못했어요."
-      />
+      <ErrorState title="재무제표를 불러오지 못했어요" error={error} onRetry={() => refetch()} />
     );
 
   const annual = [...financials.annual].sort((a, b) => a.fiscal_year - b.fiscal_year);

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { Button } from '../components/Button';
 import { DataAsOf } from '../components/DataAsOf';
+import { ApiError } from '../api/errors';
 import { EmptyState } from '../components/EmptyState';
-import { TrendChart } from '../components/TrendChart';
+import { ErrorState } from '../components/ErrorState';
 import {
   HEAT_CRITERIA_TEXT,
   HEAT_DISCLAIMER,
@@ -31,7 +32,10 @@ const aboutCap = (value: number) =>
 function ScoreTable({ detail }: { detail: IndustryDetail }) {
   const breakdown = detail.score_breakdown;
   const periodLabel = HEAT_PERIODS.find((p) => p.id === breakdown.period)?.label ?? '';
-  const total = HEAT_FACTORS.reduce((sum, key) => sum + breakdown[key] * HEAT_WEIGHTS[key], 0);
+  const total = HEAT_FACTORS.reduce(
+    (sum, key) => sum + (breakdown[key] ?? 0) * HEAT_WEIGHTS[key],
+    0,
+  );
   return (
     <div className={styles.tableWrap}>
       <table className={styles.table}>
@@ -45,16 +49,21 @@ function ScoreTable({ detail }: { detail: IndustryDetail }) {
           </tr>
         </thead>
         <tbody>
-          {HEAT_FACTORS.map((key) => (
-            <tr key={key}>
-              <th scope="row">{HEAT_FACTOR_LABELS[key]}</th>
-              <td className={styles[changeDirection(breakdown[key])]}>
-                {signedPercent(breakdown[key])}
-              </td>
-              <td>{Math.round(HEAT_WEIGHTS[key] * 100)}%</td>
-              <td>{(breakdown[key] * HEAT_WEIGHTS[key]).toFixed(1)}</td>
-            </tr>
-          ))}
+          {HEAT_FACTORS.map((key) => {
+            const value = breakdown[key];
+            return (
+              <tr key={key}>
+                <th scope="row">{HEAT_FACTOR_LABELS[key]}</th>
+                {value === undefined ? (
+                  <td className={styles.flat}>준비 중</td>
+                ) : (
+                  <td className={styles[changeDirection(value)]}>{signedPercent(value)}</td>
+                )}
+                <td>{Math.round(HEAT_WEIGHTS[key] * 100)}%</td>
+                <td>{value === undefined ? '-' : (value * HEAT_WEIGHTS[key]).toFixed(1)}</td>
+              </tr>
+            );
+          })}
         </tbody>
         <tfoot>
           <tr>
@@ -72,11 +81,18 @@ function ScoreTable({ detail }: { detail: IndustryDetail }) {
 /** 산업 페이지: 왜 관심이 몰리는지 → 숫자 → 관련 뉴스 → 관련 기업(시가총액 큰 순) */
 export function IndustryPage() {
   const { industryId = '' } = useParams();
-  const { data: detail, isPending, isError } = useIndustry(industryId);
+  const { data: detail, isPending, isError, error, refetch } = useIndustry(industryId);
   const news = useIndustryNews(industryId);
   const [companyCount, setCompanyCount] = useState(COMPANY_PAGE);
 
   if (isPending) return <div className={styles.page} aria-busy="true" />;
+  if (isError && !(error instanceof ApiError && error.status === 404)) {
+    return (
+      <div className={styles.page}>
+        <ErrorState title="산업 정보를 불러오지 못했어요" error={error} onRetry={() => refetch()} />
+      </div>
+    );
+  }
   if (isError || !detail) {
     return (
       <div className={styles.page}>
@@ -96,7 +112,6 @@ export function IndustryPage() {
   const Icon = industryIcon(detail.icon_key);
   const whyNews = detail.news.filter((item) => detail.why.news_ids.includes(item.id));
   const companies = [...detail.companies].sort((a, b) => b.market_cap - a.market_cap);
-  const last = detail.trend.at(-1);
 
   return (
     <div className={styles.page}>
@@ -144,19 +159,6 @@ export function IndustryPage() {
         <h2 id="industry-numbers" className={styles.sectionTitle}>
           숫자로 보기
         </h2>
-        {detail.trend.length > 0 && last && (
-          <div>
-            <p className={styles.chartTitle}>
-              최근 1개월 주가 흐름{' '}
-              <span className={styles.chartNote}>(1개월 전 대비, 주 단위)</span>
-            </p>
-            <TrendChart
-              points={detail.trend}
-              formatValue={signedPercent}
-              ariaLabel={`최근 1개월 주가 흐름, ${detail.trend.map((p) => `${p.date} ${signedPercent(p.value)}`).join(', ')}`}
-            />
-          </div>
-        )}
         <ScoreTable detail={detail} />
         <ul className={styles.criteria}>
           {HEAT_CRITERIA_TEXT.map((line) => (
@@ -173,6 +175,8 @@ export function IndustryPage() {
           items={news.data ?? []}
           isPending={news.isPending}
           isError={news.isError}
+          error={news.error}
+          onRetry={() => news.refetch()}
           label="관련 뉴스"
         />
       </section>

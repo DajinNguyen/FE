@@ -7,8 +7,7 @@ import { formatPrice } from '../../utils/format';
 import { WatchlistHeart } from '../watchlist/WatchlistHeart';
 import { useIndicatorItems } from './useIndicatorItems';
 import styles from './CompanyHeader.module.css';
-
-const marketLabel = { KOSPI: '코스피', KOSDAQ: '코스닥' } as const;
+import { MARKET_LABELS } from '../../config/markets';
 
 /** 기업 헤더 + 작은 주가·주요 지표 줄. 주가는 보조 정보라 크게 보여주지 않아요. */
 export function CompanyHeader({ company }: { company: CompanyDetail }) {
@@ -28,7 +27,7 @@ export function CompanyHeader({ company }: { company: CompanyDetail }) {
             )}
           </h1>
           <p className={styles.meta}>
-            {company.name_en} · {company.stock_code} · {marketLabel[company.market]} ·{' '}
+            {company.name_en} · {company.stock_code} · {MARKET_LABELS[company.market]} ·{' '}
             {company.sector}
           </p>
         </div>

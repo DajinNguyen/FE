@@ -26,8 +26,6 @@ export interface PerformanceMetric {
   value: number;
   unit: string;
   yoy_change_rate: number | null;
-  /** 작년 대비 변화율이 아직 확인하지 않은 예시 값이면 true */
-  yoy_is_sample?: boolean;
 }
 
 /** 개요 "최근 사업 성과" (실적 발표 요약) */

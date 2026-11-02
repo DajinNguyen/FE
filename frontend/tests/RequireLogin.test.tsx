@@ -45,7 +45,7 @@ describe('로그인이 필요한 동작', () => {
   });
 });
 
-describe('로그인 버튼 (목 데이터 모드)', () => {
+describe('로그인 버튼 (개발 서버)', () => {
   it('개발용 로그인을 하면 닉네임과 [로그아웃]이 보이고, 로그아웃하면 돌아와요', async () => {
     const user = userEvent.setup();
     renderWithProviders(<LoginButton />);
@@ -54,12 +54,5 @@ describe('로그인 버튼 (목 데이터 모드)', () => {
     expect(screen.getByText('개발용 사용자님')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: '로그아웃' }));
     expect(await screen.findByRole('button', { name: /Google로 로그인/ })).toBeInTheDocument();
-  });
-
-  it('목 데이터 모드에서 [Google로 로그인]은 이동하지 않고 개발용 로그인을 안내해요', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<LoginButton />);
-    await user.click(await screen.findByRole('button', { name: /Google로 로그인/ }));
-    expect(await screen.findByText(/개발용 로그인\]으로 확인해 주세요/)).toBeInTheDocument();
   });
 });

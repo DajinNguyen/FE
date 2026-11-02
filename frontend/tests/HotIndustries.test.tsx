@@ -41,6 +41,8 @@ describe('지금 관심이 몰리는 산업', () => {
 
     await user.click(screen.getByRole('button', { name: '기준 보기' }));
     const sheet = screen.getByRole('dialog', { name: '관심이 몰리는 산업은 이렇게 골라요' });
-    expect(sheet).toHaveTextContent('주가 상승률 40% + 거래대금 증가율 30% + 뉴스 언급 증가율 30%');
+    expect(sheet).toHaveTextContent(
+      '주가 상승률 35% + 거래대금 증가율 30% + 뉴스 언급 증가율 25% + 커뮤니티 활발도 10%',
+    );
   });
 });

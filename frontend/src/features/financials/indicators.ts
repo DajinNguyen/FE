@@ -14,7 +14,6 @@ export interface Indicator {
   status: Status | null;
   /** 배지 글자: "높은 편", "낮은 편 · 안정적", "평가 제외" */
   levelLabel: string;
-  is_sample: boolean;
   /** 쉬운 설명 한 줄 (값에 따라 문장이 바뀌어요) */
   description: string;
   /** 비교 문장. 예: "반도체 업종 중앙값 7.5%보다 높은 편이에요" */
@@ -92,7 +91,6 @@ interface Rule {
   thresholds: [number, number];
   description: string;
   criteria: string;
-  is_sample: boolean;
 }
 
 function evaluate(rule: Rule, benchmark: IndicatorBenchmark | undefined): Indicator {
@@ -116,7 +114,6 @@ function evaluate(rule: Rule, benchmark: IndicatorBenchmark | undefined): Indica
     display: format(rule.value),
     status: statusOf(level, rule.higherIsBetter),
     levelLabel: `${levelText[level]}${stable}`,
-    is_sample: rule.is_sample,
     description: rule.description,
     comparison,
     criteria: rule.criteria,
@@ -153,7 +150,6 @@ export function buildIndicators(financials: Financials): Indicator[] {
               ? `작년보다 매출이 ${round(growth)}% 늘었어요.`
               : `작년보다 매출이 ${round(Math.abs(growth))}% 줄었어요.`,
           criteria: '10% 이상 늘면 높은 편, 줄었으면 낮은 편',
-          is_sample: false,
         },
         benchmarks.revenue_growth,
       ),
@@ -173,7 +169,6 @@ export function buildIndicators(financials: Financials): Indicator[] {
           thresholds: [10, 5],
           description: `100원어치 팔면 약 ${Math.round(margin)}원을 남겼어요.`,
           criteria: '10% 이상이면 높은 편, 5% 미만이면 낮은 편',
-          is_sample: false,
         },
         benchmarks.operating_margin,
       ),
@@ -190,7 +185,6 @@ export function buildIndicators(financials: Financials): Indicator[] {
       thresholds: [10, 5],
       description: `주주가 맡긴 돈 100원으로 1년에 약 ${Math.round(indicators.roe.value)}원을 벌었어요.`,
       criteria: '10% 이상이면 높은 편, 5% 미만이면 낮은 편',
-      is_sample: indicators.roe.is_sample,
     },
     benchmarks.roe,
   );
@@ -210,7 +204,6 @@ export function buildIndicators(financials: Financials): Indicator[] {
       thresholds: [200, 100],
       description: `회사 자기 돈 100원당 빚이 약 ${Math.round(indicators.debt_ratio.value)}원 있어요.`,
       criteria: '100% 아래면 낮은 편(안정적), 200%를 넘으면 높은 편',
-      is_sample: indicators.debt_ratio.is_sample,
     },
     benchmarks.debt_ratio,
   );
@@ -232,7 +225,6 @@ export function buildIndicators(financials: Financials): Indicator[] {
       thresholds: [30, 15],
       description: `지금 주가는 1년 이익의 약 ${Math.round(indicators.per.value)}배예요.`,
       criteria: '업종마다 달라요. 여기서는 15배 아래면 낮은 편, 30배를 넘으면 높은 편으로 봤어요',
-      is_sample: indicators.per.is_sample,
     },
     benchmarks.per,
   );

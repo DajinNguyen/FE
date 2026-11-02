@@ -38,37 +38,10 @@
   background: var(--bg);
 }
 
-/* 본문 + 오른쪽 열 (1024px 이상) */
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
-  gap: var(--sp-12);
-  align-items: start;
-}
-
 .content {
   min-width: 0;
 }
 
-.sidebar {
-  position: sticky;
-  top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
-  padding-top: var(--sp-6);
-}
-
 .panel {
   min-height: 60vh;
-}
-
-/* 1024px 미만: 한 줄 세로 배치 (오른쪽 열은 본문 아래로) */
-@media (max-width: 1023px) {
-  .layout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-
-  .sidebar {
-    position: static;
-    padding: var(--sp-4) 0 var(--sp-6);
-  }
 }

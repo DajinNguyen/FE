@@ -1,21 +1,20 @@
 /**
- * 백엔드가 준비되기 전까지 API 응답을 흉내 내는 목 서버예요.
- * src/api/* 에서만 import 해요. (컴포넌트·훅에서 직접 import 금지)
+ * 테스트 전용 가짜 서버. 앱 코드에서는 import 하지 않아요. (fetchStub.ts 가 fetch 요청을 여기로 보내요)
  *
- * 개발 중 확인용 주소 옵션
+ * 확인용 주소 옵션
  * - ?mock_report=fail : 리포트 생성이 실패하는 경우를 흉내 내요.
  * - ?mock_market=fail : 메인 시장 정보를 불러오지 못하는 경우를 흉내 내요.
  */
 import companiesJson from './companies.json';
+import crosswordsJson from './crosswords.json';
+import termsJson from './terms.json';
 import { hotIndustries, industryRecords } from './industries';
 import { industryDetail, industryNews } from './industryDetails';
 import { marketSummary } from './market';
 import { companyNews, marketNews } from './news';
-import crosswordsJson from './crosswords.json';
 import samsungJson from './samsungElectronics.json';
-import termsJson from './terms.json';
-import { ApiError } from '../api/errors';
-import type { AuthUser } from '../features/auth/AuthContext';
+import { ApiError } from '../../src/api/errors';
+import type { AuthUser } from '../../src/features/auth/AuthContext';
 import type {
   CompanyDetail,
   CompanyReport,
@@ -32,13 +31,12 @@ import type {
   PricePeriod,
   SectorGroup,
   Term,
-} from '../types';
+} from '../../src/types';
 
 const isTest = import.meta.env.MODE === 'test';
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, isTest ? 0 : ms));
 
 const companies = companiesJson as CompanySummary[];
-const terms = termsJson as Term[];
 
 /** 재무·뉴스·리포트 원본이 있는 회사. 다른 회사를 추가하려면 JSON을 만들고 여기에 등록해요. */
 const companyData: Record<
@@ -313,7 +311,7 @@ export async function getHomeDashboard(): Promise<HomeDashboard> {
     base_time: `${lastTradingDate()} 15:30`,
     trading_value_top: tradingValues.map(([code, value]) => ({
       ...findCompany(code),
-      trading_value: { value, is_sample: true },
+      trading_value: { value },
       ai_headline: headlineOf(code),
     })),
     sector_companies: {
@@ -398,24 +396,17 @@ export async function getPriceHistory(
   return {
     stock_code: stockCode,
     period,
-    is_sample: true,
     points: closes.map((close, i) => ({ date: dates[i], close })),
   };
 }
 
 export async function getTerms(): Promise<Term[]> {
-  await wait(100);
-  return terms;
+  return termsJson as Term[];
 }
-
-/* ------------------------------------------------------------------ */
-/* 가로세로 낱말퀴즈 (직접 설계한 퍼즐 3개)                              */
-/* ------------------------------------------------------------------ */
 
 const crosswords = crosswordsJson as CrosswordPuzzle[];
 
 export async function getCrosswordPuzzles(): Promise<CrosswordSummary[]> {
-  await wait(120);
   return crosswords.map(({ id, title, difficulty, size, words }) => ({
     id,
     title,
@@ -426,7 +417,6 @@ export async function getCrosswordPuzzles(): Promise<CrosswordSummary[]> {
 }
 
 export async function getCrosswordPuzzle(puzzleId: string): Promise<CrosswordPuzzle> {
-  await wait(120);
   const puzzle = crosswords.find((p) => p.id === puzzleId);
   if (!puzzle) throw new ApiError('퍼즐을 찾지 못했어요', 404, 'PUZZLE_NOT_FOUND');
   return puzzle;

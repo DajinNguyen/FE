@@ -35,7 +35,6 @@ const quota = (overrides: Partial<ReportQuota>): ReportQuota => ({
   limit: 3,
   remaining: 0,
   blocked: null,
-  waitMinutes: 0,
   consume: () => {},
   canEarnMore: true,
   ...overrides,
@@ -49,10 +48,12 @@ describe('이용 제한 안내', () => {
 
   it('로그인 사용자가 다 쓰면 낱말퀴즈로 한 번 더 받으라고 안내하고 퀴즈로 가는 버튼이 있어요', () => {
     renderWithProviders(<QuotaNotice quota={quota({ blocked: 'member-daily' })} />);
-    expect(screen.getByRole('note')).toHaveTextContent('낱말퀴즈를 풀고 한 번 더 받아 보세요');
+    expect(screen.getByRole('note')).toHaveTextContent(
+      '낱말퀴즈 3개를 풀면 AI 리포트를 한 번 더 만들 수 있어요',
+    );
     expect(screen.getByRole('link', { name: '낱말퀴즈 풀러 가기' })).toHaveAttribute(
       'href',
-      '/terms?mode=crossword',
+      '/terms',
     );
   });
 
@@ -65,44 +66,56 @@ describe('이용 제한 안내', () => {
 });
 
 describe('낱말퀴즈 완료 보상', () => {
-  it('퍼즐을 다 풀면 리포트 만들기가 1회 늘어요', () => {
-    policy.memberDailyReports = 3;
-    const { result } = renderHook(
-      () => ({ credits: useUsageCredits(), quota: useReportQuota('005930') }),
-      { wrapper: wrapperFor(true) },
-    );
-    expect(result.current.quota.limit).toBe(3);
+  const solve = (hook: { current: ReturnType<typeof useUsageCredits> }, id: string) => {
+    let result = '';
     act(() => {
-      expect(result.current.credits.onPuzzleComplete('p1', { revealed: false })).toBe('granted');
+      result = hook.current.onPuzzleComplete(id, { revealed: false });
     });
+    return result;
+  };
+
+  it('퍼즐 3개를 다 풀면 리포트 만들기가 1회 늘고, 그 전에는 진행도(1/3, 2/3)만 올라가요', () => {
+    policy.memberDailyReports = 3;
+    const { result } = renderHook(() => ({ credits: useUsageCredits(), quota: useReportQuota() }), {
+      wrapper: wrapperFor(true),
+    });
+    const credits = {
+      get current() {
+        return result.current.credits;
+      },
+    };
+    expect(result.current.quota.limit).toBe(3);
+
+    expect(solve(credits, 'p1')).toBe('progress');
+    expect(result.current.credits.progress).toBe(1);
+    expect(solve(credits, 'p2')).toBe('progress');
+    expect(result.current.credits.progress).toBe(2);
+    expect(result.current.credits.bonus).toBe(0);
+
+    expect(solve(credits, 'p3')).toBe('granted');
     expect(result.current.credits.bonus).toBe(1);
     expect(result.current.quota.limit).toBe(4);
   });
 
-  it('정답 보기를 썼으면 보상이 없어요', () => {
+  it('정답 보기를 쓴 퀴즈는 개수에 넣지 않아요', () => {
     const { result } = renderHook(() => useUsageCredits(), { wrapper: wrapperFor(true) });
     act(() => {
       expect(result.current.onPuzzleComplete('p1', { revealed: true })).toBe('revealed');
     });
+    expect(result.current.progress).toBe(0);
     expect(result.current.bonus).toBe(0);
   });
 
-  it('하루 최대 2회, 같은 퍼즐은 한 번만, 비로그인은 보상이 없어요', () => {
+  it('보상은 하루 최대 2회(퍼즐 6개), 같은 퍼즐은 한 번만, 비로그인은 세지 않아요', () => {
     const { result } = renderHook(() => useUsageCredits(), { wrapper: wrapperFor(true) });
-    act(() => {
-      result.current.onPuzzleComplete('p1', { revealed: false });
-    });
-    act(() => {
-      expect(result.current.onPuzzleComplete('p1', { revealed: false })).toBe('already');
-      result.current.onPuzzleComplete('p2', { revealed: false });
-    });
-    act(() => {
-      expect(result.current.onPuzzleComplete('p3', { revealed: false })).toBe('daily-max');
-    });
+    solve(result, 'p1');
+    expect(solve(result, 'p1')).toBe('already');
+    for (const id of ['p2', 'p3', 'p4', 'p5', 'p6']) solve(result, id);
+    expect(solve(result, 'p7')).toBe('daily-max');
     expect(result.current.bonus).toBe(2);
     expect(result.current.canEarnMore).toBe(false);
 
     const guest = renderHook(() => useUsageCredits(), { wrapper: wrapperFor(false) });
-    expect(guest.result.current.onPuzzleComplete('p4', { revealed: false })).toBe('guest');
+    expect(guest.result.current.onPuzzleComplete('p8', { revealed: false })).toBe('guest');
   });
 });

@@ -25,7 +25,7 @@ export function App() {
         <Route path="rankings/trading" element={<TradingRankingPage />} />
         <Route path="terms" element={<TermCardsPage />} />
         {/* 낱말퀴즈는 용어 카드 화면 안에서 해요. 예전 주소는 그쪽으로 보내요. */}
-        <Route path="learn/crossword" element={<Navigate to="/terms?mode=crossword" replace />} />
+        <Route path="learn/crossword" element={<Navigate to="/terms" replace />} />
         <Route path="learn/crossword/:puzzleId" element={<CrosswordRedirect />} />
         <Route path="watchlist" element={<WatchlistPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

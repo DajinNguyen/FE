@@ -1,11 +1,11 @@
 /**
- * 산업 페이지 목 데이터 (설명·이유·흐름·뉴스·시가총액). 숫자는 모두 예시 값이에요.
+ * 산업 페이지 목 데이터 (설명·이유·뉴스·시가총액). 숫자는 모두 예시 값이에요.
  * 이유 문장은 지난 사실만 쓰고 예측·투자 권유 표현은 넣지 않아요.
  */
-import { ApiError } from '../api/errors';
-import type { CompanySummary, IndustryDetail, NewsItem } from '../types';
+import { ApiError } from '../../src/api/errors';
+import type { CompanySummary, IndustryDetail, NewsItem } from '../../src/types';
 import { industryRecords } from './industries';
-import { dateText, lastClose } from './marketClock';
+import { lastClose } from './marketClock';
 
 const text: Record<string, { description: string; why: string; topics: string[] }> = {
   ai: {
@@ -226,17 +226,6 @@ export function industryNews(industryId: string): NewsItem[] {
   }));
 }
 
-/** 1개월 전 대비 누적 등락률을 주 단위 5개 점으로 */
-function weeklyTrend(monthChange: number, seed: number) {
-  const { date } = lastClose();
-  return [4, 3, 2, 1, 0].map((weeksAgo, i) => {
-    const day = new Date(date);
-    day.setDate(day.getDate() - weeksAgo * 7);
-    const wobble = i === 0 || i === 4 ? 0 : Math.sin(seed + i) * 0.8;
-    return { date: dateText(day), value: Math.round(((monthChange * i) / 4 + wobble) * 10) / 10 };
-  });
-}
-
 export function industryDetail(industryId: string, companies: CompanySummary[]): IndustryDetail {
   const record = industryRecords.find((r) => r.industry_id === industryId);
   const info = text[industryId];
@@ -248,7 +237,6 @@ export function industryDetail(industryId: string, companies: CompanySummary[]):
     icon_key: record.icon_key,
     description: info.description,
     why: { text: info.why, news_ids: news.map((n) => n.id) },
-    trend: weeklyTrend(record.factors['1m'].price_change_rate, industryRecords.indexOf(record)),
     score_breakdown: { ...record.factors['1w'], period: '1w' },
     news,
     companies: record.companies
@@ -263,6 +251,5 @@ export function industryDetail(industryId: string, companies: CompanySummary[]):
       }))
       .sort((a, b) => b.market_cap - a.market_cap),
     as_of: lastClose().asOf,
-    is_sample: true,
   };
 }

@@ -20,10 +20,10 @@ const baseFinancials: Financials = {
   indicators_as_of: null,
   recent_performance: null,
   indicators: {
-    roe: { value: 9.2, is_sample: true },
-    debt_ratio: { value: 27.1, is_sample: true },
-    per: { value: 18.5, is_sample: true },
-    pbr: { value: 1.9, is_sample: true },
+    roe: { value: 9.2 },
+    debt_ratio: { value: 27.1 },
+    per: { value: 18.5 },
+    pbr: { value: 1.9 },
   },
 };
 
@@ -82,7 +82,7 @@ describe('지표 표현 (높은 편 / 보통 / 낮은 편)', () => {
         { fiscal_year: 2024, revenue: 100, operating_income: 8 },
         { fiscal_year: 2025, revenue: 90, operating_income: 3 },
       ],
-      indicators: { ...baseFinancials.indicators, debt_ratio: { value: 250, is_sample: true } },
+      indicators: { ...baseFinancials.indicators, debt_ratio: { value: 250 } },
     };
     renderWithProviders(<IndicatorSignals indicators={buildIndicators(weak)} />);
 

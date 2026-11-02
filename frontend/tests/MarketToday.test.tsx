@@ -11,7 +11,6 @@ const index = (change: number, change_rate: number): MarketIndex => ({
   value: 2684.32,
   change,
   change_rate,
-  is_sample: true,
 });
 
 afterEach(() => {

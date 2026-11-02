@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { Button } from '../components/Button';
+import { ErrorState } from '../components/ErrorState';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { CrosswordPanel } from '../features/crossword/CrosswordPanel';
 import {
@@ -16,16 +17,19 @@ import styles from './TermCardsPage.module.css';
 
 type PageMode = 'cards' | 'game' | 'crossword';
 
+/** 순서: 낱말퀴즈 → 카드 학습 → 문제. 처음 열면 낱말퀴즈예요. */
 const modeOptions = [
-  { value: 'cards', label: '카드 학습' },
-  { value: 'game', label: '게임' },
   { value: 'crossword', label: '낱말퀴즈' },
+  { value: 'cards', label: '카드 학습' },
+  { value: 'game', label: '문제' },
 ] as const;
 
+const DEFAULT_MODE: PageMode = 'crossword';
+
 const modeSubtitle: Record<PageMode, string> = {
+  crossword: '열쇠를 보고 용어를 가로세로 칸에 채워요',
   cards: '카드를 눌러 뒤집으면 쉬운 뜻이 나와요',
   game: '문제를 풀면서 용어를 익혀요',
-  crossword: '열쇠를 보고 용어를 가로세로 칸에 채워요',
 };
 
 const isPageMode = (value: string | null): value is PageMode =>
@@ -35,11 +39,11 @@ const isPageMode = (value: string | null): value is PageMode =>
 const MIN_GAME_TERMS = 4;
 
 export function TermCardsPage() {
-  const { data: allTerms } = useTerms();
+  const { data: allTerms, isError: termsError, error, refetch } = useTerms();
   const { mark, reset, marks } = useTermProgress();
   const [searchParams, setSearchParams] = useSearchParams();
   const modeParam = searchParams.get('mode');
-  const mode: PageMode = isPageMode(modeParam) ? modeParam : 'cards';
+  const mode: PageMode = isPageMode(modeParam) ? modeParam : DEFAULT_MODE;
   const [category, setCategory] = useState<TermCategoryFilter>('all');
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -58,7 +62,7 @@ export function TermCardsPage() {
     setSearchParams(
       (prev) => {
         const params = new URLSearchParams(prev);
-        if (next === 'cards') params.delete('mode');
+        if (next === DEFAULT_MODE) params.delete('mode');
         else params.set('mode', next);
         if (next !== 'crossword') params.delete('puzzle');
         return params;
@@ -129,7 +133,11 @@ export function TermCardsPage() {
         </div>
       )}
 
-      {mode === 'crossword' ? (
+      {mode !== 'crossword' && termsError ? (
+        <ErrorState title="용어를 불러오지 못했어요" error={error} onRetry={() => refetch()} />
+      ) : mode !== 'crossword' && !allTerms ? (
+        <div className={styles.loading} aria-hidden="true" />
+      ) : mode === 'crossword' ? (
         <CrosswordPanel
           puzzleId={searchParams.get('puzzle')}
           onSelect={(id) =>
@@ -209,7 +217,7 @@ export function TermCardsPage() {
                     className={styles.toGame}
                     onClick={() => changeMode('game')}
                   >
-                    게임으로 확인해 보기
+                    문제로 확인해 보기
                   </Button>
                   <button type="button" className={styles.reset} onClick={reset}>
                     진행 상황 초기화
