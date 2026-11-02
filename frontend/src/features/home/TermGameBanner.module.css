@@ -19,6 +19,13 @@
   font-size: var(--fs-sm);
 }
 
+.reward {
+  display: block;
+  margin-top: var(--sp-1);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
 .go {
   display: inline-flex;
   align-items: center;

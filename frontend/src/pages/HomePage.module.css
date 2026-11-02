@@ -14,25 +14,8 @@
   gap: var(--sp-4);
 }
 
-.title {
-  max-width: 760px;
-  font-size: var(--fs-3xl);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.searchBox {
-  margin-top: var(--sp-2);
-}
-
 .hint {
   color: var(--text-3);
-}
-
-.loading {
-  height: 480px;
-  border-radius: var(--radius-sm);
-  background: var(--surface);
 }
 
 .section {
@@ -75,9 +58,5 @@
   .page {
     gap: var(--sp-6);
     padding-top: var(--sp-6);
-  }
-
-  .title {
-    font-size: var(--fs-2xl);
   }
 }
