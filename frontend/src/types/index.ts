@@ -9,3 +9,4 @@ export type * from './home';
 export type * from './crossword';
 export type * from './industry';
 export type * from './market';
+export type * from './community';
