@@ -1,4 +1,3 @@
-import { AdSlot } from '../../components/AdSlot';
 import { Section } from '../../components/Section';
 import type { CompanyReportFlow } from '../../hooks/useCompanyReport';
 import type { EvidenceKind } from '../../types';
@@ -17,8 +16,7 @@ interface OverviewTabProps {
 }
 
 /**
- * 초보자용 기본 화면. 순서: AI 핵심 분석 → 핵심 그래프 → 근거 자료 → 기업 퀴즈 → (광고)
- * 광고는 AI 핵심 분석과 근거 자료 사이에 넣지 않아요.
+ * 초보자용 기본 화면. 순서: AI 핵심 분석 → 핵심 그래프 → 근거 자료 → 기업 퀴즈
  */
 export function OverviewTab({ flow, onGoToTab }: OverviewTabProps) {
   const { report } = flow;
@@ -53,7 +51,6 @@ export function OverviewTab({ flow, onGoToTab }: OverviewTabProps) {
           )}
         </>
       )}
-      <AdSlot placement="company-overview-bottom" />
     </div>
   );
 }
