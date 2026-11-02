@@ -2,7 +2,7 @@
  * 뉴스 목 데이터. 실제 기사처럼 보이지 않도록 예시 기사는 언론사를 "예시 뉴스", 주소를 example.com 으로 둬요.
  * 시각은 지금 기준으로 계산해서 "3시간 전" 같은 표시를 확인할 수 있어요.
  */
-import type { CompanySummary, NewsItem } from '../types';
+import type { CompanySummary, NewsItem } from '../../src/types';
 
 const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3_600_000).toISOString();
 

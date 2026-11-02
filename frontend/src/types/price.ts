@@ -11,7 +11,5 @@ export interface PricePoint {
 export interface PriceHistory {
   stock_code: string;
   period: PricePeriod;
-  /** 한국거래소 실제 시세로 바꾸기 전까지는 true */
-  is_sample: boolean;
   points: PricePoint[];
 }

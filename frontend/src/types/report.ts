@@ -24,7 +24,7 @@ export type EvidenceKind = 'financials' | 'news' | 'vision';
  * 핵심 포인트마다 붙는 근거 칩. 화면에는 "label date" 로 보여줘요.
  * 예: { type: "news", label: "뉴스", date: "2026-10-15" } → "뉴스 10.15"
  *     { type: "financials", label: "재무제표 2025 사업보고서", date: null } → "재무제표 2025 사업보고서"
- * 칩을 누르면 같은 화면의 해당 근거 자료(type)로 이동해요.
+ * 칩을 누르면 해당 상세 탭(재무 상세·뉴스 상세)으로 이동해요.
  */
 export interface EvidenceRef {
   type: EvidenceKind;
@@ -79,8 +79,6 @@ export interface FinancialHighlight {
   label: string;
   value: string;
   source: string;
-  /** (추가 제안) 아직 공식 자료로 확인하지 않은 값이면 true → "예시 값" 배지 */
-  is_sample?: boolean;
 }
 
 export interface FinancialsEvidence {

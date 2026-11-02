@@ -1,8 +1,8 @@
 /**
  * 시장 요약 목 데이터. 한마디·이유는 지난 사실만 쓰고 예측·투자 권유 표현은 넣지 않아요.
- * 지수 값은 예시 값이에요(is_sample: true).
+ * 테스트용 지수 값이에요.
  */
-import type { MarketSummary } from '../types';
+import type { MarketSummary } from '../../src/types';
 import { lastClose } from './marketClock';
 import { marketNews } from './news';
 
@@ -39,7 +39,6 @@ export function marketSummary(): MarketSummary {
         value: 2684.32,
         change: 31.2,
         change_rate: 1.18,
-        is_sample: true,
         intraday: intraday(2653.12, 2684.32, 1),
       },
       {
@@ -47,7 +46,6 @@ export function marketSummary(): MarketSummary {
         value: 812.4,
         change: -2.1,
         change_rate: -0.26,
-        is_sample: true,
         intraday: intraday(814.5, 812.4, 2),
       },
     ],

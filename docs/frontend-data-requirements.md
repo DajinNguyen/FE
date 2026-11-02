@@ -1,11 +1,14 @@
 # 프론트엔드 데이터 요구사항 (클라이언트 피드백 반영분)
 
-> 작성: 프론트엔드 · 2026-10-19 (2026-10-27 PM·클라이언트 피드백 반영분 추가)
-> 이번 화면 개편에 필요한 데이터 칸을 정리했어요. 프론트는 `src/types/`와 `src/mocks/`에 먼저 반영했고,
-> `src/api/` 함수(요청 주소·방식)는 바꾸지 않았어요. 백엔드는 아래 칸을 기존 응답에 추가하면 돼요.
+> 작성: 프론트엔드 · 2026-10-19 (2026-10-27 PM·클라이언트 피드백 반영분 추가, 2026-11-02 목 데이터 제거)
+> 이번 화면 개편에 필요한 데이터 칸을 정리했어요. 프론트는 `src/types/`에 먼저 반영했어요.
+> 백엔드는 아래 칸을 기존 응답에 추가하면 돼요.
 >
+> - **2026-11-02부터 앱에 목 데이터가 없어요.** 모든 화면이 `VITE_API_BASE_URL` 의 실제 API 만 불러요.
+> - 화면별로 부르는 API 전체 목록: 맨 아래 **9. 화면별 API 한눈에 보기**
 > - 타입 원본: `frontend/src/types/*.ts` (이 문서와 다르면 타입이 기준)
-> - 예시 값: `frontend/src/mocks/` (`mockServer.ts`, `companies.json`, `samsungElectronics.json`)
+> - 응답 예시: `frontend/tests/fixtures/` (테스트 전용, `mockServer.ts`, `companies.json`, `samsungElectronics.json`)
+> - `is_sample`("예시 값" 배지) 칸은 화면에서 더 이상 쓰지 않아요. 보내도 무시해요.
 > - `API_SPEC.md`에는 아직 반영하지 않았어요. 백엔드와 합의되면 함께 고칠게요.
 
 ## 한눈에 보기
@@ -81,8 +84,8 @@
 {
   "period_label": "2025년 4분기 실적",
   "announced_at": "2026-01-29",
-  "revenue": { "value": 93.8, "unit": "조 원", "yoy_change_rate": 23.7, "yoy_is_sample": false },
-  "operating_income": { "value": 20.1, "unit": "조 원", "yoy_change_rate": 209.2, "yoy_is_sample": false },
+  "revenue": { "value": 93.8, "unit": "조 원", "yoy_change_rate": 23.7 },
+  "operating_income": { "value": 20.1, "unit": "조 원", "yoy_change_rate": 209.2 },
   "summary": "AI용 메모리(HBM) 판매가 늘면서 분기 기준 가장 많은 매출을 냈어요.",
   "segments": [{ "name": "DS(반도체)", "revenue": 44.0, "unit": "조 원" }],
   "source": { "title": "DART 공시명", "date": "2026-01-29", "url": "https://dart.fss.or.kr/..." }
@@ -97,8 +100,7 @@
 | `segments` | 사업별 매출 가로 막대 (값 표시) | 빈 배열이면 숨김 |
 | `source` | 출처: DART 공시명 · 날짜 (링크) | 필수 |
 
-- `recent_performance` 가 null 이면 "최근 실적 발표 자료를 아직 불러오지 못했어요"를 보여줘요.
-- 목 데이터: 매출·영업이익·사업별 매출은 확인된 값, 작년 대비 변화율은 예시 값(`yoy_is_sample: true`)이에요.
+- `recent_performance` 가 null 이면 "최근 실적 발표 자료가 아직 없어요"를 보여줘요.
 
 ### `Financials.benchmarks`, `Financials.flags` (추가, 2026-10-27)
 
@@ -154,7 +156,7 @@
 | 예시 | `{ "semiconductor": [삼성전자, SK하이닉스, …], "food": [CJ제일제당, 오리온, …], … }` |
 | 쓰는 화면 | 메인 "업종별 기업" 탭 (탭마다 앞 5개) |
 | 없을 때 | 빈 배열이면 "이 업종의 기업은 아직 준비 중이에요" |
-| 비고 | 정렬 기준(시가총액·거래대금 등)은 백엔드에서 정해 주세요. 지금 목 데이터는 목록 순서예요. |
+| 비고 | 정렬 기준(시가총액·거래대금 등)은 백엔드에서 정해 주세요. 프론트는 받은 순서대로 보여줘요. |
 
 ### `base_time` (의미 명확히)
 
@@ -214,18 +216,22 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 
 ## 4. 이용 제한 (지금은 프론트에서 흉내)
 
-- 정책 값: `src/config/usagePolicy.ts` (임시값, PM 확정 필요) — 비로그인 하루 1회, 로그인 하루 3회, 같은 기업 다시 만들기 10분 간격
+- 정책 값: `src/config/usagePolicy.ts` (임시값, PM 확정 필요) — 지금은 비로그인·로그인 모두 하루 무제한. 같은 기업 다시 만들기 간격 제한은 없앴어요 (2026-11-02)
 - 지금은 기기(localStorage)에 횟수를 기록해요. 저장 로직은 `src/hooks/useReportQuota.ts` 한 곳에 모았어요.
 - 서버로 옮길 때 제안 (합의 필요):
-  - 리포트 응답 또는 별도 응답에 `{ limit: number; remaining: number; next_available_at: string | null }`
-  - 제한에 걸리면 `POST /report` 가 `429` + `code: "DAILY_LIMIT" | "REGENERATE_TOO_SOON"` 으로 알려 주기
+  - 리포트 응답 또는 별도 응답에 `{ limit: number; remaining: number }`
+  - 제한에 걸리면 `POST /report` 가 `429` + `code: "DAILY_LIMIT"` 으로 알려 주기
 - 이미 만들어진 리포트 보기(`GET /report`)는 제한하지 않아요.
 
-### 낱말퀴즈 완료 보상 (2026-10-27 추가, 임시값 확정 필요)
+### 낱말퀴즈 완료 보상 (2026-11-02 변경, 임시값 확정 필요)
 
-- 퍼즐 1개를 [정답 보기] 없이 다 풀면 리포트 만들기 1회 추가, 하루 최대 2회, 로그인 사용자만. 같은 퍼즐은 하루 한 번만.
+- **퍼즐 3개**를 [정답 보기] 없이 다 풀면 리포트 만들기 1회 추가, 보상은 하루 최대 2회(퍼즐 6개), 로그인 사용자만. 같은 퍼즐은 하루 한 번만 세요.
+- 퀴즈를 다 풀면 "AI 리포트까지 퀴즈 1/3", 3개를 채우면 "AI 리포트 1회가 추가됐어요"를 보여줘요.
 - 값: `frontend/src/config/usagePolicy.ts` 의 `PUZZLE_REWARD`. 지금은 기기(localStorage)에 기록해요 (`useUsageCredits`).
-- 서버로 옮길 때 필요한 것: `POST /api/crosswords/{puzzle_id}/complete` (body `{ "revealed": false }`) → `{ "granted": true, "bonus_today": 1 }`, 남은 횟수 응답에 보상 횟수 포함.
+- 서버로 옮길 때 필요한 것 (제안):
+  - `POST /api/learn/crosswords/{puzzle_id}/complete` (body `{ "revealed": false }`) → `{ "counted": true, "solved_today": 2, "bonus_today": 0 }`
+  - 남은 횟수 응답에 오늘 받은 보상 횟수 포함
+- 퍼즐이 지금 3개뿐이라, 같은 퍼즐을 하루 한 번만 세면 보상은 하루 1회까지만 받을 수 있어요. 퍼즐을 6개 이상으로 늘려야 하루 2회가 가능해요.
 - 하루 횟수 제한은 지금 임시로 무제한이라 보상 안내 문구는 숨겨져 있어요. 제한 값이 생기면 저절로 보여요.
 
 ## 5. 뉴스 (2026-10-27 형식 변경)
@@ -305,8 +311,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
     "heat_score": 35.6,
     "heat_level": "high",
     "headline_metric": { "label": "최근 1주", "value": 6.2, "unit": "%" },
-    "as_of": "2026-10-26T15:30:00+09:00",
-    "is_sample": false
+    "as_of": "2026-10-26T15:30:00+09:00"
   }
 ]
 ```
@@ -316,13 +321,12 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | `industry_id` | string | 산업 페이지 주소 `/industries/{industry_id}` | 필수 |
 | `name` | string | 아이콘 아래 산업명 | 필수 |
 | `icon_key` | string | 선 아이콘 (`ai`, `semiconductor`, `battery`, `bio`, `internet`, `auto`, `shipbuilding`, `defense`, `finance`, `game`) | 모르는 값이면 기본 아이콘 |
-| `heat_score` | number | (순서 확인용) | 필수 |
-| `heat_level` | `"high" \| "mid" \| "low"` | 아이콘 크기 (크게·중간·작게) | 필수 |
+| `heat_score` | number | 점수 높은 순 상위 3개만 보여줘요 (프론트가 다시 정렬해요) | 필수 |
+| `heat_level` | `"high" \| "mid" \| "low"` | 화면에서 안 써요 (아이콘 크기는 순위로 정해요) | 보내도 돼요 |
 | `headline_metric` | `{ label, value, unit }` | 아이콘 아래 "+6.2%" (label 은 화면 낭독용 "최근 1주 6.2% 상승") | 필수 (숫자 없는 아이콘은 안 보여줘요) |
-| `as_of` | ISO 8601 | 기준 시각 (DataAsOf) | 필수 |
-| `is_sample` | boolean | "예시 값" 배지 | false 로 보면 돼요 |
+| `as_of` | ISO 8601 | 아이콘 아래 기준일 (DataAsOf) | 필수 |
 
-**임시 기준 (확정 필요)**: 기간 최근 1주(1주/1개월 전환), 점수 = 주가 상승률 40% + 거래대금 증가율 30% + 뉴스 언급 증가율 30%, 상위 3개 `high`, 다음 3개 `mid`, 나머지 `low`.
+**임시 기준 (확정 필요)**: 기간 최근 1주(1주/1개월 전환), 점수 = 주가 상승률 35% + 거래대금 증가율 30% + 뉴스 언급 증가율 25% + 커뮤니티 활발도 10% (2026-11-02 변경), 메인에는 점수 상위 3개만 보여줘요 (1위일수록 아이콘이 커요). 4개 이상 보내도 돼요.
 산업 목록 초안: AI, 반도체, 2차전지, 바이오, 인터넷·플랫폼, 자동차, 조선, 방산, 금융, 게임.
 
 ### 6-2. 산업 페이지 `GET /api/industries/{industry_id}`
@@ -335,13 +339,12 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
   "description": "컴퓨터·스마트폰의 두뇌와 기억 장치 역할을 하는 반도체를 … 산업이에요.",
   "why": { "text": "이번 달 반도체 수출이 작년보다 늘었다는 통계가 나왔어요. …", "news_ids": ["n1", "n2"] },
   "trend": [{ "date": "2026-09-28", "value": 0 }, { "date": "2026-10-26", "value": 10.1 }],
-  "score_breakdown": { "price_change_rate": 4.8, "trading_value_change_rate": 35, "news_mention_change_rate": 40, "period": "1w" },
+  "score_breakdown": { "price_change_rate": 4.8, "trading_value_change_rate": 35, "news_mention_change_rate": 40, "community_activity_change_rate": 20, "period": "1w" },
   "news": [/* NewsItem (근거 뉴스) */],
   "companies": [
     { "stock_code": "005930", "name": "삼성전자", "intro": "스마트폰과 반도체를 만드는 회사예요", "market_cap": 760, "change_rate": 1.82 }
   ],
-  "as_of": "2026-10-26T15:30:00+09:00",
-  "is_sample": false
+  "as_of": "2026-10-26T15:30:00+09:00"
 }
 ```
 
@@ -350,8 +353,9 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | `description` | string (한 줄) | 산업명 아래 설명 | 필수 |
 | `why.text` | string (AI 정리 2~3문장, 예측·권유 금지) | "왜 관심이 몰리고 있나요?" | 빈 문자열이면 섹션 숨김 |
 | `why.news_ids` | string[] | 근거 뉴스 칩 (`news` 의 `id`) | 빈 배열이면 칩 숨김 |
-| `trend` | `{ date, value }[]` (주 단위 5개, 1개월 전 대비 누적 등락률 %) | "숫자로 보기" 그래프 (점마다 값 표시) | 빈 배열이면 그래프 숨김 |
-| `score_breakdown` | 변화율 % 3개 + `period` | 점수 구성 표 (비중은 프론트 config) | 필수 |
+| `trend` | `{ date, value }[]` | 화면에서 안 써요 (2026-11-02 산업 페이지의 최근 1개월 그래프 삭제) | 보내도 돼요 |
+| `score_breakdown` | 변화율 % 4개 + `period` | 점수 구성 표 (비중은 프론트 config) | 필수 |
+| `score_breakdown.community_activity_change_rate` | number (2026-11-02 추가) | 커뮤니티 활발도: 그 산업 기업들의 최근 1주 게시글·댓글 수 증가율 (%) | 없으면 표에 "준비 중" |
 | `news` | `NewsItem[]` | 근거 뉴스 | 빈 배열 |
 | `companies` | `{ stock_code, name, intro, market_cap(조 원), change_rate(%) }[]` | 관련 기업 (시가총액 큰 순, 10개 + [더 보기]) | 빈 배열이면 "아직 정리된 기업이 없어요" |
 | `as_of` | ISO 8601 | 상단 기준일 | 필수 |
@@ -370,7 +374,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
   "is_previous_session": false,
   "headline": "반도체 강세에 코스피가 1% 넘게 올랐어요",
   "indices": [
-    { "code": "KOSPI", "value": 2684.32, "change": 31.2, "change_rate": 1.18, "is_sample": false,
+    { "code": "KOSPI", "value": 2684.32, "change": 31.2, "change_rate": 1.18,
       "intraday": [{ "time": "09:00", "value": 2653.12 }] }
   ],
   "reasons": [
@@ -387,7 +391,6 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | `headline` | string | 메인 맨 위 가장 큰 글자 (예측·투자 권유 표현 금지) | 필수 |
 | `indices[].code` | `'KOSPI' \| 'KOSDAQ'` | 지수 이름 | 코스피는 필수, 코스닥은 없으면 숨김 |
 | `indices[].value`, `change`, `change_rate` | number | 지수, 어제 대비 등락폭·등락률 (상승 빨강 ▲, 하락 파랑 ▼) | 필수 |
-| `indices[].is_sample` | boolean (요청 형식에 추가) | true 면 "예시 값" 배지 | 필수 |
 | `indices[].intraday` | `{ time, value }[]` | 작은 당일 흐름 선 그래프 | 없으면 그래프 숨김 |
 | `reasons[]` | 최대 3개 | "오늘 시장, 왜 움직였나요?" 카드 | 빈 배열이면 섹션 숨김 |
 | `reasons[].industries` | `{ industry_id, name, change_rate }[]` | 관련 산업 칩 (예: 반도체 ▲2.1%), 누르면 산업 페이지 | 빈 배열이면 숨김 |
@@ -511,12 +514,11 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 
 1. `frontend/.env`
    ```
-   VITE_USE_MOCK=false
    VITE_API_BASE_URL=http://localhost:8000
    ```
 2. `npm run dev` 후 `http://localhost:5173/companies/005930?tab=community`
 3. 확인 순서: 목록(최신순·인기순·말머리) → 글 보기 → 로그인 → 글쓰기 → 댓글 → 좋아요 → 신고
-4. 실제 API 모드에서는 개발용 가짜 로그인 버튼이 사라져요. Google 로그인(`AuthProvider` 의 `loginWithGoogle`)을 먼저 연결해야 쓰기 기능을 확인할 수 있어요.
+4. 개발 서버의 [개발용 로그인]은 화면만 로그인 상태로 바꿔요. 서버에는 로그인 쿠키가 없어서 쓰기 요청은 401 이 나요. 쓰기 기능은 Google 로그인으로 확인해 주세요.
 
 ### 8-6. 확인이 필요한 것
 
@@ -531,3 +533,54 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 2. `sector_companies` 탭 안 정렬 기준과 개수
 3. 근거 칩 `label` 에 출처 이름까지 넣을지 (예: "재무제표 2025 사업보고서" vs "재무제표")
 4. 이용 제한 수치와, 실패한 생성도 횟수에 넣을지 (지금 프론트는 누를 때 바로 1회로 셈)
+
+## 9. 화면별 API 한눈에 보기 (2026-11-02 추가)
+
+앱에 목 데이터가 없어져서, 아래 API 가 없으면 그 영역에 "불러오지 못했어요 + 원인 + [다시 시도]"가 보여요.
+한 영역이 실패해도 다른 영역과 검색창은 그대로 동작해요. 응답 칸은 각 장(또는 `API_SPEC.md`)을 봐 주세요.
+
+| 화면 | 영역 | API | 자세한 곳 |
+|---|---|---|---|
+| 모든 화면 | 위쪽 검색창 | `GET /api/companies?query=&limit=20` | API_SPEC 1) |
+| 모든 화면 | 로그인 상태 | `GET /api/auth/me` (비로그인은 401) | 8-4, API_SPEC 3 |
+| 모든 화면 | 로그아웃 | `POST /api/auth/logout` | API_SPEC 3 |
+| 모든 화면 | Google 로그인 | `GET /api/auth/google?next=` (페이지 이동) | API_SPEC 3 |
+| 메인 | 오늘의 시장 (한마디·지수·왜 움직였나요) | `GET /api/market/summary` | 7 |
+| 메인 | 관심이 몰리는 산업 (상위 3개) | `GET /api/industries/hot?period=1w\|1m` | 6-1 |
+| 메인·거래 많은 기업 | 거래 많은 기업 TOP 5 / 전체 순위 | `GET /api/home` | 2 |
+| 산업 페이지 | 설명·흐름·점수·관련 기업 | `GET /api/industries/{industry_id}` | 6-2 |
+| 산업 페이지 | 관련 뉴스 | `GET /api/industries/{industry_id}/news?size=5` | 5 |
+| 관심 기업 | 담은 기업 목록 | `GET /api/companies?stock_codes=a,b` | API_SPEC 9) |
+| 기업 상세 | 머리(이름·주가·지표 칩), 개요 "무슨 사업을 하나요?" | `GET /api/companies/{stock_code}` | 1, API_SPEC 2) |
+| 기업 상세 > 개요 | 최근 사업 성과 | `GET /api/companies/{stock_code}/financials` (`recent_performance`) | 1 |
+| 기업 상세 > 개요 | 주가 흐름 (1달·3달·6달·1년) | `GET /api/companies/{stock_code}/prices?period=` | API_SPEC 7) |
+| 기업 상세 > AI 분석 | 리포트 보기 / 만들기 | `GET·POST /api/companies/{stock_code}/report` | 3 |
+| 기업 상세 > 재무 상세 | 재무제표·주요 지표 | `GET /api/companies/{stock_code}/financials` | 1 |
+| 기업 상세 > 뉴스 상세 | 기업 뉴스 (페이지) | `GET /api/companies/{stock_code}/news?page=&size=` | 5 |
+| 기업 상세 > 커뮤니티 | 글·댓글·좋아요·신고 | 8-1 의 API 전부 | 8 |
+| 용어 학습 | 낱말퀴즈 목록·퍼즐 | `GET /api/learn/crosswords`, `GET /api/learn/crosswords/{puzzle_id}` | 백엔드 `app/schemas/crossword.py` |
+| 용어 학습·용어 설명 | 카드 학습·문제·용어 밑줄 | `GET /api/terms` | API_SPEC 10) |
+
+### 주가 흐름 그래프 색 (2026-11-02)
+
+`PriceHistory.points` 의 첫 가격과 마지막 가격을 비교해서 프론트가 색을 정해요. (올랐으면 빨강, 내렸으면 파랑, 같으면 회색)
+그래서 `points` 는 **날짜 오름차순**으로 보내 주세요.
+
+## 11. 기업 목록 범위: OpenDART 상장사 전체 (2026-11-02 추가)
+
+- 지금 백엔드 `app/data/companies.json` 에는 **135개**만 있어서 검색도 135개 안에서만 돼요.
+- 요청: 검색(`GET /api/companies?query=&limit=20`)과 기업 상세가 **OpenDART 고유번호 목록(corpCode.xml)에서 종목코드(stock_code)가 있는 상장사 전체**(코스피·코스닥·코넥스, 약 2,700곳)를 다루게 해 주세요. 백엔드 `app/services/dart.py` 가 이미 corpCode.xml 을 받아 캐시하고 있어요.
+- 프론트는 기업 수와 상관없이 동작해요. 검색은 서버가 준 결과를 최대 20개까지 보여주고, 상세는 종목코드로 불러요.
+- 자동으로 늘어난 기업은 정리된 글이 없을 수 있어요. 아래 칸은 비어 있어도 화면이 깨지지 않아요.
+
+| 칸 | 비어 있을 때 |
+|---|---|
+| `one_liner` | 빈 문자열이면 목록에서 그 줄을 숨겨요 |
+| `sector`, `sector_group` | `sector` 는 DART 업종명, `sector_group` 은 `"etc"` 로 주세요 |
+| `market` | `"KOSPI"`, `"KOSDAQ"`, `"KONEX"` 중 하나 (2026-11-02 KONEX 추가) |
+| `business_description`, `business_segments` | 빈 값이면 "사업보고서 내용을 아직 불러오지 못했어요" |
+| `timeline` | 빈 배열이면 "회사의 방향" 숨김 |
+| `industries` | 빈 배열이면 소속 산업 칩 숨김 |
+| `market_cap` | null 이면 시가총액 숨김 |
+
+- 재무·리포트 자료가 아직 없는 기업은 지금처럼 `404 DATA_NOT_FOUND` 로 주면 "아직 자료가 없어요" 안내가 나와요.

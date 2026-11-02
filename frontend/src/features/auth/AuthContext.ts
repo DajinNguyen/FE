@@ -19,15 +19,16 @@ export interface AuthContextValue {
   loginWithGoogle: () => void;
   logout: () => Promise<void>;
   /**
-   * 개발용 가짜 로그인 (목 데이터 모드에서만 있어요). 로그인 상태의 화면 흐름을 확인할 때 써요.
-   * 실제 API 모드(VITE_USE_MOCK=false)에서는 undefined 예요.
+   * 개발용 가짜 로그인 (개발 서버에서만 있어요). 로그인 상태의 화면 흐름을 확인할 때 써요.
+   * 화면만 로그인 상태가 되고, 서버 요청은 로그인 쿠키가 없어서 거절될 수 있어요.
+   * 배포 빌드에서는 undefined 예요.
    */
   devLogin?: () => void;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
-/** 개발용 가짜 사용자 (목 데이터 모드에서만) */
+/** 개발용 가짜 사용자 (개발 서버에서만) */
 export const DEV_USER: AuthUser = {
   id: 'dev-user',
   email: 'dev@dajin.local',
