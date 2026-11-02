@@ -6,6 +6,7 @@
  * - ?mock_report=fail : 리포트 생성이 실패하는 경우를 흉내 내요.
  */
 import companiesJson from './companies.json';
+import { hotIndustries } from './industries';
 import { companyNews, marketNews } from './news';
 import crosswordsJson from './crosswords.json';
 import samsungJson from './samsungElectronics.json';
@@ -19,6 +20,7 @@ import type {
   CrosswordPuzzle,
   CrosswordSummary,
   Financials,
+  HeatPeriod,
   HomeDashboard,
   NewsItem,
   NewsPage,
@@ -127,6 +129,15 @@ export async function getMarketNews(date: string): Promise<NewsItem[]> {
   await wait(200);
   void date;
   return marketNews();
+}
+
+/* ------------------------------------------------------------------ */
+/* 산업                                                                */
+/* ------------------------------------------------------------------ */
+
+export async function getHotIndustries(period: HeatPeriod) {
+  await wait(200);
+  return hotIndustries(period);
 }
 
 /* ------------------------------------------------------------------ */
