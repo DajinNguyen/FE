@@ -1,8 +1,7 @@
 /**
- * 커뮤니티 규칙. 화면 검사와 목 서버가 같은 값을 써요. (실제 서버도 같은 규칙으로 한 번 더 검사해야 해요)
+ * 커뮤니티 규칙. 화면 검사에 써요. (실제 서버도 같은 규칙으로 한 번 더 검사해야 해요)
  */
 export const COMMUNITY_LIMITS = {
-  titleMax: 50,
   bodyMax: 2000,
   commentMax: 500,
   /** 도배 방지: 같은 사람은 1분에 글 1개·댓글 5개까지 (⚠️ 임시값, 확정 필요) */
@@ -11,6 +10,26 @@ export const COMMUNITY_LIMITS = {
   /** 신고가 이만큼 쌓이면 숨겨요. (⚠️ 임시값, 확정 필요) */
   hideAfterReports: 3,
 } as const;
+
+/**
+ * 댓글 사진 첨부. ⚠️ 임시값, 확정 필요.
+ * enabled: 업로드 API(POST /api/uploads)가 준비되면 true 로 바꿔요. 그 전에는 사진 버튼이 "준비 중"이에요.
+ */
+export const IMAGE_UPLOAD = {
+  enabled: false,
+  types: ['image/jpeg', 'image/png', 'image/webp'],
+  /** 5MB */
+  maxBytes: 5 * 1024 * 1024,
+};
+
+/** 사진 파일이 규칙에 맞지 않으면 안내 문장을, 맞으면 null 을 돌려줘요. */
+export function checkImage(file: { type: string; size: number }) {
+  if (!IMAGE_UPLOAD.types.includes(file.type)) return 'jpg·png·webp 사진만 올릴 수 있어요.';
+  if (file.size > IMAGE_UPLOAD.maxBytes) {
+    return `${IMAGE_UPLOAD.maxBytes / 1024 / 1024}MB 이하 사진만 올릴 수 있어요.`;
+  }
+  return null;
+}
 
 export const COMMUNITY_NOTICE = '종목 추천, 매수·매도 권유, 유료 리딩방 홍보는 금지돼요';
 

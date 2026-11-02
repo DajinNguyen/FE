@@ -1,202 +1,192 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { App } from '../src/App';
+import { checkImage, IMAGE_UPLOAD } from '../src/config/communityRules';
 import { CommunityTab } from '../src/features/community/CommunityTab';
-import { CommunityPostPage } from '../src/pages/CommunityPostPage';
-import { CommunityWritePage } from '../src/pages/CommunityWritePage';
 import { renderWithProviders } from './testUtils';
 
-describe('커뮤니티 탭', () => {
-  it('맨 위에 금지 안내를 보여주고, 글을 10개씩 보여주다가 [더 보기]로 이어 붙여요', async () => {
+type User = ReturnType<typeof userEvent.setup>;
+const login = async (user: User) =>
+  user.click(await screen.findByRole('button', { name: '개발용으로 로그인' }));
+
+const commentList = () => screen.findByRole('list', { name: '기업 댓글' });
+/** 본문으로 기업 댓글 한 개(li)를 찾아요 */
+const commentItem = async (text: string) =>
+  (await within(await commentList()).findByText(text, { exact: false })).closest('li')!;
+
+afterEach(() => {
+  IMAGE_UPLOAD.enabled = false;
+});
+
+describe('기업 커뮤니티: 바로 쓰는 댓글', () => {
+  it('글쓰기 화면 없이 맨 위 입력창에서 바로 쓰고, 목록은 10개씩 보다가 [더 보기]로 이어 붙여요', async () => {
     const user = userEvent.setup();
     renderWithProviders(<CommunityTab stockCode="005930" />);
 
     expect(
       screen.getByText('종목 추천, 매수·매도 권유, 유료 리딩방 홍보는 금지돼요'),
     ).toBeInTheDocument();
-    const list = await screen.findByRole('list', { name: '글 목록' });
-    expect(within(list).getAllByRole('listitem')).toHaveLength(10);
-    // 첫 글: 말머리·제목·닉네임·댓글·좋아요
-    const first = within(list).getAllByRole('link')[0];
-    expect(first).toHaveTextContent('질문');
-    expect(first).toHaveTextContent('HBM이 뭔지 쉽게 알려주실 분?');
-    expect(first).toHaveTextContent(/주린이 · .+ · 댓글 3 · 좋아요 12/);
-    // 신고로 숨겨진 글
-    expect(within(list).getByText('신고로 숨겨진 글이에요')).toBeInTheDocument();
+    expect(screen.getByLabelText('댓글 입력')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '글쓰기' })).not.toBeInTheDocument();
+
+    const list = await commentList();
+    expect(within(list).getAllByRole('listitem', { name: '' }).length).toBeGreaterThan(0);
+    const first = await commentItem('메모리를 여러 층 쌓은 거라고 들었는데');
+    expect(first).toHaveTextContent(/주린이 · .+/);
+    expect(first).not.toHaveTextContent('HBM이 뭔지 쉽게 알려주실 분?');
+    expect(within(list).getByText('신고로 숨겨진 댓글이에요')).toBeInTheDocument();
+    expect(list.querySelectorAll(':scope > li')).toHaveLength(10);
 
     await user.click(screen.getByRole('button', { name: '더 보기' }));
-    await waitFor(() =>
-      expect(
-        within(screen.getByRole('list', { name: '글 목록' })).getAllByRole('listitem'),
-      ).toHaveLength(12),
-    );
+    await waitFor(() => expect(list.querySelectorAll(':scope > li')).toHaveLength(12));
   });
 
-  it('말머리로 거르고, 인기순으로 바꿀 수 있어요', async () => {
+  it('인기순으로 바꿀 수 있어요', async () => {
     const user = userEvent.setup();
     renderWithProviders(<CommunityTab stockCode="005930" />);
-    await screen.findByRole('list', { name: '글 목록' });
-
-    await user.click(screen.getByRole('button', { name: '분석 공유' }));
-    await waitFor(() => {
-      const links = within(screen.getByRole('list', { name: '글 목록' })).getAllByRole('link');
-      expect(links.every((l) => l.textContent?.startsWith('분석 공유'))).toBe(true);
-    });
-
+    await commentList();
     await user.click(screen.getByRole('radio', { name: '인기순' }));
-    await waitFor(() =>
-      expect(
-        within(screen.getByRole('list', { name: '글 목록' })).getAllByRole('link')[0],
-      ).toHaveTextContent('4분기 실적 정리해 봤어요'),
-    );
+    await waitFor(async () => {
+      const first = (await commentList()).querySelector(':scope > li');
+      expect(first).toHaveTextContent('매출 93.8조, 영업이익 20.1조였어요');
+    });
   });
 
-  it('글이 없는 기업은 "첫 글을 남겨 보세요", 비로그인으로 글쓰기를 누르면 로그인 시트를 띄워요', async () => {
+  it('비로그인으로 등록하면 로그인 시트가 뜨고, 로그인하면 바로 올라가요. 내 댓글은 지울 수 있어요', async () => {
     const user = userEvent.setup();
     renderWithProviders(<CommunityTab stockCode="000660" />);
+    expect(
+      await screen.findByText('아직 댓글이 없어요. 첫 댓글을 남겨 보세요.'),
+    ).toBeInTheDocument();
 
-    expect(await screen.findByText('첫 글을 남겨 보세요')).toBeInTheDocument();
-    await user.click(screen.getAllByRole('button', { name: '글쓰기' })[0]);
+    await user.type(screen.getByLabelText('댓글 입력'), 'HBM 공부 중이에요');
+    await user.click(screen.getByRole('button', { name: '등록' }));
     expect(
       screen.getByRole('dialog', { name: 'Google로 로그인하면 이용할 수 있어요' }),
     ).toBeInTheDocument();
+    await login(user);
+
+    const mine = await commentItem('HBM 공부 중이에요');
+    await user.click(within(mine).getByRole('button', { name: '삭제' }));
+    await waitFor(() => expect(screen.queryByText('HBM 공부 중이에요')).not.toBeInTheDocument());
   });
-});
 
-const renderPost = (postId: string) =>
-  renderWithProviders(
-    <Routes>
-      <Route path="/companies/:stockCode/community/:postId" element={<CommunityPostPage />} />
-      <Route path="/companies/:stockCode" element={<p>기업 화면</p>} />
-    </Routes>,
-    { route: `/companies/005930/community/${postId}` },
-  );
-
-describe('글 보기', () => {
-  it('좋아요: 비로그인으로 누르면 로그인 후 바로 반영되고, 다시 누르면 취소돼요', async () => {
+  it('좋아요: 비로그인으로 누르면 로그인 후 바로 반영돼요', async () => {
     const user = userEvent.setup();
-    renderPost('p1');
-
-    const like = await screen.findByRole('button', { name: /좋아요 12/ });
-    expect(like).toHaveAttribute('aria-pressed', 'false');
-    await user.click(like);
-    await user.click(screen.getByRole('button', { name: '개발용으로 로그인' }));
-
-    expect(await screen.findByRole('button', { name: /좋아요 13/ })).toHaveAttribute(
+    renderWithProviders(<CommunityTab stockCode="005930" />);
+    const first = await commentItem('메모리를 여러 층 쌓은 거라고 들었는데');
+    await user.click(within(first).getByRole('button', { name: '좋아요 12' }));
+    await login(user);
+    expect(await within(first).findByRole('button', { name: '좋아요 13' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    await user.click(screen.getByRole('button', { name: /좋아요 13/ }));
-    expect(await screen.findByRole('button', { name: /좋아요 12/ })).toHaveAttribute(
-      'aria-pressed',
-      'false',
-    );
-  });
-
-  it('댓글을 쓰면 바로 보이고, 내 댓글은 지울 수 있어요. 숨겨진 댓글은 내용을 가려요', async () => {
-    const user = userEvent.setup();
-    renderPost('p1');
-
-    expect(await screen.findByText('신고로 숨겨진 댓글이에요')).toBeInTheDocument();
-    await user.type(screen.getByLabelText('댓글 입력'), '저도 궁금했어요');
-    await user.click(screen.getByRole('button', { name: '등록' }));
-    await user.click(screen.getByRole('button', { name: '개발용으로 로그인' }));
-
-    expect(await screen.findByText('저도 궁금했어요')).toBeInTheDocument();
-    expect(await screen.findByRole('heading', { name: '댓글 4' })).toBeInTheDocument();
-    const comments = screen.getByRole('list', { name: '댓글' });
-
-    await waitFor(() =>
-      expect(within(comments).getByRole('button', { name: '삭제' })).toBeEnabled(),
-    );
-    await user.click(within(comments).getByRole('button', { name: '삭제' }));
-    await waitFor(() =>
-      expect(within(comments).queryByText('저도 궁금했어요')).not.toBeInTheDocument(),
-    );
-  });
-
-  it('신고로 숨겨진 글은 내용을 보여주지 않아요', async () => {
-    renderPost('p12');
-    expect(await screen.findByText('신고로 숨겨진 글이에요')).toBeInTheDocument();
-    expect(screen.queryByText('오늘 꼭 사세요 무조건 오릅니다')).not.toBeInTheDocument();
   });
 });
 
-const renderWrite = () =>
-  renderWithProviders(
-    <Routes>
-      <Route path="/companies/:stockCode/community/write" element={<CommunityWritePage />} />
-      <Route path="/companies/:stockCode/community/:postId" element={<CommunityPostPage />} />
-      <Route path="/companies/:stockCode" element={<p>기업 화면</p>} />
-    </Routes>,
-    { route: '/companies/005930/community/write' },
-  );
-
-async function loginOnWritePage(user: ReturnType<typeof userEvent.setup>) {
-  // 처음에는 로그인 여부를 확인하는 동안 잠깐 비어 있어요.
-  await user.click(await screen.findByRole('button', { name: '로그인하기' }));
-  await user.click(screen.getByRole('button', { name: '개발용으로 로그인' }));
-}
-
-describe('글쓰기', () => {
-  it('로그인해야 쓸 수 있고, 제목은 50자까지만 들어가요', async () => {
+describe('댓글의 답글', () => {
+  it('답글은 접혀 있다가 "답글 N개 보기"로 펼치고, 답글의 답글은 "@닉네임"으로 보여요', async () => {
     const user = userEvent.setup();
-    renderWrite();
-    expect(await screen.findByText('로그인하면 글을 쓸 수 있어요')).toBeInTheDocument();
-    await loginOnWritePage(user);
+    renderWithProviders(<CommunityTab stockCode="005930" />);
+    const first = await commentItem('메모리를 여러 층 쌓은 거라고 들었는데');
 
-    const title = screen.getByLabelText('제목');
-    await user.type(title, '가'.repeat(60));
-    expect(title).toHaveValue('가'.repeat(50));
-    expect(screen.getByText('50/50')).toBeInTheDocument();
+    const toggle = within(first).getByRole('button', { name: '답글 5개 보기' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await user.click(toggle);
+    const replies = await within(first).findByRole('list', { name: '답글' });
+    await waitFor(() => expect(within(replies).getAllByRole('listitem')).toHaveLength(5));
+    expect(within(replies).getByText('@주린이', { exact: false })).toBeInTheDocument();
+    expect(within(replies).getByText('신고로 숨겨진 댓글이에요')).toBeInTheDocument();
+
+    await user.click(within(first).getByRole('button', { name: '답글 숨기기' }));
+    expect(within(first).queryByRole('list', { name: '답글' })).not.toBeInTheDocument();
   });
 
-  it('금지어가 있으면 등록하지 않고 안내해요. 고치면 등록되고 글 보기로 이동해요', async () => {
+  it('[답글]로 댓글에 답하고, 답글의 [답글]은 "@닉네임"을 붙여 같은 단계에 달아요 (로그인 필요)', async () => {
     const user = userEvent.setup();
-    renderWrite();
-    await loginOnWritePage(user);
+    renderWithProviders(<CommunityTab stockCode="005930" />);
+    const first = await commentItem('메모리를 여러 층 쌓은 거라고 들었는데');
 
-    await user.type(screen.getByLabelText('제목'), '같이 공부해요');
-    await user.type(screen.getByLabelText('본문'), '리딩방 들어오시면 알려드려요');
-    await user.click(screen.getByRole('button', { name: '등록' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('쓸 수 없는 표현이 있어요');
+    await user.click(within(first).getAllByRole('button', { name: '답글' })[0]);
+    await login(user);
+    await user.type(await within(first).findByLabelText('답글 입력'), '저도 궁금했어요');
+    await user.click(within(first).getAllByRole('button', { name: '등록' })[0]);
+    const replies = await within(first).findByRole('list', { name: '답글' });
+    expect(await within(replies).findByText('저도 궁금했어요')).toBeInTheDocument();
 
-    await user.clear(screen.getByLabelText('본문'));
-    await user.type(screen.getByLabelText('본문'), '재무제표 같이 공부해요');
-    await user.click(screen.getByRole('button', { name: '등록' }));
-    expect(
-      await screen.findByRole('heading', { level: 1, name: '같이 공부해요' }),
-    ).toBeInTheDocument();
-  });
-
-  it('쓰던 중 [취소]를 누르면 화면 안에서 한 번 더 물어봐요', async () => {
-    const user = userEvent.setup();
-    renderWrite();
-    await loginOnWritePage(user);
-
-    await user.type(screen.getByLabelText('제목'), '쓰는 중');
-    await user.click(screen.getByRole('button', { name: '취소' }));
-    expect(screen.getByRole('dialog', { name: '작성 중인 글이 사라져요' })).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: '계속 쓰기' }));
-    expect(screen.getByLabelText('제목')).toHaveValue('쓰는 중');
+    const target = within(replies).getByText('여러 층으로 쌓아서', { exact: false }).closest('li')!;
+    await user.click(within(target).getByRole('button', { name: '답글' }));
+    const input = await within(first).findByLabelText('답글 입력');
+    expect(input).toHaveAttribute('placeholder', '@반도체공부중 님에게 답글');
+    await user.type(input, '고마워요');
+    await user.click(within(input.closest('form')!).getByRole('button', { name: '등록' }));
+    const added = (await within(replies).findByText('고마워요', { exact: false })).closest('p')!;
+    expect(added).toHaveTextContent('@반도체공부중 고마워요');
   });
 });
 
-describe('신고', () => {
-  it('사유를 골라 신고하면 완료 토스트가 뜨고, 같은 글은 다시 신고할 수 없어요', async () => {
+describe('이모지·사진·신고', () => {
+  it('이모지: 비로그인이면 로그인 시트, 로그인하면 패널이 열리고 이모지가 없으면 준비 중 안내', async () => {
     const user = userEvent.setup();
-    renderPost('p2');
+    renderWithProviders(<CommunityTab stockCode="005930" />);
+    await user.click(screen.getByRole('button', { name: '이모지' }));
+    await login(user);
+    expect(await screen.findByRole('group', { name: '다진 이모지' })).toHaveTextContent(
+      '다진 이모지를 준비하고 있어요',
+    );
+  });
 
-    await user.click(await screen.findByRole('button', { name: '신고' }));
-    await user.click(screen.getByRole('button', { name: '개발용으로 로그인' }));
+  it('사진: 업로드 API 준비 전에는 "준비 중", 준비되면 jpg·png·webp 5MB 이하만 받아요', async () => {
+    expect(checkImage({ type: 'image/png', size: 1024 })).toBeNull();
+    expect(checkImage({ type: 'image/gif', size: 1024 })).toBe(
+      'jpg·png·webp 사진만 올릴 수 있어요.',
+    );
+    expect(checkImage({ type: 'image/jpeg', size: 6 * 1024 * 1024 })).toBe(
+      '5MB 이하 사진만 올릴 수 있어요.',
+    );
 
-    const sheet = await screen.findByRole('dialog', { name: '글 신고' });
-    expect(within(sheet).getByRole('button', { name: '신고하기' })).toBeDisabled();
+    const { unmount } = renderWithProviders(<CommunityTab stockCode="005930" />);
+    expect(screen.getByRole('button', { name: '사진 (준비 중)' })).toBeDisabled();
+    unmount();
+
+    IMAGE_UPLOAD.enabled = true;
+    const user = userEvent.setup({ applyAccept: false });
+    renderWithProviders(<CommunityTab stockCode="005930" />);
+    await user.click(screen.getByRole('button', { name: '사진' }));
+    await login(user);
+    await user.upload(
+      screen.getByLabelText('사진 고르기'),
+      new File(['gif'], 'a.gif', { type: 'image/gif' }),
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('jpg·png·webp 사진만 올릴 수 있어요.');
+  });
+
+  it('신고: 사유에 "부적절한 사진"이 있고, 신고하면 다시 신고할 수 없어요', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<CommunityTab stockCode="005930" />);
+    const item = await commentItem('매출 93.8조, 영업이익 20.1조였어요');
+    await user.click(within(item).getByRole('button', { name: '신고' }));
+    await login(user);
+
+    const sheet = await screen.findByRole('dialog', { name: '댓글 신고' });
+    expect(within(sheet).getByRole('radio', { name: '부적절한 사진' })).toBeInTheDocument();
     await user.click(within(sheet).getByRole('radio', { name: '투자 권유·리딩방' }));
     await user.click(within(sheet).getByRole('button', { name: '신고하기' }));
-
     expect(await screen.findByText('신고했어요. 확인 후 처리할게요.')).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: '신고함' })).toBeDisabled();
+    expect(await within(item).findByRole('button', { name: '신고함' })).toBeDisabled();
+  });
+
+  it('예전 글쓰기·글 보기 주소는 기업 화면 커뮤니티 탭으로 보내요', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="*" element={<App />} />
+      </Routes>,
+      { route: '/companies/005930/community/write' },
+    );
+    expect(
+      await screen.findByRole('tab', { name: '커뮤니티', selected: true }),
+    ).toBeInTheDocument();
   });
 });
