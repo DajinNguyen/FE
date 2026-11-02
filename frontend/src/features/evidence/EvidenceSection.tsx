@@ -71,7 +71,7 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
         <EvidenceBlock
           kind="vision"
           title="기업 비전"
-          detail={{ tab: 'info', label: '기업 정보 보기' }}
+          detail={{ tab: 'overview', label: '개요에서 기업 정보 보기' }}
           onGoToTab={onGoToTab}
           meta={vision && sourceLine(vision.source, vision.base_date)}
         >
