@@ -28,6 +28,7 @@ interface StoredPost {
   updated_at: string | null;
   likes: Set<string>;
   reports: Set<string>;
+  image_url?: string | null;
 }
 
 interface StoredComment {
@@ -272,6 +273,7 @@ function toPost(stored: StoredPost): Post {
     liked_by_me: Boolean(me && stored.likes.has(me)),
     reported_by_me: Boolean(me && stored.reports.has(me)),
     is_mine: stored.author.id === me,
+    image_url: hidden ? null : (stored.image_url ?? null),
     is_hidden: hidden,
   };
 }
@@ -364,6 +366,7 @@ export async function createPost(stockCode: string, input: PostInput): Promise<P
     updated_at: null,
     likes: new Set(),
     reports: new Set(),
+    image_url: input.image_url ?? null,
   };
   posts = [stored, ...posts];
   return toPost(stored);
