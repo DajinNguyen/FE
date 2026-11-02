@@ -7,6 +7,7 @@ import { getSessionUser } from './session';
 import { COMMUNITY_LIMITS, findBannedWord } from '../../src/config/communityRules';
 import type {
   Comment,
+  CommentInput,
   LikeResult,
   Post,
   PostCategory,
@@ -36,6 +37,10 @@ interface StoredComment {
   author: { id: string; nickname: string };
   created_at: string;
   reports: Set<string>;
+  parent_id?: string | null;
+  reply_to_nickname?: string | null;
+  image_url?: string | null;
+  deleted?: boolean;
 }
 
 const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3_600_000).toISOString();
@@ -201,6 +206,7 @@ function seed() {
     author: StoredComment['author'],
     hours: number,
     reports = 0,
+    reply?: { parent_id: string; reply_to_nickname?: string },
   ): StoredComment => ({
     id,
     post_id: postId,
@@ -208,6 +214,7 @@ function seed() {
     author,
     created_at: hoursAgo(hours),
     reports: fakeUsers(reports, `${id}-report`),
+    ...reply,
   });
   comments = [
     c(
@@ -218,6 +225,11 @@ function seed() {
       1.5,
     ),
     c('c2', 'p1', '용어 카드에도 설명이 있어요!', people.e, 1),
+    c('c6', 'p1', '감사해요! 덕분에 이해했어요.', people.a, 1.2, 0, { parent_id: 'c1' }),
+    c('c7', 'p1', '용어 카드에서 HBM 도 찾아보세요.', people.e, 1.1, 0, {
+      parent_id: 'c1',
+      reply_to_nickname: people.a.nickname,
+    }),
     c('c3', 'p1', '여기서 말고 오픈채팅으로 오세요 (숨겨진 댓글 예시)', people.c, 0.5, 3),
     c('c4', 'p2', '정리 감사해요. 숫자 출처까지 적어 주셔서 좋네요.', people.a, 4),
     c(
@@ -251,13 +263,12 @@ function toPost(stored: StoredPost): Post {
     id: stored.id,
     stock_code: stored.stock_code,
     category: stored.category,
-    title: hidden ? '' : stored.title,
     body: hidden ? '' : stored.body,
     author: stored.author,
     created_at: stored.created_at,
     updated_at: stored.updated_at,
     like_count: stored.likes.size,
-    comment_count: comments.filter((cm) => cm.post_id === stored.id).length,
+    comment_count: comments.filter((cm) => cm.post_id === stored.id && !cm.deleted).length,
     liked_by_me: Boolean(me && stored.likes.has(me)),
     reported_by_me: Boolean(me && stored.reports.has(me)),
     is_mine: stored.author.id === me,
@@ -270,7 +281,12 @@ function toComment(stored: StoredComment): Comment {
   return {
     id: stored.id,
     post_id: stored.post_id,
-    body: hidden ? '' : stored.body,
+    body: hidden || stored.deleted ? '' : stored.body,
+    parent_id: stored.parent_id ?? null,
+    reply_to_nickname: stored.reply_to_nickname ?? null,
+    reply_count: comments.filter((cm) => cm.parent_id === stored.id && !cm.deleted).length,
+    is_deleted: Boolean(stored.deleted),
+    image_url: stored.image_url ?? null,
     author: stored.author,
     created_at: stored.created_at,
     is_mine: stored.author.id === getSessionUser()?.id,
@@ -291,19 +307,13 @@ function findPost(postId: string) {
 }
 
 function validatePost(input: PostInput) {
-  const title = input.title.trim();
   const body = input.body.trim();
-  if (
-    !title ||
-    title.length > COMMUNITY_LIMITS.titleMax ||
-    !body ||
-    body.length > COMMUNITY_LIMITS.bodyMax
-  ) {
-    throw new ApiError('제목과 본문 글자 수를 확인해 주세요', 400, 'INVALID_LENGTH');
+  if (!body || body.length > COMMUNITY_LIMITS.bodyMax) {
+    throw new ApiError('본문 글자 수를 확인해 주세요', 400, 'INVALID_LENGTH');
   }
-  const banned = findBannedWord(`${title} ${body}`);
+  const banned = findBannedWord(body);
   if (banned) throw new ApiError(`${banned}은(는) 쓸 수 없어요`, 400, 'BANNED_WORD');
-  return { title, body };
+  return { title: body.split('\n')[0].slice(0, 30), body };
 }
 
 export async function getPosts(
@@ -392,12 +402,12 @@ export async function getComments(postId: string): Promise<Comment[]> {
     .map(toComment);
 }
 
-export async function createComment(postId: string, body: string): Promise<Comment> {
+export async function createComment(postId: string, input: CommentInput): Promise<Comment> {
   await wait(200);
   const user = requireUser();
   findPost(postId);
-  const text = body.trim();
-  if (!text || text.length > COMMUNITY_LIMITS.commentMax) {
+  const text = input.body.trim();
+  if ((!text && !input.image_url) || text.length > COMMUNITY_LIMITS.commentMax) {
     throw new ApiError('댓글 글자 수를 확인해 주세요', 400, 'INVALID_LENGTH');
   }
   const banned = findBannedWord(text);
@@ -416,6 +426,9 @@ export async function createComment(postId: string, body: string): Promise<Comme
     author: { id: user.id, nickname: user.nickname },
     created_at: new Date().toISOString(),
     reports: new Set(),
+    parent_id: input.parent_id ?? null,
+    reply_to_nickname: input.reply_to_nickname ?? null,
+    image_url: input.image_url ?? null,
   };
   comments = [...comments, stored];
   return toComment(stored);
@@ -428,7 +441,9 @@ export async function deleteComment(commentId: string): Promise<void> {
   if (!comment) throw new ApiError('댓글을 찾지 못했어요', 404, 'COMMENT_NOT_FOUND');
   if (comment.author.id !== user.id)
     throw new ApiError('내 댓글만 지울 수 있어요', 403, 'NOT_OWNER');
-  comments = comments.filter((cm) => cm.id !== commentId);
+  // 답글이 있으면 자리를 남겨요 ("삭제된 댓글이에요")
+  if (comments.some((cm) => cm.parent_id === commentId)) comment.deleted = true;
+  else comments = comments.filter((cm) => cm.id !== commentId);
 }
 
 export async function likePost(postId: string): Promise<LikeResult> {

@@ -59,7 +59,7 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   [
     'POST',
     /^\/api\/posts\/([\w-]+)\/comments$/,
-    async ([, id], _, body) => server.createComment(id, body.body),
+    async ([, id], _, body) => server.createComment(id, body),
   ],
   ['POST', /^\/api\/posts\/([\w-]+)\/like$/, async ([, id]) => server.likePost(id)],
   ['DELETE', /^\/api\/posts\/([\w-]+)\/like$/, async ([, id]) => server.unlikePost(id)],

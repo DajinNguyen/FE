@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query';
-import { createPost, deletePost, likePost, unlikePost, updatePost } from '../api/community';
+import { createPost, deletePost, likePost, unlikePost } from '../api/community';
 import type { Post, PostInput, PostPage } from '../types';
 import { communityKeys } from './communityKeys';
 import { useToast } from './useToast';
 import { useViewerId } from './useViewerId';
 
-/** 글쓰기·수정·삭제와 좋아요 (좋아요는 먼저 화면에 반영하고 실패하면 되돌려요) */
+/** 기업 댓글(=글) 쓰기·삭제와 좋아요 (좋아요는 먼저 화면에 반영하고 실패하면 되돌려요) */
 export function usePostMutations(stockCode: string) {
   const queryClient = useQueryClient();
   const viewer = useViewerId();
@@ -16,15 +16,6 @@ export function usePostMutations(stockCode: string) {
 
   const create = useMutation({
     mutationFn: (input: PostInput) => createPost(stockCode, input),
-    onSuccess: (post) => {
-      queryClient.setQueryData(communityKeys.post(viewer, post.id), post);
-      void refreshLists();
-    },
-  });
-
-  const update = useMutation({
-    mutationFn: ({ postId, input }: { postId: string; input: PostInput }) =>
-      updatePost(postId, input),
     onSuccess: (post) => {
       queryClient.setQueryData(communityKeys.post(viewer, post.id), post);
       void refreshLists();
@@ -78,5 +69,5 @@ export function usePostMutations(stockCode: string) {
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['community'] }),
   });
 
-  return { create, update, remove, toggleLike };
+  return { create, remove, toggleLike };
 }

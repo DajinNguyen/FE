@@ -566,6 +566,69 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 `PriceHistory.points` 의 첫 가격과 마지막 가격을 비교해서 프론트가 색을 정해요. (올랐으면 빨강, 내렸으면 파랑, 같으면 회색)
 그래서 `points` 는 **날짜 오름차순**으로 보내 주세요.
 
+## 10. 커뮤니티 변경 (2026-11-02 추가)
+
+### 10-1. 기업 커뮤니티 = 바로 쓰는 댓글 + 답글 (2026-11-02 변경)
+
+- 글쓰기 화면·글 보기 화면을 없앴어요. 기업 화면 커뮤니티 탭에서 **바로 댓글을 쓰고**, 그 댓글에 **답글**을 달아요.
+- 지금 백엔드 API 를 그대로 써요. 새 API 는 필요 없어요.
+
+| 화면 | 쓰는 API | 비고 |
+|---|---|---|
+| 기업 댓글 목록 (최신순·인기순, 10개씩) | `GET /api/companies/{stock_code}/posts` | 글 = 기업 댓글. `category` 는 항상 `"free"` |
+| 기업 댓글 쓰기 | `POST /api/companies/{stock_code}/posts` | `{ "category": "free", "body": "…" }` |
+| 기업 댓글 지우기·좋아요·신고 | `DELETE /api/posts/{id}`, `POST·DELETE /api/posts/{id}/like`, `POST /api/reports` (`target_type: "post"`) | |
+| 답글 목록 | `GET /api/posts/{post_id}/comments` | "답글 N개 보기"(N = `comment_count`)를 누르면 불러요 |
+| 답글 쓰기 | `POST /api/posts/{post_id}/comments` | `{ "body": "…", "reply_to_nickname": "주린이" }` |
+
+- ⚠️ 지금 백엔드 `PostInput.title` 이 필수라서, 프론트가 **본문 첫 줄(30자)을 title 로 채워 보내요** (`src/api/community.ts` 의 `withTitle`). 화면에서는 title 을 쓰지 않아요. 백엔드에서 title 을 빼면 그 함수만 지우면 돼요.
+- 예전 주소 `/companies/{code}/community/write`, `/community/{postId}` 는 커뮤니티 탭으로 보내요.
+
+### 10-2. 답글 칸 (백엔드 변경 예정)
+
+답글은 한 단계만 들여 써요. 답글에 다시 답하면 같은 단계에 "@닉네임"을 붙여요.
+
+`POST /api/posts/{post_id}/comments` 요청에 칸 추가 (칸 이름은 지금 백엔드에 맞춰 `body` 그대로):
+
+```json
+{ "body": "저도 궁금했어요", "reply_to_nickname": "주린이", "image_url": null }
+```
+
+`Comment` 응답에 칸 추가:
+
+| 칸 | 타입 | 쓰는 곳 | 없을 때 |
+|---|---|---|---|
+| `reply_to_nickname` | string \| null | 답글의 답글이면 "@닉네임" 표시 | 숨김 |
+| `is_deleted` | boolean | 지웠지만 자리를 남긴 답글 → "삭제된 댓글이에요" | false |
+| `image_url` | string \| null | 답글 사진 (작게, 누르면 크게) | 숨김 |
+
+- `Post` 에도 `image_url` (string \| null) 을 추가해 주세요 (기업 댓글 사진). 요청 `PostInput.image_url` 도 같이.
+- `parent_id`, `reply_count` 는 위 구조(글 = 댓글, 댓글 = 답글)에서는 필요 없어요. 보내도 돼요.
+
+### 10-3. 다진 전용 이모지 (에셋 필요)
+- 댓글 본문에 `:dajin-아이디:` 로 들어가요 (예: `:dajin-like:`). 서버는 글자 그대로 저장하면 돼요.
+- 이미지 위치: `frontend/public/emoji/dajin/{아이디}.png`, 목록: `frontend/src/config/dajinEmojis.ts`
+- 지금은 에셋이 없어서 이모지 패널에 "다진 이모지를 준비하고 있어요"가 보여요.
+- 필요한 이모지 (초안, 다진 캐릭터로 새로 그려야 해요. 다른 서비스 캐릭터 사용 금지):
+
+| 아이디 | 이름 | 대체 텍스트 |
+|---|---|---|
+| `like` | 좋아요 | 엄지를 든 다진 |
+| `curious` | 궁금해요 | 고개를 갸웃하는 다진 |
+| `surprised` | 놀라요 | 눈이 커진 다진 |
+| `studying` | 공부 중 | 책을 보는 다진 |
+| `cheer` | 응원해요 | 깃발을 흔드는 다진 |
+
+- 크기: 정사각형 PNG(투명 배경), 화면 표시 64px 기준 **2배 128×128px**, 한 장 50KB 이하 권장.
+
+### 10-4. 댓글 사진 업로드 (백엔드 필요)
+- `POST /api/uploads` (multipart/form-data, 칸 이름 `file`, 로그인 필요) → `{ "image_url": "https://..." }`
+- 프론트 제한 (임시값, `src/config/communityRules.ts` 의 `IMAGE_UPLOAD`): jpg·png·webp, 5MB 이하, 댓글 1개에 1장. 서버도 같은 규칙으로 검사해 주세요.
+- 실패하면 `{ "error": { "code": "FILE_TOO_LARGE" | "INVALID_TYPE", "message": "…" } }`
+- API 가 생기기 전까지 사진 버튼은 "사진 (준비 중)" 으로 눌리지 않아요. 준비되면 `IMAGE_UPLOAD.enabled` 를 `true` 로 바꾸면 돼요.
+- 신고 사유에 `image`(부적절한 사진)를 추가했어요. `ReportInput.reason` 에 `"image"` 가 올 수 있어요.
+
+
 ## 11. 기업 목록 범위: OpenDART 상장사 전체 (2026-11-02 추가)
 
 - 지금 백엔드 `app/data/companies.json` 에는 **135개**만 있어서 검색도 135개 안에서만 돼요.

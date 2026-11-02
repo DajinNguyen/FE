@@ -12,6 +12,11 @@ export function useCommunityPosts(stockCode: string, sort: PostSort, category?: 
     queryFn: ({ pageParam }) => getPosts(stockCode, { sort, category, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (last) => (last.has_next ? last.page + 1 : undefined),
+    // 로그인해서 보는 사람이 바뀌어도 같은 기업·정렬이면 목록을 두고 새로 받아요. (열어 둔 답글 입력창이 닫히지 않게)
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[3] === stockCode && previousQuery?.queryKey[4] === sort
+        ? previous
+        : undefined,
   });
   return { ...query, posts: query.data?.pages.flatMap((p) => p.items) ?? [] };
 }
