@@ -26,6 +26,22 @@
   animation: slideUp 320ms var(--ease);
 }
 
+.close {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-4);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  color: var(--text-2);
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+
+.close:hover {
+  background: var(--surface);
+}
+
 .handle {
   width: 40px;
   height: 4px;
@@ -90,5 +106,28 @@
   from {
     opacity: 0;
     transform: translateY(12px) scale(0.97);
+  }
+}
+
+/* 오른쪽 패널 (핵심 포인트 상세 등 내용이 긴 시트) */
+@media (min-width: 1024px) {
+  .side {
+    align-items: stretch;
+    justify-content: flex-end;
+    padding: 0;
+  }
+
+  .side .sheet {
+    max-width: 520px;
+    max-height: none;
+    height: 100%;
+    border-radius: 0;
+    animation: slideLeft 280ms var(--ease);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
   }
 }

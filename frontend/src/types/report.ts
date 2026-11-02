@@ -50,6 +50,14 @@ export interface KeyPointValue {
   period: string;
 }
 
+/** 핵심 포인트 상세 시트: 연도별 숫자 + 관련 뉴스·공시 */
+export interface KeyPointDetail {
+  /** 3~5년, 오래된 해부터 */
+  yearly: { year: string; revenue: number; operating_income: number; unit: string }[];
+  related_news: NewsItem[];
+  related_disclosures: { title: string; date: string; url: string }[];
+}
+
 export interface KeyPoint {
   category: KeyPointCategory;
   /** 한 줄 결론 */
@@ -63,6 +71,8 @@ export interface KeyPoint {
   /** 무슨 뜻인가요? (초보자용 해석 1문장) */
   meaning: string;
   evidence: EvidenceRef[];
+  /** 누르면 열리는 상세 시트 내용. 없으면 시트에 이유·근거만 보여줘요. */
+  detail?: KeyPointDetail | null;
 }
 
 export interface FinancialHighlight {

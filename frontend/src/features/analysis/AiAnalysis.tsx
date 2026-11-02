@@ -3,8 +3,10 @@ import { DataAsOf } from '../../components/DataAsOf';
 import { Icon } from '../../components/Icon';
 import { TermText } from '../../components/TermText';
 import type { CompanyReportFlow } from '../../hooks/useCompanyReport';
-import type { CompanyReport, EvidenceKind } from '../../types';
+import type { CompanyReport, EvidenceKind, KeyPoint } from '../../types';
+import { useState } from 'react';
 import { KeyPointRow } from './KeyPointRow';
+import { KeyPointSheet } from './KeyPointSheet';
 import { QuotaNotice } from './QuotaNotice';
 import { RegenerateProgress, ReportSkeleton, ReportWaiting } from './ReportWaiting';
 import { groupKeyPoints } from './reportMeta';
@@ -37,6 +39,7 @@ const formatGeneratedAt = (value: string | null) => {
 export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
   const { view, report, isRegenerating, startedAt, failureReason, generate, cancel, quota } = flow;
   const blocked = quota.blocked !== null;
+  const [openPoint, setOpenPoint] = useState<KeyPoint | null>(null);
 
   return (
     <section className={styles.analysis} aria-labelledby="ai-analysis-title">
@@ -97,7 +100,7 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
                       <KeyPointRow
                         key={`${point.category}-${index}`}
                         point={point}
-                        onEvidence={onEvidence}
+                        onOpen={setOpenPoint}
                       />
                     ))}
                   </ul>
@@ -110,8 +113,8 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
                 prefix="이 리포트는"
                 suffix="기준 자료로 만들었어요."
               />{' '}
-              {formatGeneratedAt(report.generated_at)} 생성 · 항목을 누르면 이유와 근거를 볼 수
-              있어요
+              {formatGeneratedAt(report.generated_at)} 생성 · 항목을 누르면 이유·연도별 숫자·근거를
+              볼 수 있어요
             </p>
             <div className={styles.footer}>
               <span>
@@ -132,6 +135,7 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
           </>
         )}
       </div>
+      <KeyPointSheet point={openPoint} onClose={() => setOpenPoint(null)} onEvidence={onEvidence} />
     </section>
   );
 }

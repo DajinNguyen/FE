@@ -157,6 +157,26 @@
 | 쓰는 화면 | 핵심 포인트마다 근거 칩. 누르면 같은 화면의 해당 근거 자료(`type`)로 이동 |
 | 없을 때 | 빈 배열이면 근거 줄을 숨겨요. `date` 가 `null` 이면 `label` 만 보여요. `date` 가 YYYY-MM-DD 가 아니면 받은 글자를 그대로 붙여요. |
 
+### `key_points[].detail` (추가, 선택, 2026-10-27)
+
+AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
+
+```json
+{
+  "yearly": [{ "year": "2023", "revenue": 258.94, "operating_income": 6.57, "unit": "조 원" }],
+  "related_news": [/* NewsItem */],
+  "related_disclosures": [{ "title": "DART 공시명", "date": "2026-01-29", "url": "https://dart.fss.or.kr/..." }]
+}
+```
+
+| 칸 | 쓰는 곳 | 없을 때 |
+|---|---|---|
+| `yearly` (3~5년, 오래된 해부터) | 연도별 매출·영업이익 막대 (값 표시) | 빈 배열이면 그래프 숨김 |
+| `related_news` | 근거 뉴스 | 빈 배열이면 숨김 |
+| `related_disclosures` | 근거 공시 (공시명·날짜·링크) | 빈 배열이면 숨김 |
+
+- `detail` 이 없으면 시트에 숫자 변화·이유·의미·근거 칩만 보여줘요.
+
 ### `data_as_of` (추가, 선택)
 
 | 항목 | 내용 |
