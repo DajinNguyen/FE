@@ -57,7 +57,10 @@ export function FinancialsTab({ stockCode }: { stockCode: string }) {
         </Section>
       </div>
 
-      <Section title="지표 신호등" description="숫자가 어느 정도인지 신호등 색으로 알려줘요">
+      <Section
+        title="주요 지표"
+        description="숫자가 높은 편인지 낮은 편인지, 비교 기준과 함께 알려줘요"
+      >
         <IndicatorSignals indicators={indicators} />
       </Section>
 

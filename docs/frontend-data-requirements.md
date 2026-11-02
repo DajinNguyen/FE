@@ -100,6 +100,31 @@
 - `recent_performance` 가 null 이면 "최근 실적 발표 자료를 아직 불러오지 못했어요"를 보여줘요.
 - 목 데이터: 매출·영업이익·사업별 매출은 확인된 값, 작년 대비 변화율은 예시 값(`yoy_is_sample: true`)이에요.
 
+### `Financials.benchmarks`, `Financials.flags` (추가, 2026-10-27)
+
+재무 상세 > 주요 지표를 "높은 편 / 보통 / 낮은 편"과 비교 문장으로 보여줘요. (예전 "좋음 / 보통 / 주의")
+
+```json
+{
+  "benchmarks": {
+    "operating_margin": { "basis": "sector_median", "basis_value": 7.5, "basis_label": "반도체 업종 중앙값" },
+    "debt_ratio": { "basis": "general", "basis_value": 100, "basis_label": "일반적인 기준" }
+  },
+  "flags": { "is_financial": false, "is_loss": false, "is_capital_impaired": false }
+}
+```
+
+| 칸 | 타입 | 쓰는 곳 | 없을 때 |
+|---|---|---|---|
+| `benchmarks.{지표}` | `{ basis: "sector_median" \| "general", basis_value: number \| null, basis_label }` | "반도체 업종 중앙값 7.5%보다 높은 편이에요" (기준값 ±10% 안이면 "비슷해요") | 프론트 기본 기준으로 판단, 비교 문장 숨김 |
+| 지표 이름 | `revenue_growth`, `operating_margin`, `roe`, `debt_ratio`, `per` | | |
+| `flags.is_financial` | boolean | 금융업은 부채비율 "평가 제외" | false |
+| `flags.is_loss` | boolean | 적자면 PER "계산할 수 없어요" | false |
+| `flags.is_capital_impaired` | boolean | 자본잠식이면 ROE·부채비율 "평가 제외" | false |
+
+- 부채비율은 낮은 편이면 "낮은 편 · 안정적"으로 보여줘요.
+- 업종 중앙값은 같은 업종 상장사의 최근 사업연도 값으로 계산해 주세요. (확정 필요)
+
 ## 2. 메인 대시보드 `GET /api/home`
 
 ### `trading_value_top` (개수 변경)
