@@ -7,8 +7,8 @@ import { Section } from '../../components/Section';
 import { TermText } from '../../components/TermText';
 import type { CompanyReport, EvidenceKind } from '../../types';
 import { evidenceAnchorId } from '../analysis/reportMeta';
+import { NewsList } from '../news/NewsList';
 import type { CompanyTabId, GoToTab } from '../companyTabs';
-import { formatRelativeTime } from '../../utils/format';
 import styles from './EvidenceSection.module.css';
 
 interface EvidenceSectionProps {
@@ -62,23 +62,7 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
           }
         >
           {news.length > 0 ? (
-            <ul className={styles.news}>
-              {news.slice(0, 3).map((item) => (
-                <li key={item.title}>
-                  <button
-                    type="button"
-                    className={styles.newsItem}
-                    onClick={() => onGoToTab('news')}
-                  >
-                    <span className={styles.newsTitle}>{item.title}</span>
-                    <span className={styles.meta}>
-                      {item.press} · {formatRelativeTime(item.published_at)}
-                    </span>
-                    <span className={styles.newsSummary}>{item.summary_short}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <NewsList items={news.slice(0, 3)} compact label="근거 뉴스" />
           ) : (
             <NotFound />
           )}
