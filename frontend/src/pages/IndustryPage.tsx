@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router';
 import { Button } from '../components/Button';
 import { DataAsOf } from '../components/DataAsOf';
 import { EmptyState } from '../components/EmptyState';
-import { SampleBadge } from '../components/SampleBadge';
 import { TrendChart } from '../components/TrendChart';
 import {
   HEAT_CRITERIA_TEXT,
@@ -109,7 +108,7 @@ export function IndustryPage() {
           <h1 className={styles.title}>{detail.name}</h1>
           <p className={styles.description}>{detail.description}</p>
           <p className={styles.asOf}>
-            <DataAsOf value={detail.as_of} /> <SampleBadge isSample={detail.is_sample} />
+            <DataAsOf value={detail.as_of} />
           </p>
         </div>
       </header>

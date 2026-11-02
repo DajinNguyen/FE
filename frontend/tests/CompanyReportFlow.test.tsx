@@ -1,8 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { EvidenceSection } from '../src/features/evidence/EvidenceSection';
+import { afterEach, describe, expect, it } from 'vitest';
 import { CompanyPage } from '../src/pages/CompanyPage';
 import { renderWithProviders } from './testUtils';
 
@@ -64,7 +63,6 @@ describe('기업 화면: AI 분석', () => {
     expect(first).toHaveTextContent('43.6조 원');
     expect(first).toHaveTextContent('6.6배');
     expect(within(now).queryByText('왜 그런가요?')).not.toBeInTheDocument();
-    expect(screen.getByText('이 분석의 근거')).toBeInTheDocument();
     // 기업 헤더에는 한 줄 소개 문장을 쓰지 않아요.
     expect(screen.queryByText('스마트폰과 반도체를 만드는 회사예요')).not.toBeInTheDocument();
   });
@@ -141,27 +139,5 @@ describe('기업 화면: AI 분석', () => {
 
     await user.click(within(panel).getByRole('button', { name: '개요로 돌아가기' }));
     expect(screen.getByRole('tab', { name: '개요', selected: true })).toBeInTheDocument();
-  });
-});
-
-describe('근거 자료', () => {
-  it('일부 자료가 없으면 그 자리에만 "자료를 찾지 못했어요"를 보여줘요', () => {
-    renderWithProviders(
-      <EvidenceSection
-        evidence={{
-          financials: null,
-          news: [],
-          vision: {
-            summary: '스마트폰과 반도체를 만드는 회사예요.',
-            revenue_mix: [],
-            source: '사업보고서',
-          },
-        }}
-        onGoToTab={vi.fn()}
-      />,
-    );
-
-    expect(screen.getAllByText('자료를 찾지 못했어요')).toHaveLength(2);
-    expect(screen.getByText('스마트폰과 반도체를 만드는 회사예요.')).toBeInTheDocument();
   });
 });

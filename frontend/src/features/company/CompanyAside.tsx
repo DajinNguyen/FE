@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { DataAsOf } from '../../components/DataAsOf';
 import { PriceChart } from '../../components/PriceChart';
 import { PriceChange } from '../../components/PriceChange';
-import { SampleBadge } from '../../components/SampleBadge';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { TermText } from '../../components/TermText';
 import { usePriceHistory } from '../../hooks/usePriceHistory';
@@ -37,9 +36,7 @@ export function CompanyAside({ stockCode }: { stockCode: string }) {
     <aside className={styles.aside} aria-label="주가와 주요 지표">
       <section className={styles.card}>
         <div className={styles.cardHead}>
-          <h2 className={styles.cardTitle}>
-            주가 흐름 <SampleBadge isSample={Boolean(prices?.is_sample)} />
-          </h2>
+          <h2 className={styles.cardTitle}>주가 흐름</h2>
           {periodRate !== undefined && (
             <span className={styles.periodChange}>
               {periodLabel} 전보다 <PriceChange rate={periodRate} />
@@ -62,7 +59,7 @@ export function CompanyAside({ stockCode }: { stockCode: string }) {
         {last !== undefined && (
           <p className={styles.small}>
             최근 종가 {formatPrice(last)}
-            {prices?.is_sample && ' · 예시 데이터예요'} · <DataAsOf value={lastDate} />
+            · <DataAsOf value={lastDate} />
           </p>
         )}
       </section>
@@ -76,9 +73,7 @@ export function CompanyAside({ stockCode }: { stockCode: string }) {
                 <dt>
                   <TermText text={item.label} />
                 </dt>
-                <dd>
-                  {item.display} <SampleBadge isSample={item.value.is_sample} />
-                </dd>
+                <dd>{item.display}</dd>
               </div>
             ))}
           </dl>

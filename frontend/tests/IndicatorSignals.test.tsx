@@ -49,11 +49,10 @@ describe('지표 신호등', () => {
     expect(card('per').getByText('보통')).toBeInTheDocument();
   });
 
-  it('예시 값에는 "예시 값" 배지를, 계산 값에는 배지를 붙이지 않아요', () => {
+  it('"예시 값" 배지는 보여주지 않아요', () => {
     renderWithProviders(<IndicatorSignals indicators={buildIndicators(baseFinancials)} />);
 
-    expect(card('roe').getByText('예시 값')).toBeInTheDocument();
-    expect(card('revenue_growth').queryByText('예시 값')).not.toBeInTheDocument();
+    expect(card('roe').queryByText('예시 값')).not.toBeInTheDocument();
   });
 
   it('매출이 줄고 이익률이 낮으면 주의로 표시해요', () => {
