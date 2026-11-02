@@ -7,7 +7,7 @@
  * - ?mock_market=fail : 메인 시장 정보를 불러오지 못하는 경우를 흉내 내요.
  */
 import companiesJson from './companies.json';
-import { hotIndustries } from './industries';
+import { hotIndustries, industryRecords } from './industries';
 import { industryDetail, industryNews } from './industryDetails';
 import { marketSummary } from './market';
 import { companyNews, marketNews } from './news';
@@ -92,15 +92,23 @@ export async function getCompaniesByCodes(codes: string[]): Promise<CompanySumma
     .filter((c): c is CompanySummary => Boolean(c));
 }
 
+/** 이 회사가 속한 산업 */
+const industriesOf = (stockCode: string) =>
+  industryRecords
+    .filter((record) => record.companies.includes(stockCode))
+    .map(({ industry_id, name }) => ({ industry_id, name }));
+
 /** 원본 JSON이 없는 회사는 검색 목록 정보만으로 채워요. (사업 설명 등은 빈 값) */
 export async function getCompany(stockCode: string): Promise<CompanyDetail> {
   await wait(150);
   const data = companyData[stockCode];
-  if (data) return { ...data.company, price_as_of: lastTradingDate() };
+  if (data)
+    return { ...data.company, price_as_of: lastTradingDate(), industries: industriesOf(stockCode) };
   const summary = findCompany(stockCode);
   return {
     ...summary,
     price_as_of: lastTradingDate(),
+    industries: industriesOf(stockCode),
     market_cap: null,
     homepage_url: '',
     dart_url: 'https://dart.fss.or.kr/',
