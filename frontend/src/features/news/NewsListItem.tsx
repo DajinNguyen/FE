@@ -20,8 +20,14 @@ export function NewsListItem({ item, compact = false }: NewsListItemProps) {
         <span className="visually-hidden">(원문이 새 탭에서 열려요)</span>
       </a>
       <p className={styles.meta}>
-        {item.press} ·{' '}
-        <time dateTime={item.published_at}>{formatRelativeTime(item.published_at)}</time>
+        {item.press}
+        {/* 날짜를 모르는 기사("-", 빈 값)는 시간을 숨겨요 */}
+        {/\d/.test(item.published_at ?? '') && (
+          <>
+            {' · '}
+            <time dateTime={item.published_at}>{formatRelativeTime(item.published_at)}</time>
+          </>
+        )}
       </p>
       {!compact && item.summary_short && (
         <p className={styles.summary}>
