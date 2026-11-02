@@ -50,6 +50,8 @@ export function useComments(postId: string) {
       queryClient.setQueryData<Comment[]>(key, (old) =>
         (old ?? []).map((c) => (c.id === context?.tempId ? comment : c)),
       ),
+    // 로그인하면서 쓴 경우 보는 사람이 바뀌어 다른 쿼리가 화면에 있어요. 끝나면 서버 값으로 다시 맞춰요.
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['community'] }),
   });
 
   const remove = useMutation({

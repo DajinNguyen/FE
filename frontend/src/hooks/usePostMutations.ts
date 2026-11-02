@@ -74,6 +74,8 @@ export function usePostMutations(stockCode: string) {
       showToast('좋아요를 반영하지 못했어요. 잠시 후 다시 시도해 주세요.');
     },
     onSuccess: (result, post) => patchPost(post.id, (p) => ({ ...p, ...result })),
+    // 로그인하면서 누른 경우 보는 사람이 바뀌어 다른 쿼리가 화면에 있어요. 끝나면 서버 값으로 다시 맞춰요.
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['community'] }),
   });
 
   return { create, update, remove, toggleLike };

@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useParams } from 'react-router';
 import { AppLayout } from './components/AppLayout';
+import { CommunityPostPage } from './pages/CommunityPostPage';
 import { CompanyPage } from './pages/CompanyPage';
 import { HomePage } from './pages/HomePage';
 import { IndustryPage } from './pages/IndustryPage';
@@ -13,6 +14,7 @@ export function App() {
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
         <Route path="companies/:stockCode" element={<CompanyPage />} />
+        <Route path="companies/:stockCode/community/:postId" element={<CommunityPostPage />} />
         <Route path="industries/:industryId" element={<IndustryPage />} />
         <Route path="rankings/trading" element={<TradingRankingPage />} />
         <Route path="terms" element={<TermCardsPage />} />
