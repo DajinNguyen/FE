@@ -4,9 +4,11 @@
  *
  * 개발 중 확인용 주소 옵션
  * - ?mock_report=fail : 리포트 생성이 실패하는 경우를 흉내 내요.
+ * - ?mock_market=fail : 메인 시장 정보를 불러오지 못하는 경우를 흉내 내요.
  */
 import companiesJson from './companies.json';
 import { hotIndustries } from './industries';
+import { marketSummary } from './market';
 import { companyNews, marketNews } from './news';
 import crosswordsJson from './crosswords.json';
 import samsungJson from './samsungElectronics.json';
@@ -22,6 +24,7 @@ import type {
   Financials,
   HeatPeriod,
   HomeDashboard,
+  MarketSummary,
   NewsItem,
   NewsPage,
   PriceHistory,
@@ -122,6 +125,20 @@ export async function getCompanyNews(
   const all = companyNews(findCompany(stockCode));
   const start = (page - 1) * size;
   return { items: all.slice(start, start + size), page, size, has_next: start + size < all.length };
+}
+
+/**
+ * 메인 "오늘의 시장". 주소에 ?mock_market=fail 을 붙이면 실패를 흉내 내요.
+ */
+export async function getMarketSummary(): Promise<MarketSummary> {
+  await wait(200);
+  if (
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('mock_market') === 'fail'
+  ) {
+    throw new ApiError('시장 정보를 불러오지 못했어요', 503, 'MARKET_UNAVAILABLE');
+  }
+  return marketSummary();
 }
 
 /** 시장 뉴스 (목 데이터는 날짜와 상관없이 같은 목록) */

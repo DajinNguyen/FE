@@ -237,6 +237,43 @@
 **임시 기준 (확정 필요)**: 기간 최근 1주(1주/1개월 전환), 점수 = 주가 상승률 40% + 거래대금 증가율 30% + 뉴스 언급 증가율 30%, 상위 3개 `high`, 다음 3개 `mid`, 나머지 `low`.
 산업 목록 초안: AI, 반도체, 2차전지, 바이오, 인터넷·플랫폼, 자동차, 조선, 방산, 금융, 게임.
 
+## 7. 메인 "오늘의 시장" `GET /api/market/summary` (2026-10-27 추가)
+
+타입 원본: `frontend/src/types/market.ts` · 프론트 함수: `frontend/src/api/market.ts`
+
+```json
+{
+  "as_of": "2026-10-24T15:30:00+09:00",
+  "is_previous_session": false,
+  "headline": "반도체 강세에 코스피가 1% 넘게 올랐어요",
+  "indices": [
+    { "code": "KOSPI", "value": 2684.32, "change": 31.2, "change_rate": 1.18, "is_sample": false,
+      "intraday": [{ "time": "09:00", "value": 2653.12 }] }
+  ],
+  "reasons": [
+    { "title": "AI 서버용 메모리 기대가 커졌어요", "description": "…",
+      "industries": [{ "industry_id": "semiconductor", "name": "반도체", "change_rate": 2.1 }], "news": [/* NewsItem */] }
+  ]
+}
+```
+
+| 칸 | 타입 | 쓰는 화면 | 없을 때 |
+|---|---|---|---|
+| `as_of` | ISO 8601 | 한마디 아래 "10월 24일 장 마감 기준" | 필수 |
+| `is_previous_session` | boolean (요청 형식에 추가) | 장 시작 전·휴장일이면 "직전 거래일 기준" | 필수 |
+| `headline` | string | 메인 맨 위 가장 큰 글자 (예측·투자 권유 표현 금지) | 필수 |
+| `indices[].code` | `'KOSPI' \| 'KOSDAQ'` | 지수 이름 | 코스피는 필수, 코스닥은 없으면 숨김 |
+| `indices[].value`, `change`, `change_rate` | number | 지수, 어제 대비 등락폭·등락률 (상승 빨강 ▲, 하락 파랑 ▼) | 필수 |
+| `indices[].is_sample` | boolean (요청 형식에 추가) | true 면 "예시 값" 배지 | 필수 |
+| `indices[].intraday` | `{ time, value }[]` | 작은 당일 흐름 선 그래프 | 없으면 그래프 숨김 |
+| `reasons[]` | 최대 3개 | "오늘 시장이 왜 이렇게 움직였나요?" 카드 | 빈 배열이면 섹션 숨김 |
+| `reasons[].industries` | `{ industry_id, name, change_rate }[]` | 관련 산업 칩 (예: 반도체 ▲2.1%), 누르면 산업 페이지 | 빈 배열이면 숨김 |
+| `reasons[].news` | `NewsItem[]` | 근거 뉴스 (언론사·시간·원문 링크) | 빈 배열이면 숨김 |
+
+- 응답이 실패하면 메인에 "시장 정보를 불러오지 못했어요"만 보여주고 검색창부터는 그대로 써요.
+- `industry_id` 는 뜨는 산업(`GET /api/industries/hot`)과 같은 값을 써 주세요.
+- 확인 필요: 한마디·이유를 누가(AI) 언제 만드는지.
+
 ## 확인이 필요한 것
 
 1. `sector_group` 분류 기준 (예: 삼성전기·LG전자를 반도체로 볼지 기타로 볼지)
