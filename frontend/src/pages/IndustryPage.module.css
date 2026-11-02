@@ -92,15 +92,10 @@
 }
 
 .aiNote,
-.chartNote,
 .caption,
 .criteria {
   color: var(--text-3);
   font-size: var(--fs-xs);
-}
-
-.chartTitle {
-  font-weight: 700;
 }
 
 .tableWrap {
