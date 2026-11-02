@@ -7,7 +7,7 @@ interface CompanyListRowProps {
   company: CompanySummary | TradingCompany;
   onSelect: (company: CompanySummary) => void;
   rank?: number;
-  /** 메인 TOP 5: 순위·기업명·한 줄 소개·거래대금만 */
+  /** 메인 TOP 3: 순위·기업명·한 줄 소개·거래대금만 */
   compact?: boolean;
 }
 
@@ -34,7 +34,7 @@ export function CompanyListRow({ company, onSelect, rank, compact }: CompanyList
               </span>
             )}
           </span>
-          <span className={styles.oneLiner}>{company.one_liner}</span>
+          {company.one_liner && <span className={styles.oneLiner}>{company.one_liner}</span>}
           {!compact && trading?.ai_headline && (
             <span className={styles.ai}>
               <span className={styles.aiLabel}>AI 결론</span>
