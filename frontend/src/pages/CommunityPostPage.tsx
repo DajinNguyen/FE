@@ -11,6 +11,7 @@ import {
   HIDDEN_POST_TEXT,
 } from '../features/community/communityLabels';
 import { CommunityNotice } from '../features/community/CommunityNotice';
+import { ReportSheet } from '../features/community/ReportSheet';
 import { useCompany } from '../hooks/useCompanies';
 import { useCommunityPost } from '../hooks/useCommunityPost';
 import { usePostMutations } from '../hooks/usePostMutations';
@@ -29,6 +30,7 @@ export function CommunityPostPage() {
   const { data: post, isPending, isError } = useCommunityPost(postId);
   const { toggleLike, remove } = usePostMutations(stockCode);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [reporting, setReporting] = useState(false);
 
   const back = (
     <Link to={communityPaths.list(stockCode)} className={styles.back}>
@@ -101,11 +103,26 @@ export function CommunityPostPage() {
               <Icon name="heart" size={18} filled={post.liked_by_me} />
               좋아요 {post.like_count}
             </button>
+            {!post.is_mine && (
+              <button
+                type="button"
+                className={styles.report}
+                disabled={post.reported_by_me}
+                onClick={() => requireLogin(() => setReporting(true))}
+              >
+                {post.reported_by_me ? '신고함' : '신고'}
+              </button>
+            )}
           </div>
         </article>
       )}
 
       {!post.is_hidden && <CommentSection postId={post.id} />}
+
+      <ReportSheet
+        target={reporting ? { target_type: 'post', target_id: post.id } : null}
+        onClose={() => setReporting(false)}
+      />
 
       <Sheet open={confirmDelete} onClose={() => setConfirmDelete(false)} title="글을 지울까요?">
         <p>지운 글과 댓글은 되돌릴 수 없어요.</p>
