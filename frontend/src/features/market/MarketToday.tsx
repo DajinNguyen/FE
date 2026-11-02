@@ -1,6 +1,7 @@
 import { useMarketSummary } from '../../hooks/useMarketSummary';
 import { formatMarketDate } from '../../utils/format';
 import { MarketIndexes } from './MarketIndexes';
+import { MarketReasons } from './MarketReasons';
 import styles from './Market.module.css';
 
 /** 한마디 아래 작게 보여주는 서비스 소개 한 줄 */
@@ -8,7 +9,7 @@ export const SERVICE_INTRO =
   '궁금한 기업을 검색하면, AI가 재무제표·뉴스·사업 방향을 근거로 쉽게 설명해 드려요';
 
 /**
- * 메인 맨 위 "오늘의 시장": 한마디(페이지 제목) → 지수
+ * 메인 맨 위 "오늘의 시장": 한마디(페이지 제목) → 지수 → 왜 움직였나요?
  * 불러오지 못하면 안내만 보여주고, 아래 검색창은 그대로 쓸 수 있어요.
  */
 export function MarketToday() {
@@ -51,6 +52,7 @@ export function MarketToday() {
         <p className={styles.intro}>{SERVICE_INTRO}</p>
       </div>
       <MarketIndexes indexes={data.indices} />
+      <MarketReasons reasons={data.reasons} />
     </section>
   );
 }

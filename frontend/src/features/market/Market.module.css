@@ -121,6 +121,78 @@
   color: var(--text-3);
 }
 
+/* 오늘 시장이 왜 이렇게 움직였나요? */
+.reasons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.reasonsTitle {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.reasonList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-4);
+}
+
+.reason {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--line-strong);
+}
+
+.reasonTitle {
+  font-size: var(--fs-md);
+  font-weight: 800;
+}
+
+.reasonText {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-2);
+}
+
+.industryChip {
+  display: inline-flex;
+  gap: var(--sp-1);
+  padding: 0 var(--sp-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-full);
+  color: var(--text-1);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.9;
+}
+
+.industryChip:hover {
+  border-color: var(--brand);
+}
+
+.reasonNews {
+  margin-top: auto;
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line);
+}
+
+.reasonNewsLabel {
+  margin-bottom: var(--sp-1);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
 /* 불러오는 중 */
 .skeleton {
   border-radius: var(--radius-xs);
@@ -147,6 +219,12 @@
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
     animation: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .reasonList {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
