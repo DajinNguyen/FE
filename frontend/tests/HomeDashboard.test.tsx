@@ -1,5 +1,4 @@
 import { screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { HomePage } from '../src/pages/HomePage';
 import { TradingRankingPage } from '../src/pages/TradingRankingPage';
@@ -35,25 +34,11 @@ describe('메인 화면', () => {
     );
   });
 
-  it('업종 탭을 바꾸면 그 업종의 기업을 보여주고, 떠오르는 기업과 광고는 숨겨요', async () => {
-    const user = userEvent.setup();
+  it('업종별 기업 탭 대신 관심이 몰리는 산업 아이콘을 보여줘요', async () => {
     renderWithProviders(<HomePage />);
-
-    const sectors = await screen.findByRole('region', { name: '업종별 기업' });
-    const tabs = within(sectors)
-      .getAllByRole('tab')
-      .map((tab) => tab.textContent);
-    expect(tabs).toEqual(['반도체', '자동차', '인터넷', '금융', '식품', '기타']);
-
-    await user.click(within(sectors).getByRole('tab', { name: '식품' }));
-    expect(within(sectors).getByText('오리온')).toBeInTheDocument();
-
+    expect(await screen.findByRole('list', { name: '관심이 몰리는 산업' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: '업종별 기업' })).not.toBeInTheDocument();
     expect(screen.queryByRole('region', { name: '떠오르는 기업' })).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('광고')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /용어 게임/ })).toHaveAttribute(
-      'href',
-      '/terms?mode=game',
-    );
   });
 
   it('전체 보기 화면은 순위 30개를 보여줘요', async () => {

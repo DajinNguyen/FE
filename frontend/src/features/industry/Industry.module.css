@@ -1,0 +1,141 @@
+.hot {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.hotHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-1) var(--sp-4);
+}
+
+.hotTitle {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.hotNote {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: 2px;
+}
+
+.criteriaButton {
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hotList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  align-items: end;
+  gap: var(--sp-6) var(--sp-3);
+}
+
+.hotItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-2) 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  text-align: center;
+}
+
+.hotItem:hover .hotIcon {
+  border-color: var(--brand);
+}
+
+.hotIcon {
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--sp-1);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-full);
+  color: var(--brand);
+  transition: border-color var(--dur) var(--ease);
+}
+
+.hotItem[data-level='high'] .hotIcon {
+  width: 72px;
+  height: 72px;
+}
+
+.hotItem[data-level='mid'] .hotIcon {
+  width: 60px;
+  height: 60px;
+}
+
+.hotItem[data-level='low'] .hotIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--text-2);
+}
+
+.hotItem[data-level='high'] .hotName {
+  font-size: var(--fs-md);
+}
+
+.hotName {
+  font-size: var(--fs-base);
+  font-weight: 800;
+  line-height: var(--lh-tight);
+}
+
+.hotMetric {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.hotMetric .rise,
+.hotMetric .fall,
+.hotMetric .flat {
+  font-weight: 700;
+}
+
+.rise {
+  color: var(--rise);
+}
+
+.fall {
+  color: var(--fall);
+}
+
+.flat {
+  color: var(--text-2);
+}
+
+.hotSkeleton {
+  height: 220px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.message {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.criteria {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-left: var(--sp-6);
+  list-style: disc;
+  line-height: var(--lh-body);
+}
+
+.criteriaNote {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}

@@ -7,8 +7,8 @@ import { FEATURE_RISING_COMPANIES, HOME_TRADING_LIMIT } from '../config/home';
 import { CompanyListRow } from '../features/home/CompanyListRow';
 import { MarketToday } from '../features/market/MarketToday';
 import { HowItWorks } from '../features/home/HowItWorks';
-import { SectorCompanies } from '../features/home/SectorCompanies';
 import { TermGameBanner } from '../features/home/TermGameBanner';
+import { HotIndustries } from '../features/industry/HotIndustries';
 import { useHomeDashboard } from '../hooks/useHomeDashboard';
 import { useOpenCompany } from '../hooks/useOpenCompany';
 import listStyles from '../features/home/CompanyList.module.css';
@@ -36,6 +36,8 @@ export function HomePage() {
           <CompanySearch variant="hero" />
         </div>
       </section>
+
+      <HotIndustries />
 
       <HowItWorks />
 
@@ -80,10 +82,6 @@ export function HomePage() {
               </ul>
             </HomeSection>
           )}
-
-          <HomeSection title="업종별 기업">
-            <SectorCompanies companies={data.sector_companies} onSelect={openCompany} />
-          </HomeSection>
         </>
       )}
 

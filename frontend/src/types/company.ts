@@ -1,7 +1,7 @@
 import type { SampleNumber } from './common';
 
 /**
- * 메인 화면 업종 탭에 쓰는 업종 묶음. 값은 프론트 상수(src/config/sectorGroups.ts)로 고정이에요.
+ * 업종 묶음. (메인 업종 탭은 산업 아이콘으로 바뀌어서 지금 화면에서는 쓰지 않아요)
  * 어느 묶음에도 들지 않으면 "etc" 예요.
  */
 export type SectorGroup = 'semiconductor' | 'auto' | 'internet' | 'finance' | 'food' | 'etc';
