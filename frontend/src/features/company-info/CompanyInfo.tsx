@@ -1,5 +1,5 @@
+import { Link } from 'react-router';
 import { EmptyState } from '../../components/EmptyState';
-import { Button } from '../../components/Button';
 import { Icon } from '../../components/Icon';
 import { SampleBadge } from '../../components/SampleBadge';
 import { Section } from '../../components/Section';
@@ -7,19 +7,41 @@ import { TermText } from '../../components/TermText';
 import { useCompany } from '../../hooks/useCompanies';
 import { useFinancials } from '../../hooks/useFinancials';
 import { formatTrillion } from '../../utils/format';
-import type { GoToTab } from '../companyTabs';
-import { QUIZ_ANCHOR_ID } from '../overview/OverviewTab';
-import styles from './CompanyInfoTab.module.css';
+import styles from './CompanyInfo.module.css';
 
 const marketLabel = { KOSPI: '코스피', KOSDAQ: '코스닥' } as const;
 
-export function CompanyInfoTab({
-  stockCode,
-  onGoToTab,
+/** 업종 + 소속 산업 칩 (산업 페이지로) */
+function IndustryLine({
+  sector,
+  industries,
 }: {
-  stockCode: string;
-  onGoToTab: GoToTab;
+  sector: string;
+  industries: { industry_id: string; name: string }[];
 }) {
+  return (
+    <p className={styles.industryLine}>
+      <span className={styles.industryLabel}>업종</span> {sector}
+      {industries.length > 0 && (
+        <>
+          <span className={styles.industryLabel}>소속 산업</span>
+          {industries.map((industry) => (
+            <Link
+              key={industry.industry_id}
+              to={`/industries/${industry.industry_id}`}
+              className={styles.industryChip}
+            >
+              {industry.name} 산업 보기
+            </Link>
+          ))}
+        </>
+      )}
+    </p>
+  );
+}
+
+/** 개요 탭의 기업 정보: 무슨 사업을 하나요? · 회사의 방향 · 기본 정보 */
+export function CompanyInfo({ stockCode }: { stockCode: string }) {
   const { data: company } = useCompany(stockCode);
   const { data: financials } = useFinancials(stockCode);
 
@@ -34,6 +56,7 @@ export function CompanyInfoTab({
               <TermText text={company.business_description} />
             </p>
           )}
+          <IndustryLine sector={company.sector} industries={company.industries} />
           <ul className={styles.segments}>
             {company.business_segments.map((segment) => (
               <li key={segment.code} className={styles.segment}>
@@ -47,6 +70,7 @@ export function CompanyInfoTab({
         </Section>
       ) : (
         <Section title="무슨 사업을 하나요?">
+          <IndustryLine sector={company.sector} industries={company.industries} />
           <EmptyState
             title="자료를 찾지 못했어요"
             description="사업보고서 내용을 아직 불러오지 못했어요."
@@ -137,15 +161,6 @@ export function CompanyInfoTab({
           >
             DART 공시 보기 <Icon name="external" size={16} />
           </a>
-        </div>
-      </Section>
-
-      <Section>
-        <div className={styles.quizCta}>
-          <p className={styles.quizCtaTitle}>다 읽었다면, 퀴즈로 확인해 볼까요?</p>
-          <Button size="lg" onClick={() => onGoToTab('overview', QUIZ_ANCHOR_ID)}>
-            퀴즈 풀러 가기
-          </Button>
         </div>
       </Section>
     </div>

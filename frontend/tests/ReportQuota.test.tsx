@@ -12,7 +12,7 @@ const renderCompanyPage = (stockCode: string) =>
     <Routes>
       <Route path="/companies/:stockCode" element={<CompanyPage />} />
     </Routes>,
-    { route: `/companies/${stockCode}` },
+    { route: `/companies/${stockCode}?tab=analysis` },
   );
 
 const today = () => {

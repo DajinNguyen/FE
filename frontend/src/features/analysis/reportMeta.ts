@@ -33,14 +33,14 @@ export const evidenceLabel: Record<EvidenceKind, string> = {
   vision: '기업 비전',
 };
 
-/** 개요 화면 안의 근거 자료 위치 */
+/** AI 분석 탭 안의 근거 자료 위치 */
 export const evidenceAnchorId = (kind: EvidenceKind) => `evidence-${kind}`;
 
 /** 근거 자료가 없을 때 대신 보여줄 상세 탭 */
 export const evidenceDetailTab: Record<EvidenceKind, CompanyTabId> = {
   financials: 'financials',
   news: 'news',
-  vision: 'info',
+  vision: 'overview',
 };
 
 /** 백엔드가 순서를 다르게 보내도 정해진 순서로 정렬해요. 모르는 분류는 뒤로 보내요. */

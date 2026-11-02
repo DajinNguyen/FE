@@ -4,8 +4,13 @@
  *
  * 개발 중 확인용 주소 옵션
  * - ?mock_report=fail : 리포트 생성이 실패하는 경우를 흉내 내요.
+ * - ?mock_market=fail : 메인 시장 정보를 불러오지 못하는 경우를 흉내 내요.
  */
 import companiesJson from './companies.json';
+import { hotIndustries, industryRecords } from './industries';
+import { industryDetail, industryNews } from './industryDetails';
+import { marketSummary } from './market';
+import { companyNews, marketNews } from './news';
 import crosswordsJson from './crosswords.json';
 import samsungJson from './samsungElectronics.json';
 import termsJson from './terms.json';
@@ -18,8 +23,11 @@ import type {
   CrosswordPuzzle,
   CrosswordSummary,
   Financials,
+  HeatPeriod,
   HomeDashboard,
+  MarketSummary,
   NewsItem,
+  NewsPage,
   PriceHistory,
   PricePeriod,
   SectorGroup,
@@ -35,12 +43,11 @@ const terms = termsJson as Term[];
 /** 재무·뉴스·리포트 원본이 있는 회사. 다른 회사를 추가하려면 JSON을 만들고 여기에 등록해요. */
 const companyData: Record<
   string,
-  { company: CompanyDetail; financials: Financials; news: NewsItem[]; report: CompanyReport }
+  { company: CompanyDetail; financials: Financials; report: CompanyReport }
 > = {
   '005930': samsungJson as unknown as {
     company: CompanyDetail;
     financials: Financials;
-    news: NewsItem[];
     report: CompanyReport;
   },
 };
@@ -85,15 +92,23 @@ export async function getCompaniesByCodes(codes: string[]): Promise<CompanySumma
     .filter((c): c is CompanySummary => Boolean(c));
 }
 
+/** 이 회사가 속한 산업 */
+const industriesOf = (stockCode: string) =>
+  industryRecords
+    .filter((record) => record.companies.includes(stockCode))
+    .map(({ industry_id, name }) => ({ industry_id, name }));
+
 /** 원본 JSON이 없는 회사는 검색 목록 정보만으로 채워요. (사업 설명 등은 빈 값) */
 export async function getCompany(stockCode: string): Promise<CompanyDetail> {
   await wait(150);
   const data = companyData[stockCode];
-  if (data) return { ...data.company, price_as_of: lastTradingDate() };
+  if (data)
+    return { ...data.company, price_as_of: lastTradingDate(), industries: industriesOf(stockCode) };
   const summary = findCompany(stockCode);
   return {
     ...summary,
     price_as_of: lastTradingDate(),
+    industries: industriesOf(stockCode),
     market_cap: null,
     homepage_url: '',
     dart_url: 'https://dart.fss.or.kr/',
@@ -109,9 +124,57 @@ export async function getFinancials(stockCode: string): Promise<Financials> {
   return getData(stockCode).financials;
 }
 
-export async function getNews(stockCode: string): Promise<NewsItem[]> {
+/** 기업 뉴스: 최신순, 페이지 단위 */
+export async function getCompanyNews(
+  stockCode: string,
+  page: number,
+  size: number,
+): Promise<NewsPage> {
   await wait(250);
-  return getData(stockCode).news;
+  const all = companyNews(findCompany(stockCode));
+  const start = (page - 1) * size;
+  return { items: all.slice(start, start + size), page, size, has_next: start + size < all.length };
+}
+
+/**
+ * 메인 "오늘의 시장". 주소에 ?mock_market=fail 을 붙이면 실패를 흉내 내요.
+ */
+export async function getMarketSummary(): Promise<MarketSummary> {
+  await wait(200);
+  if (
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('mock_market') === 'fail'
+  ) {
+    throw new ApiError('시장 정보를 불러오지 못했어요', 503, 'MARKET_UNAVAILABLE');
+  }
+  return marketSummary();
+}
+
+/** 시장 뉴스 (목 데이터는 날짜와 상관없이 같은 목록) */
+export async function getMarketNews(date: string): Promise<NewsItem[]> {
+  await wait(200);
+  void date;
+  return marketNews();
+}
+
+/* ------------------------------------------------------------------ */
+/* 산업                                                                */
+/* ------------------------------------------------------------------ */
+
+export async function getHotIndustries(period: HeatPeriod) {
+  await wait(200);
+  return hotIndustries(period);
+}
+
+export async function getIndustry(industryId: string) {
+  await wait(200);
+  return industryDetail(industryId, companies);
+}
+
+/** 산업 관련 뉴스 (최신순) */
+export async function getIndustryNews(industryId: string, size: number) {
+  await wait(200);
+  return industryNews(industryId).slice(0, size);
 }
 
 /* ------------------------------------------------------------------ */
@@ -378,3 +441,21 @@ export async function getMe(): Promise<AuthUser | null> {
 export async function logout(): Promise<void> {
   await wait(80);
 }
+
+/* ------------------------------------------------------------------ */
+/* 커뮤니티 (메모리 저장)                                               */
+/* ------------------------------------------------------------------ */
+
+export {
+  createComment,
+  createPost,
+  deleteComment,
+  deletePost,
+  getComments,
+  getPost,
+  getPosts,
+  likePost,
+  reportTarget,
+  unlikePost,
+  updatePost,
+} from './community';

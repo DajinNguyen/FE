@@ -18,6 +18,7 @@ const baseFinancials: Financials = {
   latest_quarter: { label: '2025년 4분기', revenue: 93.8, operating_income: 20.1, note: '' },
   segments: { base_label: '', items: [] },
   indicators_as_of: null,
+  recent_performance: null,
   indicators: {
     roe: { value: 9.2, is_sample: true },
     debt_ratio: { value: 27.1, is_sample: true },

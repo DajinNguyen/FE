@@ -1,7 +1,7 @@
 import type { SampleNumber } from './common';
 
 /**
- * 메인 화면 업종 탭에 쓰는 업종 묶음. 값은 프론트 상수(src/config/sectorGroups.ts)로 고정이에요.
+ * 업종 묶음. (메인 업종 탭은 산업 아이콘으로 바뀌어서 지금 화면에서는 쓰지 않아요)
  * 어느 묶음에도 들지 않으면 "etc" 예요.
  */
 export type SectorGroup = 'semiconductor' | 'auto' | 'internet' | 'finance' | 'food' | 'etc';
@@ -42,6 +42,8 @@ export interface TimelineItem {
 export interface CompanyDetail extends CompanySummary {
   /** 시가총액 (조 원). 아직 자료가 없으면 null */
   market_cap: SampleNumber | null;
+  /** 이 회사가 속한 산업 (칩을 누르면 산업 페이지). 없으면 빈 배열 */
+  industries: { industry_id: string; name: string }[];
   homepage_url: string;
   dart_url: string;
   business_description: string;

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import styles from './Section.module.css';
 
 interface SectionProps {
@@ -11,12 +11,17 @@ interface SectionProps {
 
 /** 탭 안의 한 덩어리. 제목 + 내용 */
 export function Section({ title, description, action, children, id }: SectionProps) {
+  const titleId = useId();
   return (
-    <section className={styles.section} id={id}>
+    <section className={styles.section} id={id} aria-labelledby={title ? titleId : undefined}>
       {(title || action) && (
         <div className={styles.head}>
           <div>
-            {title && <h2 className={styles.title}>{title}</h2>}
+            {title && (
+              <h2 id={titleId} className={styles.title}>
+                {title}
+              </h2>
+            )}
             {description && <p className={styles.description}>{description}</p>}
           </div>
           {action}

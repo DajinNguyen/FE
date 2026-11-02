@@ -109,76 +109,9 @@
   transition: transform var(--dur) var(--ease);
 }
 
-.pointHead[aria-expanded='true'] .chevron {
-  transform: rotate(180deg);
-}
-
 /* 펼친 내용 (접혀 있을 때는 hidden 이 이겨야 해요) */
 .pointBody[hidden] {
   display: none;
-}
-
-.pointBody {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-  padding: 0 0 var(--sp-4);
-}
-
-.metric {
-  color: var(--text-2);
-  font-size: var(--fs-sm);
-}
-
-.metric strong {
-  color: var(--text-1);
-}
-
-.period {
-  color: var(--text-3);
-}
-
-.explain {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  margin: 0;
-}
-
-.explain dt {
-  color: var(--text-3);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-}
-
-.explain dd {
-  margin: 0;
-}
-
-.evidence {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 var(--sp-2);
-  color: var(--text-3);
-  font-size: var(--fs-sm);
-}
-
-.evidenceLabel {
-  font-weight: 700;
-}
-
-.evidenceLink {
-  color: var(--text-2);
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: var(--line-strong);
-  text-underline-offset: 3px;
-}
-
-.evidenceLink:hover {
-  color: var(--brand);
-  text-decoration-color: currentColor;
 }
 
 .footer {

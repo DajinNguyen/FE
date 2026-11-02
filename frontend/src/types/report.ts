@@ -1,3 +1,5 @@
+import type { NewsItem } from './news';
+
 /**
  * AI 리포트 응답 형식 (docs/report-schema-proposal.md 제안안, 백엔드·AI 합의 전).
  * 숫자(before/after, evidence)는 백엔드가 공식 자료로 계산해서 넣고,
@@ -48,6 +50,14 @@ export interface KeyPointValue {
   period: string;
 }
 
+/** 핵심 포인트 상세 시트: 연도별 숫자 + 관련 뉴스·공시 */
+export interface KeyPointDetail {
+  /** 3~5년, 오래된 해부터 */
+  yearly: { year: string; revenue: number; operating_income: number; unit: string }[];
+  related_news: NewsItem[];
+  related_disclosures: { title: string; date: string; url: string }[];
+}
+
 export interface KeyPoint {
   category: KeyPointCategory;
   /** 한 줄 결론 */
@@ -61,6 +71,8 @@ export interface KeyPoint {
   /** 무슨 뜻인가요? (초보자용 해석 1문장) */
   meaning: string;
   evidence: EvidenceRef[];
+  /** 누르면 열리는 상세 시트 내용. 없으면 시트에 이유·근거만 보여줘요. */
+  detail?: KeyPointDetail | null;
 }
 
 export interface FinancialHighlight {
@@ -80,14 +92,6 @@ export interface FinancialsEvidence {
   highlights: FinancialHighlight[];
   /** (추가 제안) 기준일 예: "2025년 연간 · 연결 기준" */
   base_date?: string;
-}
-
-export interface NewsEvidence {
-  title: string;
-  press: string;
-  published_at: string;
-  summary: string;
-  url: string;
 }
 
 export interface RevenueMixItem {
@@ -121,7 +125,8 @@ export interface CompanyReport {
   key_points: KeyPoint[];
   evidence: {
     financials: FinancialsEvidence | null;
-    news: NewsEvidence[];
+    /** 근거 뉴스 (뉴스 탭과 같은 형식) */
+    news: NewsItem[];
     vision: VisionEvidence | null;
   };
   quiz: QuizQuestion[];

@@ -7,6 +7,7 @@ import { Section } from '../../components/Section';
 import { TermText } from '../../components/TermText';
 import type { CompanyReport, EvidenceKind } from '../../types';
 import { evidenceAnchorId } from '../analysis/reportMeta';
+import { NewsList } from '../news/NewsList';
 import type { CompanyTabId, GoToTab } from '../companyTabs';
 import styles from './EvidenceSection.module.css';
 
@@ -54,26 +55,14 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
           title="뉴스"
           detail={{ tab: 'news', label: '뉴스 상세 보기' }}
           onGoToTab={onGoToTab}
-          meta={news.length > 0 && <DataAsOf prefix="최근 뉴스" value={news[0].published_at} />}
+          meta={
+            news.length > 0 && (
+              <DataAsOf prefix="최근 뉴스" value={news[0].published_at.slice(0, 10)} />
+            )
+          }
         >
           {news.length > 0 ? (
-            <ul className={styles.news}>
-              {news.slice(0, 3).map((item) => (
-                <li key={item.title}>
-                  <button
-                    type="button"
-                    className={styles.newsItem}
-                    onClick={() => onGoToTab('news')}
-                  >
-                    <span className={styles.newsTitle}>{item.title}</span>
-                    <span className={styles.meta}>
-                      {item.press} · {item.published_at}
-                    </span>
-                    <span className={styles.newsSummary}>{item.summary}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <NewsList items={news.slice(0, 3)} compact label="근거 뉴스" />
           ) : (
             <NotFound />
           )}
@@ -82,7 +71,7 @@ export function EvidenceSection({ evidence, onGoToTab }: EvidenceSectionProps) {
         <EvidenceBlock
           kind="vision"
           title="기업 비전"
-          detail={{ tab: 'info', label: '기업 정보 보기' }}
+          detail={{ tab: 'overview', label: '개요에서 기업 정보 보기' }}
           onGoToTab={onGoToTab}
           meta={vision && sourceLine(vision.source, vision.base_date)}
         >

@@ -1,61 +1,53 @@
 import { screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { HomePage } from '../src/pages/HomePage';
 import { TradingRankingPage } from '../src/pages/TradingRankingPage';
 import { renderWithProviders } from './testUtils';
 
 describe('메인 화면', () => {
-  it('서비스 한 줄 설명, 검색창, 3단계 설명을 보여주고 검색 예시 칩은 없어요', () => {
+  it('맨 위에 오늘의 시장 한마디가 페이지 제목으로 나오고, 검색창이 있고 검색 예시 칩은 없어요', async () => {
     renderWithProviders(<HomePage />);
 
     expect(
-      screen.getByRole('heading', {
+      await screen.findByRole('heading', {
         level: 1,
-        name: '궁금한 기업을 검색하면, AI가 재무제표·뉴스·사업 방향을 근거로 쉽게 설명해 드려요',
+        name: '반도체 강세에 코스피가 1% 넘게 올랐어요',
       }),
     ).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: '기업 검색' })).toBeInTheDocument();
     expect(screen.queryByText('이렇게 찾아보세요')).not.toBeInTheDocument();
-    const steps = screen.getByRole('list', { name: '다진이 하는 일' });
-    expect(within(steps).getAllByRole('listitem')).toHaveLength(3);
   });
 
-  it('거래가 많은 기업은 기준일과 함께 10개까지 순위 리스트로 보여주고, AI 결론이 없는 줄은 숨겨요', async () => {
+  it('거래 많은 기업은 기준일과 함께 TOP 3만 작게 보여줘요 (순위·기업명·한 줄 소개·거래대금)', async () => {
     renderWithProviders(<HomePage />);
 
-    const trading = await screen.findByRole('region', { name: '오늘 거래가 많은 기업' });
-    expect(within(trading).getByText(/장 마감 기준 · 거래대금 순/)).toBeInTheDocument();
-    const rows = within(trading).getAllByRole('listitem');
-    expect(rows).toHaveLength(10);
-    // 삼성전자만 리포트가 있어서 AI 결론이 보여요.
-    expect(within(rows[0]).getByText('AI 결론')).toBeInTheDocument();
-    expect(within(rows[1]).queryByText('AI 결론')).not.toBeInTheDocument();
-    expect(within(trading).getByRole('link', { name: /전체 보기/ })).toHaveAttribute(
+    const list = await screen.findByRole('list', { name: '거래 많은 기업' });
+    const rows = within(list).getAllByRole('listitem');
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toHaveTextContent('1삼성전자');
+    expect(rows[0]).toHaveTextContent('거래대금');
+    expect(within(rows[0]).queryByText('AI 결론')).not.toBeInTheDocument();
+    expect(screen.getByText(/기준 · 거래대금 순/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /전체 보기/ })).toHaveAttribute(
       'href',
       '/rankings/trading',
     );
+    expect(screen.getByRole('link', { name: /낱말퀴즈/ })).toHaveAttribute(
+      'href',
+      '/terms?mode=crossword',
+    );
+    expect(screen.queryByRole('list', { name: '다진이 하는 일' })).not.toBeInTheDocument();
+    expect(within(list).queryByText('예시 값')).not.toBeInTheDocument();
+    expect(screen.getByRole('complementary', { name: '다진 사용 방법' })).toHaveTextContent(
+      '기업을 검색하면 AI가 재무제표·뉴스를 근거로 쉽게 설명해요',
+    );
   });
 
-  it('업종 탭을 바꾸면 그 업종의 기업을 보여주고, 떠오르는 기업과 광고는 숨겨요', async () => {
-    const user = userEvent.setup();
+  it('업종별 기업 탭 대신 관심이 몰리는 산업 아이콘을 보여줘요', async () => {
     renderWithProviders(<HomePage />);
-
-    const sectors = await screen.findByRole('region', { name: '업종별 기업' });
-    const tabs = within(sectors)
-      .getAllByRole('tab')
-      .map((tab) => tab.textContent);
-    expect(tabs).toEqual(['반도체', '자동차', '인터넷', '금융', '식품', '기타']);
-
-    await user.click(within(sectors).getByRole('tab', { name: '식품' }));
-    expect(within(sectors).getByText('오리온')).toBeInTheDocument();
-
+    expect(await screen.findByRole('list', { name: '관심이 몰리는 산업' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: '업종별 기업' })).not.toBeInTheDocument();
     expect(screen.queryByRole('region', { name: '떠오르는 기업' })).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('광고')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /용어 게임/ })).toHaveAttribute(
-      'href',
-      '/terms?mode=game',
-    );
   });
 
   it('전체 보기 화면은 순위 30개를 보여줘요', async () => {
