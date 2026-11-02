@@ -1,9 +1,20 @@
-/* 메인 맨 위: 왼쪽 시장 한마디(가장 크게)·기준 시각, 오른쪽 코스피·코스닥 (세로) */
+/* 메인 맨 위 진한 띠: 왼쪽 시장 한마디(가장 크게)·기준 시각, 오른쪽 코스피·코스닥 (세로, 흰 칩) */
 .today {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-6);
+  padding: var(--sp-8);
+  border-radius: var(--radius-lg);
+  background: var(--deep);
+  color: var(--on-deep);
+}
+
+/* 띠 안의 실패 안내도 밝은 글자로 */
+.today .headlineBlock {
+  --text-1: var(--on-deep);
+  --text-2: var(--on-deep-sub);
+  --text-3: var(--on-deep-sub);
 }
 
 .headlineBlock {
@@ -28,7 +39,7 @@
 }
 
 .meta {
-  color: var(--text-3);
+  color: var(--on-deep-sub);
   font-size: var(--fs-sm);
 }
 
@@ -46,8 +57,9 @@
   align-items: center;
   gap: var(--sp-3);
   padding: var(--sp-2) var(--sp-4);
-  border: 1px solid var(--line-strong);
   border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--text-1);
   font-size: var(--fs-sm);
   font-variant-numeric: tabular-nums;
 }
@@ -87,10 +99,14 @@
 }
 
 /* 오늘 시장, 왜 움직였나요? (보통 크기) */
+/* 보조 배경 띠로 앞뒤 섹션과 번갈아요 */
 .reasons {
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
+  padding: var(--sp-6);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
 }
 
 .reasonsTitle {
@@ -153,9 +169,10 @@
   display: inline-flex;
   gap: var(--sp-1);
   padding: 0 var(--sp-2);
-  border: 1px solid var(--line-strong);
+  border: 1px solid transparent;
+  background: var(--brand-weak);
   border-radius: var(--radius-full);
-  color: var(--text-1);
+  color: var(--brand-strong);
   font-size: var(--fs-xs);
   font-weight: 700;
   line-height: 1.9;
@@ -183,6 +200,10 @@
   border-radius: var(--radius-xs);
   background: var(--surface-strong);
   animation: pulse 1.4s ease-in-out infinite;
+}
+
+.today .skeleton {
+  background: var(--on-deep-surface);
 }
 
 .skeletonHeadline {
@@ -226,6 +247,11 @@
   .today {
     flex-direction: column;
     align-items: stretch;
+    padding: var(--sp-6) var(--sp-4);
+  }
+
+  .reasons {
+    padding: var(--sp-4);
   }
 
   .headline {

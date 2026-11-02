@@ -35,7 +35,7 @@
   position: sticky;
   top: var(--header-h);
   z-index: 20;
-  background: var(--bg);
+  background: var(--page);
 }
 
 .content {

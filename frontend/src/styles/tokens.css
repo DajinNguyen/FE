@@ -6,62 +6,80 @@
  * - text-1~3 은 바탕(bg, surface) 위에서 4.5:1 이상이에요. text-4 는 글자에 쓰지 않아요(테두리·비활성 표시용).
  */
 :root {
-  /* 강조색 (인디고) */
-  --brand: #4338ca;
-  --brand-strong: #3730a3;
-  --brand-weak: #eef0fb;
-  --brand-muted: #c9cdf2;
-  --brand-card: #4338ca;
+  /* 색 — 1안 딥 틸 (2026-11-02)
+   * page(연한 브랜드 톤) 위에 흰 카드(bg)를 올려요. 흰색은 카드·입력창·시트에만 써요.
+   * deep: 헤더·메인 맨 위 띠 같은 진한 면 / brand: 버튼·링크·활성 탭 / point: 순위 배지처럼 몇 곳에만
+   * rise·fall 은 숫자 글자용(배경 대비 4.5:1 이상), rise-line·fall-line 은 그래프 선용이에요.
+   * ind-*: 산업 TOP 3 카드의 산업별 배경(bg)·아이콘(fg) */
+  --deep: #0e4a47;
+  --on-deep: #ffffff;
+  --on-deep-sub: rgba(255, 255, 255, 0.8);
+  --on-deep-surface: rgba(255, 255, 255, 0.14);
+  --on-deep-line: rgba(255, 255, 255, 0.4);
+  --brand: #11756f;
+  --brand-strong: #0e4a47;
+  --brand-weak: #d9ecea;
+  --brand-muted: #9ccdc7;
+  --brand-card: #0e5a56;
   --on-brand: #ffffff;
-  --on-brand-sub: rgba(255, 255, 255, 0.78);
-  /* 강조색 면(용어 카드 앞면 등) 위의 글자 */
+  --on-brand-sub: rgba(255, 255, 255, 0.8);
   --on-brand-card: #ffffff;
-  --on-brand-card-sub: rgba(255, 255, 255, 0.78);
-
-  /* 배경·면 */
+  --on-brand-card-sub: rgba(255, 255, 255, 0.8);
+  --point: #f2a93b;
+  --on-point: #14201f;
+  --page: #eef6f5;
   --bg: #ffffff;
-  --bg-outside: #f1f2f7;
-  --surface: #f6f7fb;
-  --surface-strong: #eceef6;
-  --line: #e3e5ee;
-  --line-strong: #c3c7d6;
-
-  /* 낱말퀴즈: 막힌 칸 / 글자 칸 */
-  --cw-block: #272a45;
+  --bg-outside: #e2efed;
+  --surface: #e2efed;
+  --surface-strong: #d3e3e0;
+  --line: #d3e3e0;
+  --line-strong: #8eaaa6;
+  --cw-block: #14302d;
   --cw-cell: #ffffff;
-
-  /* 그래프: 강조 막대는 brand, 나머지 막대는 chart-muted (바탕 대비 3:1 이상) */
-  --chart-muted: #8a90bf;
-
-  /* 글자 */
-  --text-1: #14162a;
-  --text-2: #373a52;
-  --text-3: #5b5f76;
-  --text-4: #9a9db0;
-
-  /* 상태 */
+  --chart-muted: #7fa6a1;
+  --text-1: #14201f;
+  --text-2: #2f3f3d;
+  --text-3: #5a6b69;
+  --text-4: #93a6a3;
   --good: #1b7a46;
-  --good-weak: #e6f3ec;
+  --good-weak: #e3f2e8;
   --normal: #9a5b00;
   --normal-weak: #fbf0de;
   --caution: #b4451a;
   --caution-weak: #fbebe4;
-
-  /* 시세 (한국 관례: 상승 빨강 / 하락 파랑) */
-  --rise: #cc2f36;
-  --fall: #1565c0;
-
-  /* 아바타 (강조색을 늘리지 않도록 회색 한 가지) */
-  --avatar-1: #eceef6;
-  --avatar-2: #eceef6;
-  --avatar-3: #eceef6;
-  --avatar-4: #eceef6;
-  --avatar-5: #eceef6;
-  --avatar-text: #4338ca;
-
-  --overlay: rgba(12, 13, 28, 0.45);
-  --shadow-float: 0 4px 16px rgba(20, 22, 42, 0.08);
-  --shadow-pop: 0 12px 32px rgba(20, 22, 42, 0.14);
+  --rise: #c42b31;
+  --fall: #2c63c4;
+  --rise-line: #e5484d;
+  --fall-line: #3e7be0;
+  --avatar-1: #d9ecea;
+  --avatar-2: #d9ecea;
+  --avatar-3: #d9ecea;
+  --avatar-4: #d9ecea;
+  --avatar-5: #d9ecea;
+  --avatar-text: #0e4a47;
+  --overlay: rgba(8, 24, 23, 0.45);
+  --shadow-float: 0 4px 16px rgba(14, 74, 71, 0.08);
+  --shadow-pop: 0 12px 32px rgba(14, 74, 71, 0.16);
+  --ind-ai-bg: #e8e6fb;
+  --ind-ai-fg: #5246c8;
+  --ind-semiconductor-bg: #e3eefb;
+  --ind-semiconductor-fg: #2f64b0;
+  --ind-battery-bg: #e4f5e8;
+  --ind-battery-fg: #2e8a4e;
+  --ind-bio-bg: #fbe8ef;
+  --ind-bio-fg: #b8436b;
+  --ind-internet-bg: #fff1dd;
+  --ind-internet-fg: #a8620e;
+  --ind-auto-bg: #e9eef2;
+  --ind-auto-fg: #4a5a68;
+  --ind-shipbuilding-bg: #e0f2f4;
+  --ind-shipbuilding-fg: #1f7a85;
+  --ind-defense-bg: #edeee3;
+  --ind-defense-fg: #5e6534;
+  --ind-finance-bg: #e6ecf7;
+  --ind-finance-fg: #34558f;
+  --ind-game-bg: #f6e7f8;
+  --ind-game-fg: #8a3f96;
 
   /* 글자 크기 — 12px 이하는 쓰지 않아요. */
   --fs-xs: 13px; /* 출처·기준일 같은 보조 글자 */
@@ -118,88 +136,148 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --brand: #a5b0fb;
-    --brand-strong: #c7cdfd;
-    --brand-weak: #1c1f3a;
-    --brand-muted: #353b70;
-    --brand-card: #30368a;
-    --on-brand-card: #e8e9f3;
-    --on-brand-card-sub: rgba(232, 233, 243, 0.75);
-    --on-brand: #0e1018;
-    --on-brand-sub: rgba(14, 16, 24, 0.72);
-    --bg: #0e1018;
-    --bg-outside: #090a10;
-    --surface: #161925;
-    --surface-strong: #20233a;
-    --line: #2e3247;
-    --line-strong: #60657f;
-    --chart-muted: #5f66a5;
-    --cw-block: #05060a;
-    --cw-cell: #1e2133;
-    --text-1: #e8e9f3;
-    --text-2: #bfc2d6;
-    --text-3: #9598ae;
-    --text-4: #5d6076;
+    --deep: #0b3735;
+    --on-deep: #e6eeec;
+    --on-deep-sub: rgba(230, 238, 236, 0.78);
+    --on-deep-surface: rgba(230, 238, 236, 0.12);
+    --on-deep-line: rgba(230, 238, 236, 0.35);
+    --on-deep-surface: rgba(230, 238, 236, 0.12);
+    --on-deep-line: rgba(230, 238, 236, 0.35);
+    --brand: #3fbfb2;
+    --brand-strong: #7fd9cf;
+    --brand-weak: #12302d;
+    --brand-muted: #24504b;
+    --brand-card: #145550;
+    --on-brand: #0f1716;
+    --on-brand-sub: rgba(15, 23, 22, 0.75);
+    --on-brand-card: #e6eeec;
+    --on-brand-card-sub: rgba(230, 238, 236, 0.78);
+    --point: #f2b455;
+    --on-point: #0f1716;
+    --page: #0f1716;
+    --bg: #18221f;
+    --bg-outside: #0b1110;
+    --surface: #142120;
+    --surface-strong: #1f2e2b;
+    --line: #26332f;
+    --line-strong: #5f7571;
+    --cw-block: #060c0b;
+    --cw-cell: #1f2e2b;
+    --chart-muted: #4f7a75;
+    --text-1: #e6eeec;
+    --text-2: #c3cfcc;
+    --text-3: #9aaaa7;
+    --text-4: #5f7571;
     --good: #5fc98b;
     --good-weak: #173224;
     --normal: #e2a64a;
     --normal-weak: #3a2b14;
     --caution: #f08a5d;
     --caution-weak: #3b2219;
-    --rise: #ff6b70;
-    --fall: #6cb6ff;
-    --avatar-1: #20233a;
-    --avatar-2: #20233a;
-    --avatar-3: #20233a;
-    --avatar-4: #20233a;
-    --avatar-5: #20233a;
-    --avatar-text: #c7cdfd;
+    --rise: #ff6b6f;
+    --fall: #6c9cf0;
+    --rise-line: #ff6b6f;
+    --fall-line: #6c9cf0;
+    --avatar-1: #1f2e2b;
+    --avatar-2: #1f2e2b;
+    --avatar-3: #1f2e2b;
+    --avatar-4: #1f2e2b;
+    --avatar-5: #1f2e2b;
+    --avatar-text: #7fd9cf;
     --overlay: rgba(0, 0, 0, 0.6);
     --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.4);
     --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --ind-ai-bg: #262350;
+    --ind-ai-fg: #b9b2ff;
+    --ind-semiconductor-bg: #182c47;
+    --ind-semiconductor-fg: #91b9f0;
+    --ind-battery-bg: #173523;
+    --ind-battery-fg: #86d19e;
+    --ind-bio-bg: #3a1c29;
+    --ind-bio-fg: #f29cbc;
+    --ind-internet-bg: #3a2a12;
+    --ind-internet-fg: #f1b86a;
+    --ind-auto-bg: #222b32;
+    --ind-auto-fg: #b1bfcb;
+    --ind-shipbuilding-bg: #123337;
+    --ind-shipbuilding-fg: #83cdd5;
+    --ind-defense-bg: #2b2d1c;
+    --ind-defense-fg: #c6cd92;
+    --ind-finance-bg: #1c2638;
+    --ind-finance-fg: #a0b8e6;
+    --ind-game-bg: #33203b;
+    --ind-game-fg: #dba6e5;
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --brand: #a5b0fb;
-  --brand-strong: #c7cdfd;
-  --brand-weak: #1c1f3a;
-  --brand-muted: #353b70;
-  --brand-card: #30368a;
-  --on-brand-card: #e8e9f3;
-  --on-brand-card-sub: rgba(232, 233, 243, 0.75);
-  --on-brand: #0e1018;
-  --on-brand-sub: rgba(14, 16, 24, 0.72);
-  --bg: #0e1018;
-  --bg-outside: #090a10;
-  --surface: #161925;
-  --surface-strong: #20233a;
-  --line: #2e3247;
-  --line-strong: #60657f;
-  --chart-muted: #5f66a5;
-  --cw-block: #05060a;
-  --cw-cell: #1e2133;
-  --text-1: #e8e9f3;
-  --text-2: #bfc2d6;
-  --text-3: #9598ae;
-  --text-4: #5d6076;
+  --deep: #0b3735;
+  --on-deep: #e6eeec;
+  --on-deep-sub: rgba(230, 238, 236, 0.78);
+  --brand: #3fbfb2;
+  --brand-strong: #7fd9cf;
+  --brand-weak: #12302d;
+  --brand-muted: #24504b;
+  --brand-card: #145550;
+  --on-brand: #0f1716;
+  --on-brand-sub: rgba(15, 23, 22, 0.75);
+  --on-brand-card: #e6eeec;
+  --on-brand-card-sub: rgba(230, 238, 236, 0.78);
+  --point: #f2b455;
+  --on-point: #0f1716;
+  --page: #0f1716;
+  --bg: #18221f;
+  --bg-outside: #0b1110;
+  --surface: #142120;
+  --surface-strong: #1f2e2b;
+  --line: #26332f;
+  --line-strong: #5f7571;
+  --cw-block: #060c0b;
+  --cw-cell: #1f2e2b;
+  --chart-muted: #4f7a75;
+  --text-1: #e6eeec;
+  --text-2: #c3cfcc;
+  --text-3: #9aaaa7;
+  --text-4: #5f7571;
   --good: #5fc98b;
   --good-weak: #173224;
   --normal: #e2a64a;
   --normal-weak: #3a2b14;
   --caution: #f08a5d;
   --caution-weak: #3b2219;
-  --rise: #ff6b70;
-  --fall: #6cb6ff;
-  --avatar-1: #20233a;
-  --avatar-2: #20233a;
-  --avatar-3: #20233a;
-  --avatar-4: #20233a;
-  --avatar-5: #20233a;
-  --avatar-text: #c7cdfd;
+  --rise: #ff6b6f;
+  --fall: #6c9cf0;
+  --rise-line: #ff6b6f;
+  --fall-line: #6c9cf0;
+  --avatar-1: #1f2e2b;
+  --avatar-2: #1f2e2b;
+  --avatar-3: #1f2e2b;
+  --avatar-4: #1f2e2b;
+  --avatar-5: #1f2e2b;
+  --avatar-text: #7fd9cf;
   --overlay: rgba(0, 0, 0, 0.6);
   --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --ind-ai-bg: #262350;
+  --ind-ai-fg: #b9b2ff;
+  --ind-semiconductor-bg: #182c47;
+  --ind-semiconductor-fg: #91b9f0;
+  --ind-battery-bg: #173523;
+  --ind-battery-fg: #86d19e;
+  --ind-bio-bg: #3a1c29;
+  --ind-bio-fg: #f29cbc;
+  --ind-internet-bg: #3a2a12;
+  --ind-internet-fg: #f1b86a;
+  --ind-auto-bg: #222b32;
+  --ind-auto-fg: #b1bfcb;
+  --ind-shipbuilding-bg: #123337;
+  --ind-shipbuilding-fg: #83cdd5;
+  --ind-defense-bg: #2b2d1c;
+  --ind-defense-fg: #c6cd92;
+  --ind-finance-bg: #1c2638;
+  --ind-finance-fg: #a0b8e6;
+  --ind-game-bg: #33203b;
+  --ind-game-fg: #dba6e5;
   color-scheme: dark;
 }

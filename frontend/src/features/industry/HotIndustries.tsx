@@ -4,7 +4,7 @@ import { DataAsOf } from '../../components/DataAsOf';
 import { ErrorState } from '../../components/ErrorState';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { DEFAULT_HEAT_PERIOD, HEAT_PERIODS } from '../../config/industryHeat';
-import { industryIcon } from '../../config/industryIcons';
+import { industryColorStyle, industryIcon } from '../../config/industryIcons';
 import { useHotIndustries } from '../../hooks/useIndustries';
 import type { HeatPeriod, IndustrySummary } from '../../types';
 import { HeatCriteriaSheet } from './HeatCriteriaSheet';
@@ -25,6 +25,7 @@ function IndustryCard({ industry, rank }: { industry: IndustrySummary; rank: num
       <Link
         to={`/industries/${industry.industry_id}`}
         className={styles.hotItem}
+        style={industryColorStyle(industry.icon_key)}
         data-rank={rank}
         aria-label={`${rank}위 ${industry.name} 산업, ${metric.label} ${changeWords(metric.value)}`}
       >

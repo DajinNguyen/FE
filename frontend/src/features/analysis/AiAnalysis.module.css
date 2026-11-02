@@ -2,7 +2,7 @@
 .analysis {
   margin-top: var(--sp-6);
   padding: var(--sp-8);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--surface);
   scroll-margin-top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
 }
@@ -17,8 +17,14 @@
   font-weight: 700;
 }
 
+/* AI 한 줄 결론: 브랜드 톤 카드 */
 .headline {
   margin-top: var(--sp-2);
+  padding: var(--sp-4) var(--sp-6);
+  border-left: 4px solid var(--brand);
+  border-radius: var(--radius-sm);
+  background: var(--brand-weak);
+  color: var(--text-1);
   font-size: var(--fs-2xl);
   font-weight: 800;
   letter-spacing: -0.02em;
