@@ -8,6 +8,7 @@
  */
 import companiesJson from './companies.json';
 import { hotIndustries } from './industries';
+import { industryDetail, industryNews } from './industryDetails';
 import { marketSummary } from './market';
 import { companyNews, marketNews } from './news';
 import crosswordsJson from './crosswords.json';
@@ -155,6 +156,17 @@ export async function getMarketNews(date: string): Promise<NewsItem[]> {
 export async function getHotIndustries(period: HeatPeriod) {
   await wait(200);
   return hotIndustries(period);
+}
+
+export async function getIndustry(industryId: string) {
+  await wait(200);
+  return industryDetail(industryId, companies);
+}
+
+/** 산업 관련 뉴스 (최신순) */
+export async function getIndustryNews(industryId: string, size: number) {
+  await wait(200);
+  return industryNews(industryId).slice(0, size);
 }
 
 /* ------------------------------------------------------------------ */

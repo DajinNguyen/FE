@@ -237,6 +237,41 @@
 **임시 기준 (확정 필요)**: 기간 최근 1주(1주/1개월 전환), 점수 = 주가 상승률 40% + 거래대금 증가율 30% + 뉴스 언급 증가율 30%, 상위 3개 `high`, 다음 3개 `mid`, 나머지 `low`.
 산업 목록 초안: AI, 반도체, 2차전지, 바이오, 인터넷·플랫폼, 자동차, 조선, 방산, 금융, 게임.
 
+### 6-2. 산업 페이지 `GET /api/industries/{industry_id}`
+
+```json
+{
+  "industry_id": "semiconductor",
+  "name": "반도체",
+  "icon_key": "semiconductor",
+  "description": "컴퓨터·스마트폰의 두뇌와 기억 장치 역할을 하는 반도체를 … 산업이에요.",
+  "why": { "text": "이번 달 반도체 수출이 작년보다 늘었다는 통계가 나왔어요. …", "news_ids": ["n1", "n2"] },
+  "trend": [{ "date": "2026-09-28", "value": 0 }, { "date": "2026-10-26", "value": 10.1 }],
+  "score_breakdown": { "price_change_rate": 4.8, "trading_value_change_rate": 35, "news_mention_change_rate": 40, "period": "1w" },
+  "news": [/* NewsItem (근거 뉴스) */],
+  "companies": [
+    { "stock_code": "005930", "name": "삼성전자", "intro": "스마트폰과 반도체를 만드는 회사예요", "market_cap": 760, "change_rate": 1.82 }
+  ],
+  "as_of": "2026-10-26T15:30:00+09:00",
+  "is_sample": false
+}
+```
+
+| 칸 | 타입 | 쓰는 곳 | 없을 때 |
+|---|---|---|---|
+| `description` | string (한 줄) | 산업명 아래 설명 | 필수 |
+| `why.text` | string (AI 정리 2~3문장, 예측·권유 금지) | "왜 관심이 몰리고 있나요?" | 빈 문자열이면 섹션 숨김 |
+| `why.news_ids` | string[] | 근거 뉴스 칩 (`news` 의 `id`) | 빈 배열이면 칩 숨김 |
+| `trend` | `{ date, value }[]` (주 단위 5개, 1개월 전 대비 누적 등락률 %) | "숫자로 보기" 그래프 (점마다 값 표시) | 빈 배열이면 그래프 숨김 |
+| `score_breakdown` | 변화율 % 3개 + `period` | 점수 구성 표 (비중은 프론트 config) | 필수 |
+| `news` | `NewsItem[]` | 근거 뉴스 | 빈 배열 |
+| `companies` | `{ stock_code, name, intro, market_cap(조 원), change_rate(%) }[]` | 관련 기업 (시가총액 큰 순, 10개 + [더 보기]) | 빈 배열이면 "아직 정리된 기업이 없어요" |
+| `as_of` | ISO 8601 | 상단 기준일 | 필수 |
+
+- 관련 뉴스 5개는 `GET /api/industries/{industry_id}/news?size=5` (5장 뉴스 참고) 로 따로 받아요.
+- `companies` 는 서버에서 시가총액 큰 순으로 정렬해 주세요. (프론트도 한 번 더 정렬해요)
+- 없는 산업이면 `404 INDUSTRY_NOT_FOUND`.
+
 ## 7. 메인 "오늘의 시장" `GET /api/market/summary` (2026-10-27 추가)
 
 타입 원본: `frontend/src/types/market.ts` · 프론트 함수: `frontend/src/api/market.ts`

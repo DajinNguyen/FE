@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { getCompanyNews, getMarketNews } from '../api/news';
+import { getCompanyNews, getIndustryNews, getMarketNews } from '../api/news';
 
 /** 기업 뉴스. [더 보기]를 누르면 다음 페이지를 이어 붙여요. */
 export function useCompanyNews(stockCode: string) {
@@ -18,6 +18,15 @@ export function useMarketNews(date: string) {
   return useQuery({
     queryKey: ['market', 'news', date],
     queryFn: () => getMarketNews(date),
+    staleTime: 5 * 60_000,
+  });
+}
+
+/** 산업 관련 뉴스 */
+export function useIndustryNews(industryId: string) {
+  return useQuery({
+    queryKey: ['industries', industryId, 'news'],
+    queryFn: () => getIndustryNews(industryId),
     staleTime: 5 * 60_000,
   });
 }

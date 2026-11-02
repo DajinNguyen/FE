@@ -19,3 +19,14 @@ export function getMarketNews(date: string) {
     mock: async () => (await loadMockServer()).getMarketNews(date),
   });
 }
+
+/** 산업 페이지 "관련 뉴스" 개수 */
+export const INDUSTRY_NEWS_SIZE = 5;
+
+/** 산업 관련 뉴스 (최신순) */
+export function getIndustryNews(industryId: string, size = INDUSTRY_NEWS_SIZE) {
+  return request<NewsItem[]>({
+    path: `/api/industries/${industryId}/news?size=${size}`,
+    mock: async () => (await loadMockServer()).getIndustryNews(industryId, size),
+  });
+}
