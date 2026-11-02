@@ -34,8 +34,11 @@ export const HEAT_CRITERIA_TEXT = [
   '고른 기간(최근 1주 또는 1개월) 동안의 변화를 봐요.',
   '점수 = 주가 상승률 40% + 거래대금 증가율 30% + 뉴스 언급 증가율 30%',
   '점수가 높은 순서로 상위 3개는 크게, 다음 3개는 중간, 나머지는 작게 보여줘요.',
-  '관심이 몰린다는 것은 투자 추천이 아니에요. 왜 관심을 받는지 알아보는 데 써 주세요.',
 ];
+
+/** "기준 보기"와 산업 페이지 맨 아래 안내 */
+export const HEAT_DISCLAIMER =
+  '관심이 몰린다는 것은 투자 추천이 아니에요. 왜 관심을 받는지 알아보는 데 써 주세요.';
 
 /** 점수 구성 칸 이름 (표 순서) */
 export const HEAT_FACTORS = Object.keys(HEAT_WEIGHTS) as (keyof typeof HEAT_WEIGHTS)[];

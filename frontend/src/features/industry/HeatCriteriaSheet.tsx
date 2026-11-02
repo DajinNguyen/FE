@@ -1,6 +1,6 @@
 import { Button } from '../../components/Button';
 import { Sheet } from '../../components/Sheet';
-import { HEAT_CRITERIA_TEXT } from '../../config/industryHeat';
+import { HEAT_CRITERIA_TEXT, HEAT_DISCLAIMER } from '../../config/industryHeat';
 import styles from './Industry.module.css';
 
 /** "기준 보기": 뜨는 산업을 고르는 임시 기준 설명 */
@@ -16,6 +16,7 @@ export function HeatCriteriaSheet({ open, onClose }: { open: boolean; onClose: (
         {HEAT_CRITERIA_TEXT.map((line) => (
           <li key={line}>{line}</li>
         ))}
+        <li>{HEAT_DISCLAIMER}</li>
       </ul>
       <p className={styles.criteriaNote}>
         지금은 임시 기준이에요. 기준이 바뀌면 이 설명도 바뀌어요.
