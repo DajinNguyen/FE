@@ -1,3 +1,5 @@
+import type { NewsItem } from './news';
+
 /**
  * AI 리포트 응답 형식 (docs/report-schema-proposal.md 제안안, 백엔드·AI 합의 전).
  * 숫자(before/after, evidence)는 백엔드가 공식 자료로 계산해서 넣고,
@@ -82,14 +84,6 @@ export interface FinancialsEvidence {
   base_date?: string;
 }
 
-export interface NewsEvidence {
-  title: string;
-  press: string;
-  published_at: string;
-  summary: string;
-  url: string;
-}
-
 export interface RevenueMixItem {
   name: string;
   amount: number;
@@ -121,7 +115,8 @@ export interface CompanyReport {
   key_points: KeyPoint[];
   evidence: {
     financials: FinancialsEvidence | null;
-    news: NewsEvidence[];
+    /** 근거 뉴스 (뉴스 탭과 같은 형식) */
+    news: NewsItem[];
     vision: VisionEvidence | null;
   };
   quiz: QuizQuestion[];
