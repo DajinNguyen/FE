@@ -152,7 +152,7 @@ interface PriceHistory {
   stock_code: string;
   period: "1m" | "3m" | "6m" | "1y";
   is_sample: boolean;
-  points: { date: string /* YYYY-MM-DD */; close: number }[];  // 오래된 날짜부터
+  points: { date: string /* YYYY-MM-DD */; open: number; high: number; low: number; close: number }[];  // 오래된 날짜부터
 }
 ```
 
