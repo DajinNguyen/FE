@@ -35,7 +35,7 @@ export function CompanyComment({ post, stockCode }: { post: Post; stockCode: str
       <p className={styles.meta}>
         <strong>{post.author.nickname}</strong> · {formatRelativeTime(post.created_at)}
       </p>
-      <CommentBody body={post.body} />
+      <CommentBody body={post.body} imageUrl={post.image_url} />
       <div className={styles.actions}>
         <button
           type="button"

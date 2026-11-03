@@ -17,7 +17,7 @@ const commentItem = async (text: string) =>
   (await within(await commentList()).findByText(text, { exact: false })).closest('li')!;
 
 afterEach(() => {
-  IMAGE_UPLOAD.enabled = false;
+  IMAGE_UPLOAD.enabled = true;
 });
 
 describe('기업 커뮤니티: 바로 쓰는 댓글', () => {
@@ -138,7 +138,7 @@ describe('이모지·사진·신고', () => {
     );
   });
 
-  it('사진: 업로드 API 준비 전에는 "준비 중", 준비되면 jpg·png·webp 5MB 이하만 받아요', async () => {
+  it('사진: 기본으로 켜져 있고 jpg·png·webp 5MB 이하만 받아요 (업로드 서버를 끄면 "준비 중")', async () => {
     expect(checkImage({ type: 'image/png', size: 1024 })).toBeNull();
     expect(checkImage({ type: 'image/gif', size: 1024 })).toBe(
       'jpg·png·webp 사진만 올릴 수 있어요.',
@@ -147,6 +147,8 @@ describe('이모지·사진·신고', () => {
       '5MB 이하 사진만 올릴 수 있어요.',
     );
 
+    // 업로드 서버를 꺼 두면 "준비 중"
+    IMAGE_UPLOAD.enabled = false;
     const { unmount } = renderWithProviders(<CommunityTab stockCode="005930" />);
     expect(screen.getByRole('button', { name: '사진 (준비 중)' })).toBeDisabled();
     unmount();
@@ -176,6 +178,41 @@ describe('이모지·사진·신고', () => {
     await user.click(within(sheet).getByRole('button', { name: '신고하기' }));
     expect(await screen.findByText('신고했어요. 확인 후 처리할게요.')).toBeInTheDocument();
     expect(await within(item).findByRole('button', { name: '신고함' })).toBeDisabled();
+  });
+
+  it('기업 댓글은 2,000자, 답글은 500자까지 쓸 수 있어요', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<CommunityTab stockCode="005930" />);
+    expect(screen.getByLabelText('댓글 입력')).toHaveAttribute('maxlength', '2000');
+    expect(screen.getByText('0/2,000')).toBeInTheDocument();
+
+    const first = await commentItem('메모리를 여러 층 쌓은 거라고 들었는데');
+    await user.click(within(first).getAllByRole('button', { name: '답글' })[0]);
+    await login(user);
+    expect(await within(first).findByLabelText('답글 입력')).toHaveAttribute('maxlength', '500');
+  });
+
+  it('기업 댓글에 붙인 사진도 작게 보이고, 누르면 크게 볼 수 있어요', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<CommunityTab stockCode="000660" />);
+    await screen.findByText('아직 댓글이 없어요. 첫 댓글을 남겨 보세요.');
+    // 사진 올리기(XHR)는 브라우저에서만 돼서, 서버가 사진 주소를 돌려준 것처럼 바로 써요.
+    await login(user).catch(() => {});
+    const { createPost } = await import('../src/api/community');
+    await createPost('000660', {
+      category: 'free',
+      body: '공장 사진이에요',
+      image_url: '/photo.png',
+    });
+    await user.click(screen.getByRole('radio', { name: '인기순' }));
+
+    const item = await commentItem('공장 사진이에요');
+    await user.click(within(item).getByRole('button', { name: '사진 크게 보기' }));
+    expect(
+      within(screen.getByRole('dialog', { name: '댓글 사진' })).getByRole('img', {
+        name: '댓글 사진 크게 보기',
+      }),
+    ).toHaveAttribute('src', '/photo.png');
   });
 
   it('예전 글쓰기·글 보기 주소는 기업 화면 커뮤니티 탭으로 보내요', async () => {

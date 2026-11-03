@@ -518,7 +518,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
    ```
 2. `npm run dev` 후 `http://localhost:5173/companies/005930?tab=community`
 3. 확인 순서: 목록(최신순·인기순·말머리) → 글 보기 → 로그인 → 글쓰기 → 댓글 → 좋아요 → 신고
-4. 개발 서버의 [개발용 로그인]은 화면만 로그인 상태로 바꿔요. 서버에는 로그인 쿠키가 없어서 쓰기 요청은 401 이 나요. 쓰기 기능은 Google 로그인으로 확인해 주세요.
+4. [개발용 로그인]은 화면만 로그인 상태로 바꿔서 서버에 쓰면 401 이 나요. 그래서 **기본은 꺼져 있어요.** 서버 없이 화면만 볼 때 `frontend/.env` 에 `VITE_DEV_LOGIN=true` 를 넣으면 켜져요. 실제 백엔드와 확인할 때는 Google 로그인을 써 주세요.
 
 ### 8-6. 확인이 필요한 것
 
@@ -625,7 +625,9 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 - `POST /api/uploads` (multipart/form-data, 칸 이름 `file`, 로그인 필요) → `{ "image_url": "https://..." }`
 - 프론트 제한 (임시값, `src/config/communityRules.ts` 의 `IMAGE_UPLOAD`): jpg·png·webp, 5MB 이하, 댓글 1개에 1장. 서버도 같은 규칙으로 검사해 주세요.
 - 실패하면 `{ "error": { "code": "FILE_TOO_LARGE" | "INVALID_TYPE", "message": "…" } }`
-- API 가 생기기 전까지 사진 버튼은 "사진 (준비 중)" 으로 눌리지 않아요. 준비되면 `IMAGE_UPLOAD.enabled` 를 `true` 로 바꾸면 돼요.
+- 2026-11-03 부터 사진 버튼이 켜져 있어요 (`IMAGE_UPLOAD.enabled: true`). 업로드 서버에 문제가 있으면 `false` 로 바꿔 "사진 (준비 중)" 으로 돌릴 수 있어요.
+- 기업 댓글(`Post.image_url`)과 답글(`Comment.image_url`) 사진을 모두 보여줘요.
+- 글자 수: 기업 댓글 2,000자, 답글 500자
 - 신고 사유에 `image`(부적절한 사진)를 추가했어요. `ReportInput.reason` 에 `"image"` 가 올 수 있어요.
 
 

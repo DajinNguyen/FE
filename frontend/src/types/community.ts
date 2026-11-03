@@ -21,6 +21,8 @@ export interface Post {
   category: PostCategory;
   /** 본문 (제목 없이 본문만, 최대 2,000자). 숨김 처리된 글은 빈 문자열. 서버가 title 을 보내도 쓰지 않아요. */
   body: string;
+  /** 기업 댓글에 붙인 사진 주소. 없으면 null */
+  image_url?: string | null;
   author: Author;
   created_at: string;
   updated_at: string | null;
