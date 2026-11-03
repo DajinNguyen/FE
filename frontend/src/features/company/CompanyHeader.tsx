@@ -1,15 +1,13 @@
 import { CompanyAvatar } from '../../components/CompanyAvatar';
 import { DataAsOf } from '../../components/DataAsOf';
 import { PriceChange } from '../../components/PriceChange';
-import { SampleBadge } from '../../components/SampleBadge';
 import { TermText } from '../../components/TermText';
 import type { CompanyDetail } from '../../types';
 import { formatPrice } from '../../utils/format';
 import { WatchlistHeart } from '../watchlist/WatchlistHeart';
 import { useIndicatorItems } from './useIndicatorItems';
 import styles from './CompanyHeader.module.css';
-
-const marketLabel = { KOSPI: '코스피', KOSDAQ: '코스닥' } as const;
+import { MARKET_LABELS } from '../../config/markets';
 
 /** 기업 헤더 + 작은 주가·주요 지표 줄. 주가는 보조 정보라 크게 보여주지 않아요. */
 export function CompanyHeader({ company }: { company: CompanyDetail }) {
@@ -29,7 +27,7 @@ export function CompanyHeader({ company }: { company: CompanyDetail }) {
             )}
           </h1>
           <p className={styles.meta}>
-            {company.name_en} · {company.stock_code} · {marketLabel[company.market]} ·{' '}
+            {company.name_en} · {company.stock_code} · {MARKET_LABELS[company.market]} ·{' '}
             {company.sector}
           </p>
         </div>
@@ -40,9 +38,6 @@ export function CompanyHeader({ company }: { company: CompanyDetail }) {
         <span className={styles.price}>
           {formatPrice(company.current_price.value)}
           <PriceChange rate={company.change_rate.value} />
-          <SampleBadge
-            isSample={company.current_price.is_sample || company.change_rate.is_sample}
-          />
           <DataAsOf value={company.price_as_of} />
         </span>
         {indicators.length > 0 && (
@@ -53,7 +48,6 @@ export function CompanyHeader({ company }: { company: CompanyDetail }) {
                   <TermText text={item.label} />
                 </span>
                 {item.display}
-                <SampleBadge isSample={item.value.is_sample} />
               </li>
             ))}
           </ul>

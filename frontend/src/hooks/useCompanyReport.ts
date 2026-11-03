@@ -12,8 +12,9 @@ import { useToast } from './useToast';
  * generating : AI가 만드는 중 (기존 리포트가 있으면 그대로 보여줘요)
  * done       : 리포트가 있어요
  * failed     : 만들지 못했어요 (기존 리포트가 있으면 done 으로 두고 토스트만 띄워요)
+ * load-failed: 리포트 상태를 불러오지 못했어요 (서버 연결 실패 등)
  */
-export type ReportView = 'checking' | 'none' | 'generating' | 'done' | 'failed';
+export type ReportView = 'checking' | 'none' | 'generating' | 'done' | 'failed' | 'load-failed';
 
 /** 생성 중일 때 상태를 다시 물어보는 간격 */
 const POLL_MS = 2000;
@@ -29,7 +30,7 @@ const reportKey = (stockCode: string) => ['companies', stockCode, 'report'] as c
 export function useCompanyReport(stockCode: string) {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const quota = useReportQuota(stockCode);
+  const quota = useReportQuota();
   const [cancelled, setCancelled] = useState(false);
 
   const query = useQuery({
@@ -68,9 +69,13 @@ export function useCompanyReport(stockCode: string) {
     (mutation.error ?? query.error)?.message ??
     '잠시 후 다시 시도해 주세요.';
 
+  // 리포트 상태 자체를 불러오지 못했어요 (만들기 실패와 구분해서 [다시 시도]는 다시 불러오기)
+  const loadFailed = query.isError && !mutation.isPending && !mutation.isError;
+
   let view: ReportView;
   if (generating) view = 'generating';
   else if (query.isPending) view = 'checking';
+  else if (loadFailed && !lastReport) view = 'load-failed';
   else if (lastReport) view = 'done';
   else if (failed) view = 'failed';
   else view = 'none';
@@ -101,6 +106,8 @@ export function useCompanyReport(stockCode: string) {
     isRegenerating: generating && lastReport !== null,
     startedAt,
     failureReason,
+    loadError: query.error,
+    reload: query.refetch,
     generate,
     cancel,
     /** 남은 횟수·제한 상태 (리포트 보기는 제한 없음) */

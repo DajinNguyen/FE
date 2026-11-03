@@ -78,7 +78,7 @@ export function TermGame({ terms, allTerms, categoryLabel }: TermGameProps) {
     const savedWrong = allTerms.filter((t) => record.wrong_term_ids.includes(t.id));
     return (
       <div className={styles.card}>
-        <p className={styles.eyebrow}>용어 게임</p>
+        <p className={styles.eyebrow}>용어 문제</p>
         <h2 className={styles.setupTitle}>
           {Math.min(GAME_ROUND_SIZE, terms.length)}문제를 풀어 봐요
         </h2>
@@ -89,7 +89,7 @@ export function TermGame({ terms, allTerms, categoryLabel }: TermGameProps) {
         </p>
         <div className={styles.modePicker}>
           <SegmentedControl
-            label="게임 종류"
+            label="문제 종류"
             options={modeOptions}
             value={mode}
             onChange={setMode}
@@ -108,13 +108,13 @@ export function TermGame({ terms, allTerms, categoryLabel }: TermGameProps) {
               <dd>{record.best_streak}개</dd>
             </div>
             <div>
-              <dt>플레이</dt>
-              <dd>{record.plays}판</dd>
+              <dt>푼 횟수</dt>
+              <dd>{record.plays}번</dd>
             </div>
           </dl>
         )}
         <Button size="lg" block onClick={() => start(terms)} className={styles.startButton}>
-          게임 시작
+          풀기 시작
         </Button>
         {savedWrong.length > 0 && (
           <Button variant="secondary" size="lg" block onClick={() => start(savedWrong)}>
@@ -165,7 +165,7 @@ export function TermGame({ terms, allTerms, categoryLabel }: TermGameProps) {
           </Button>
         </div>
         <button type="button" className={styles.link} onClick={backToSetup}>
-          게임 종류 바꾸기
+          문제 종류 바꾸기
         </button>
       </div>
     );
@@ -211,7 +211,7 @@ export function TermGame({ terms, allTerms, categoryLabel }: TermGameProps) {
       <div
         className={styles.track}
         role="progressbar"
-        aria-label="게임 진행"
+        aria-label="문제 진행"
         aria-valuemin={0}
         aria-valuemax={questions.length}
         aria-valuenow={index + (answered ? 1 : 0)}

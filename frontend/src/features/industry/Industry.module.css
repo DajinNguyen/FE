@@ -1,3 +1,4 @@
+/* 메인 "관심이 몰리는 산업 TOP 3" — 메인의 시각적 포인트 */
 .hot {
   display: flex;
   min-width: 0;
@@ -5,24 +6,25 @@
   gap: var(--sp-4);
 }
 
+/* 왼쪽 제목·기준 보기, 같은 줄 오른쪽 기간 */
 .hotHead {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+}
+
+.hotTitleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: var(--sp-1) var(--sp-4);
 }
 
 .hotTitle {
-  font-size: var(--fs-xl);
+  font-size: var(--fs-2xl);
   font-weight: 800;
-}
-
-.hotNote {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-top: 2px;
 }
 
 .criteriaButton {
@@ -35,71 +37,95 @@
 
 .hotList {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: end;
-  gap: var(--sp-6) var(--sp-3);
+  gap: var(--sp-4);
 }
 
 .hotItem {
   display: flex;
+  height: 100%;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-1);
-  padding: var(--sp-2) 0;
-  border-radius: var(--radius-sm);
+  padding: var(--sp-6) var(--sp-3) var(--sp-4);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  background: var(--industry-bg, var(--bg));
   color: var(--text-1);
   text-align: center;
+  transition:
+    border-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
 }
 
-.hotItem:hover .hotIcon {
-  border-color: var(--brand);
+.hotItem:hover {
+  border-color: var(--industry-fg, var(--brand));
+}
+
+/* 1위 카드가 가장 높아요 */
+.hotItem[data-rank='1'] {
+  padding-top: var(--sp-8);
 }
 
 .hotIcon {
   display: grid;
   place-items: center;
-  margin-bottom: var(--sp-1);
-  border: 1px solid var(--line-strong);
+  margin-block: var(--sp-1) var(--sp-2);
   border-radius: var(--radius-full);
-  color: var(--brand);
-  transition: border-color var(--dur) var(--ease);
+  background: var(--bg);
+  color: var(--industry-fg, var(--brand));
 }
 
-.hotItem[data-level='high'] .hotIcon {
-  width: 72px;
-  height: 72px;
+.hotItem[data-rank='1'] .hotIcon {
+  width: 104px;
+  height: 104px;
 }
 
-.hotItem[data-level='mid'] .hotIcon {
-  width: 60px;
-  height: 60px;
+.hotItem[data-rank='2'] .hotIcon {
+  width: 88px;
+  height: 88px;
 }
 
-.hotItem[data-level='low'] .hotIcon {
-  width: 48px;
-  height: 48px;
-  color: var(--text-2);
+.hotItem[data-rank='3'] .hotIcon {
+  width: 76px;
+  height: 76px;
 }
 
-.hotItem[data-level='high'] .hotName {
-  font-size: var(--fs-md);
+.hotRank {
+  padding: 0 var(--sp-2);
+  border-radius: var(--radius-full);
+  background: var(--point);
+  color: var(--on-point);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  line-height: 1.7;
 }
 
 .hotName {
-  font-size: var(--fs-base);
+  font-size: var(--fs-md);
   font-weight: 800;
   line-height: var(--lh-tight);
+  word-break: keep-all;
+}
+
+.hotItem[data-rank='1'] .hotName {
+  font-size: var(--fs-lg);
 }
 
 .hotMetric {
   color: var(--text-3);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   font-variant-numeric: tabular-nums;
 }
 
-.hotMetric {
-  font-size: var(--fs-sm);
-  font-weight: 700;
+.hotMetric span {
+  font-weight: 800;
+}
+
+.hotAsOf {
+  font-size: var(--fs-xs);
 }
 
 .rise {
@@ -114,10 +140,57 @@
   color: var(--text-2);
 }
 
+/* 불러오는 중: 카드와 같은 크기 */
 .hotSkeleton {
-  height: 220px;
-  border-radius: var(--radius-sm);
+  height: 260px;
+  border-radius: var(--radius-lg);
   background: var(--surface);
+}
+
+.hotSkeleton[data-rank='1'] {
+  height: 288px;
+}
+
+@media (max-width: 719px) {
+  .hotList {
+    gap: var(--sp-2);
+  }
+
+  .hotItem {
+    padding: var(--sp-4) var(--sp-1) var(--sp-3);
+  }
+
+  .hotItem[data-rank='1'] {
+    padding-top: var(--sp-6);
+  }
+
+  .hotItem[data-rank='1'] .hotIcon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .hotItem[data-rank='2'] .hotIcon {
+    width: 62px;
+    height: 62px;
+  }
+
+  .hotItem[data-rank='3'] .hotIcon {
+    width: 54px;
+    height: 54px;
+  }
+
+  .hotName,
+  .hotItem[data-rank='1'] .hotName {
+    font-size: var(--fs-base);
+  }
+
+  .hotMetric {
+    font-size: var(--fs-xs);
+  }
+
+  .hotSkeleton {
+    height: 200px;
+  }
 }
 
 .message {

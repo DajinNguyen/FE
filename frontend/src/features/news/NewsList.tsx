@@ -1,4 +1,5 @@
 import { Button } from '../../components/Button';
+import { ErrorState } from '../../components/ErrorState';
 import type { NewsItem } from '../../types';
 import { NewsListItem } from './NewsListItem';
 import styles from './News.module.css';
@@ -7,6 +8,10 @@ interface NewsListProps {
   items: NewsItem[];
   isPending?: boolean;
   isError?: boolean;
+  /** 실패 원인 */
+  error?: unknown;
+  /** [다시 시도] */
+  onRetry?: () => void;
   /** 뉴스가 없을 때 안내 */
   emptyText?: string;
   compact?: boolean;
@@ -22,6 +27,8 @@ export function NewsList({
   items,
   isPending = false,
   isError = false,
+  error,
+  onRetry,
   emptyText = '아직 관련 뉴스가 없어요',
   compact = false,
   hasMore = false,
@@ -42,7 +49,7 @@ export function NewsList({
     );
   }
   if (isError)
-    return <p className={styles.empty}>뉴스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>;
+    return <ErrorState compact title="뉴스를 불러오지 못했어요" error={error} onRetry={onRetry} />;
   if (items.length === 0) return <p className={styles.empty}>{emptyText}</p>;
 
   return (

@@ -26,8 +26,6 @@ export interface PerformanceMetric {
   value: number;
   unit: string;
   yoy_change_rate: number | null;
-  /** 작년 대비 변화율이 아직 확인하지 않은 예시 값이면 true */
-  yoy_is_sample?: boolean;
 }
 
 /** 개요 "최근 사업 성과" (실적 발표 요약) */
@@ -46,6 +44,17 @@ export interface RecentPerformance {
   source: { title: string; date: string; url: string };
 }
 
+/** 지표 비교 기준. 예: { basis: "sector_median", basis_value: 7.5, basis_label: "반도체 업종 중앙값" } */
+export interface IndicatorBenchmark {
+  basis: 'sector_median' | 'general';
+  /** 비교할 값 (%, 배). 없으면 비교 문장을 빼요. */
+  basis_value: number | null;
+  basis_label: string;
+}
+
+export type BenchmarkedIndicator =
+  'revenue_growth' | 'operating_margin' | 'roe' | 'debt_ratio' | 'per';
+
 /** GET /api/companies/{stock_code}/financials 응답 */
 export interface Financials {
   stock_code: string;
@@ -60,6 +69,10 @@ export interface Financials {
   };
   /** PER·PBR·ROE·부채비율의 기준 (예: "2025년 사업보고서"). 없으면 기준 표시를 숨겨요. */
   indicators_as_of: string | null;
+  /** 지표별 비교 기준 (업종 중앙값 등). 없는 지표는 프론트 기본 기준으로 판단해요. */
+  benchmarks?: Partial<Record<BenchmarkedIndicator, IndicatorBenchmark>>;
+  /** 평가 예외: 금융업(부채비율 제외), 적자(PER 계산 불가), 자본잠식(ROE·부채비율 제외) */
+  flags?: { is_financial: boolean; is_loss: boolean; is_capital_impaired: boolean };
   /** 최근 실적 발표 요약. 없으면 null */
   recent_performance: RecentPerformance | null;
   indicators: {

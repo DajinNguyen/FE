@@ -103,3 +103,9 @@
     font-size: var(--fs-2xl);
   }
 }
+
+.skeleton {
+  height: 160px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}

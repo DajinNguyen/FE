@@ -7,8 +7,8 @@ import { CompanyAvatar } from './CompanyAvatar';
 import { HighlightText } from './HighlightText';
 import { Icon } from './Icon';
 import styles from './CompanySearch.module.css';
-
-const marketLabel = { KOSPI: '코스피', KOSDAQ: '코스닥' } as const;
+import { errorReason } from '../api/errors';
+import { MARKET_LABELS } from '../config/markets';
 
 interface CompanySearchProps {
   /** hero: 메인 화면의 큰 검색창 / header: 상단 내비게이션의 작은 검색창 */
@@ -129,7 +129,14 @@ export function CompanySearch({ variant, autoFocus }: CompanySearchProps) {
             </div>
           )}
 
-          {isSearching && options.length === 0 ? (
+          {isSearching && search.isError && !isWaiting ? (
+            <div className={styles.empty} role="alert">
+              검색하지 못했어요. {errorReason(search.error)}{' '}
+              <button type="button" className={styles.textButton} onClick={() => search.refetch()}>
+                다시 시도
+              </button>
+            </div>
+          ) : isSearching && options.length === 0 ? (
             <p className={styles.empty} role="status">
               {isWaiting
                 ? '찾고 있어요…'
@@ -198,7 +205,7 @@ function ResultRow({ company, keyword }: { company: CompanySummary; keyword: str
       </span>
       <span className={styles.tags}>
         <span className={styles.sector}>{company.sector}</span>
-        <span className={styles.market}>{marketLabel[company.market]}</span>
+        <span className={styles.market}>{MARKET_LABELS[company.market]}</span>
       </span>
     </>
   );

@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { USAGE_POLICY } from '../config/usagePolicy';
 import { useAuth } from './useAuth';
+import { useUsageCredits } from './useUsageCredits';
 import { createPersistentStore, usePersistentStore } from './persistentStore';
 
 /**
@@ -11,14 +12,11 @@ interface UsageRecord {
   /** 횟수를 센 날짜 (YYYY-MM-DD, 기기 시간 기준). 날짜가 바뀌면 0부터 다시 세요. */
   date: string;
   count: number;
-  /** 기업별 마지막으로 만들기를 누른 시각 (ms) */
-  lastByCompany: Record<string, number>;
 }
 
 const usageStore = createPersistentStore<UsageRecord>('dajin:report-usage', {
   date: '',
   count: 0,
-  lastByCompany: {},
 });
 
 const todayString = () => {
@@ -27,38 +25,26 @@ const todayString = () => {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 };
 
-const MINUTE = 60_000;
-
 /**
- * 막힌 이유
+ * 막힌 이유 (같은 기업을 다시 만드는 간격 제한은 없어요)
  * guest-daily  : 비로그인 하루 횟수를 다 썼어요 → 로그인 안내
  * member-daily : 로그인 사용자 하루 횟수를 다 썼어요 → 내일 다시
- * interval     : 같은 기업을 방금 만들었어요 → N분 뒤에 다시
  */
-export type QuotaBlock = 'guest-daily' | 'member-daily' | 'interval';
+export type QuotaBlock = 'guest-daily' | 'member-daily';
 
-export function useReportQuota(stockCode: string) {
+export function useReportQuota() {
   const record = usePersistentStore(usageStore);
   const { isLoggedIn } = useAuth();
+  const { bonus, canEarnMore } = useUsageCredits();
 
-  const limit = isLoggedIn ? USAGE_POLICY.memberDailyReports : USAGE_POLICY.guestDailyReports;
+  // 로그인 사용자는 낱말퀴즈 보상만큼 더 만들 수 있어요.
+  const limit =
+    (isLoggedIn ? USAGE_POLICY.memberDailyReports : USAGE_POLICY.guestDailyReports) + bonus;
   const used = record.date === todayString() ? record.count : 0;
   const remaining = Math.max(0, limit - used);
 
-  // 다시 만들기 간격은 시간이 지나면 풀리니까 1분마다 다시 계산해요.
-  const [now, setNow] = useState(() => Date.now());
-  const last = record.lastByCompany[stockCode];
-  const intervalMs = USAGE_POLICY.regenerateIntervalMinutes * MINUTE;
-  const waitMs = last ? last + intervalMs - now : 0;
-  useEffect(() => {
-    if (waitMs <= 0) return;
-    const timer = setInterval(() => setNow(Date.now()), Math.min(MINUTE, waitMs));
-    return () => clearInterval(timer);
-  }, [waitMs]);
-
   let blocked: QuotaBlock | null = null;
   if (remaining === 0) blocked = isLoggedIn ? 'member-daily' : 'guest-daily';
-  else if (waitMs > 0) blocked = 'interval';
 
   /** 만들기를 눌렀을 때 한 번 세요. */
   const consume = useCallback(() => {
@@ -66,18 +52,16 @@ export function useReportQuota(stockCode: string) {
     usageStore.set((prev) => ({
       date: today,
       count: (prev.date === today ? prev.count : 0) + 1,
-      lastByCompany: { ...prev.lastByCompany, [stockCode]: Date.now() },
     }));
-    setNow(Date.now());
-  }, [stockCode]);
+  }, []);
 
   return {
     limit,
     remaining,
     blocked,
-    /** interval 로 막혔을 때 남은 분 (올림) */
-    waitMinutes: Math.max(0, Math.ceil(waitMs / MINUTE)),
     consume,
+    /** 오늘 낱말퀴즈로 횟수를 더 받을 수 있는지 */
+    canEarnMore,
   };
 }
 

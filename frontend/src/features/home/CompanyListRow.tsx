@@ -1,5 +1,4 @@
 import { PriceChange } from '../../components/PriceChange';
-import { SampleBadge } from '../../components/SampleBadge';
 import type { CompanySummary, TradingCompany } from '../../types';
 import { formatTradingValue } from '../../utils/format';
 import styles from './CompanyList.module.css';
@@ -8,7 +7,7 @@ interface CompanyListRowProps {
   company: CompanySummary | TradingCompany;
   onSelect: (company: CompanySummary) => void;
   rank?: number;
-  /** 메인 TOP 3: 순위·기업명·한 줄 소개·거래대금만 (예시 값 배지도 빼요) */
+  /** 메인 TOP 3: 순위·기업명·한 줄 소개·거래대금만 */
   compact?: boolean;
 }
 
@@ -21,7 +20,6 @@ const isTrading = (company: CompanySummary | TradingCompany): company is Trading
  */
 export function CompanyListRow({ company, onSelect, rank, compact }: CompanyListRowProps) {
   const trading = isTrading(company) ? company : null;
-  const isSample = company.change_rate.is_sample || Boolean(trading?.trading_value.is_sample);
 
   return (
     <li className={styles.item}>
@@ -36,7 +34,7 @@ export function CompanyListRow({ company, onSelect, rank, compact }: CompanyList
               </span>
             )}
           </span>
-          <span className={styles.oneLiner}>{company.one_liner}</span>
+          {company.one_liner && <span className={styles.oneLiner}>{company.one_liner}</span>}
           {!compact && trading?.ai_headline && (
             <span className={styles.ai}>
               <span className={styles.aiLabel}>AI 결론</span>
@@ -52,7 +50,6 @@ export function CompanyListRow({ company, onSelect, rank, compact }: CompanyList
           )}
           <span className={styles.rate}>
             {!compact && <PriceChange rate={company.change_rate.value} />}
-            {!compact && <SampleBadge isSample={isSample} />}
           </span>
         </span>
       </button>

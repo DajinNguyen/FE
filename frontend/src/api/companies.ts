@@ -1,4 +1,4 @@
-import { loadMockServer, request } from './client';
+import { request } from './client';
 import { ApiError } from './errors';
 import type {
   CompanyDetail,
@@ -15,35 +15,30 @@ export const SEARCH_LIMIT = 20;
 export function searchCompanies(query: string) {
   return request<CompanySummary[]>({
     path: `/api/companies?query=${encodeURIComponent(query)}&limit=${SEARCH_LIMIT}`,
-    mock: async () => (await loadMockServer()).searchCompanies(query, SEARCH_LIMIT),
   });
 }
 
 export function getCompaniesByCodes(stockCodes: string[]) {
   return request<CompanySummary[]>({
     path: `/api/companies?stock_codes=${stockCodes.join(',')}`,
-    mock: async () => (await loadMockServer()).getCompaniesByCodes(stockCodes),
   });
 }
 
 export function getCompany(stockCode: string) {
   return request<CompanyDetail>({
     path: `/api/companies/${stockCode}`,
-    mock: async () => (await loadMockServer()).getCompany(stockCode),
   });
 }
 
 export function getFinancials(stockCode: string) {
   return request<Financials>({
     path: `/api/companies/${stockCode}/financials`,
-    mock: async () => (await loadMockServer()).getFinancials(stockCode),
   });
 }
 
 export function getPriceHistory(stockCode: string, period: PricePeriod) {
   return request<PriceHistory>({
     path: `/api/companies/${stockCode}/prices?period=${period}`,
-    mock: async () => (await loadMockServer()).getPriceHistory(stockCode, period),
   });
 }
 
@@ -55,7 +50,6 @@ export async function getCompanyReport(stockCode: string): Promise<CompanyReport
   try {
     return await request<CompanyReport>({
       path: `/api/companies/${stockCode}/report`,
-      mock: async () => (await loadMockServer()).getCompanyReport(stockCode),
     });
   } catch (error) {
     if (error instanceof ApiError && error.status === 404 && error.code !== 'COMPANY_NOT_FOUND') {
@@ -74,7 +68,6 @@ export function generateReport(stockCode: string) {
   return request<CompanyReport>({
     path: `/api/companies/${stockCode}/report`,
     method: 'POST',
-    mock: async () => (await loadMockServer()).generateReport(stockCode),
   });
 }
 

@@ -9,8 +9,6 @@ export interface MarketIndex {
   change: number;
   /** 어제 대비 등락률 (%) */
   change_rate: number;
-  /** 공식 시세로 바꾸기 전 예시 값이면 true → "예시 값" 배지 */
-  is_sample: boolean;
   /** 당일 흐름 (작은 선 그래프). 없으면 그래프를 숨겨요. */
   intraday?: { time: string; value: number }[];
 }

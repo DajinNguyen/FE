@@ -36,3 +36,9 @@
     padding-top: var(--sp-6);
   }
 }
+
+.loading {
+  height: 200px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}

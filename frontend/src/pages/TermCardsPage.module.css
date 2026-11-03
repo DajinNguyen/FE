@@ -271,3 +271,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.loading {
+  height: 360px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}

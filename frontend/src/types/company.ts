@@ -15,7 +15,7 @@ export interface CompanySummary {
   sector: string;
   /** 업종 탭 묶음 (sector 는 화면에 그대로 보여주는 자세한 업종 이름) */
   sector_group: SectorGroup;
-  market: 'KOSPI' | 'KOSDAQ';
+  market: 'KOSPI' | 'KOSDAQ' | 'KONEX';
   current_price: SampleNumber;
   /** 전일 대비 등락률 (%) */
   change_rate: SampleNumber;

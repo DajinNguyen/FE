@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { buildQuestions, pickDistractors } from '../src/features/term-game/buildQuestions';
-import termsJson from '../src/mocks/terms.json';
+import termsJson from './fixtures/terms.json';
 import { TermCardsPage } from '../src/pages/TermCardsPage';
 import type { Term } from '../src/types';
 import { renderWithProviders } from './testUtils';
@@ -102,7 +102,7 @@ describe('buildQuestions', () => {
   });
 });
 
-describe('용어 게임 화면', () => {
+describe('용어 문제 화면', () => {
   beforeEach(() => window.localStorage.clear());
 
   it('?mode=game 으로 들어오면 게임을 풀고 결과를 볼 수 있어요', async () => {
@@ -110,7 +110,7 @@ describe('용어 게임 화면', () => {
     renderWithProviders(<TermCardsPage />, { route: '/terms?mode=game' });
 
     await user.click(await screen.findByRole('radio', { name: 'OX' }));
-    await user.click(screen.getByRole('button', { name: '게임 시작' }));
+    await user.click(screen.getByRole('button', { name: '풀기 시작' }));
 
     for (let i = 0; i < 10; i += 1) {
       expect(screen.getByText(`문제 ${i + 1} / 10`)).toBeInTheDocument();
@@ -128,7 +128,7 @@ describe('용어 게임 화면', () => {
 
   it('분류를 고르면 카드 목록과 진행 개수가 그 분류만 보여요', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<TermCardsPage />, { route: '/terms' });
+    renderWithProviders(<TermCardsPage />, { route: '/terms?mode=cards' });
 
     const filters = await screen.findByRole('group', { name: '용어 분류' });
     await user.click(within(filters).getByRole('button', { name: /^산업/ }));

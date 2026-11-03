@@ -1,0 +1,12 @@
+.clamp {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+.more {
+  margin-top: var(--sp-1);
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}

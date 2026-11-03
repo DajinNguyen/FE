@@ -1,4 +1,5 @@
-import { USAGE_POLICY } from '../../config/usagePolicy';
+import { Link } from 'react-router';
+import { PUZZLE_REWARD_TEXT } from '../../config/usagePolicy';
 import { useAuth } from '../../hooks/useAuth';
 import type { ReportQuota } from '../../hooks/useReportQuota';
 import styles from './AiAnalysis.module.css';
@@ -14,22 +15,23 @@ export function QuotaNotice({ quota }: { quota: ReportQuota }) {
         <button type="button" className={styles.quotaLink} onClick={loginWithGoogle}>
           Google로 로그인
         </button>
-        하면 하루 {USAGE_POLICY.memberDailyReports}번까지 더 이용할 수 있어요.
+        하면 더 이용할 수 있어요.
       </p>
     );
   }
   if (quota.blocked === 'member-daily') {
     return (
       <p className={styles.quota} role="note">
-        오늘 만들 수 있는 리포트를 다 썼어요. 내일 다시 이용할 수 있어요.
-      </p>
-    );
-  }
-  if (quota.blocked === 'interval') {
-    return (
-      <p className={styles.quota} role="note">
-        같은 기업은 {USAGE_POLICY.regenerateIntervalMinutes}분마다 만들 수 있어요.{' '}
-        {quota.waitMinutes}분 뒤에 다시 해 주세요.
+        {quota.canEarnMore ? (
+          <>
+            오늘 만들 수 있는 리포트를 다 썼어요. {PUZZLE_REWARD_TEXT}.{' '}
+            <Link to="/terms" className={styles.quotaLink}>
+              낱말퀴즈 풀러 가기
+            </Link>
+          </>
+        ) : (
+          '오늘 만들 수 있는 리포트를 다 썼어요. 내일 다시 이용할 수 있어요.'
+        )}
       </p>
     );
   }

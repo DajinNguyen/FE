@@ -1,0 +1,52 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.title {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.price {
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-tight);
+}
+
+.periodChange {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.chartBox {
+  min-height: 160px;
+}
+
+.placeholder {
+  height: 160px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+}
+
+.empty {
+  padding: var(--sp-8) 0;
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.asOf {
+  font-size: var(--fs-xs);
+}

@@ -27,7 +27,7 @@ export function LoginButton() {
         <span className={styles.long}>Google로 로그인</span>
         <span className={styles.short}>로그인</span>
       </button>
-      {/* 목 데이터 모드에서만: 로그인 상태 흐름을 확인하는 개발용 버튼 */}
+      {/* 개발 서버에서만: 로그인 상태 흐름을 확인하는 개발용 버튼 */}
       {devLogin && (
         <button type="button" className={styles.devButton} onClick={devLogin}>
           개발용 로그인

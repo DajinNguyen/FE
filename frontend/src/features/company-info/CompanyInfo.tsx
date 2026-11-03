@@ -1,15 +1,14 @@
 import { Link } from 'react-router';
 import { EmptyState } from '../../components/EmptyState';
+import { ErrorState } from '../../components/ErrorState';
 import { Icon } from '../../components/Icon';
-import { SampleBadge } from '../../components/SampleBadge';
 import { Section } from '../../components/Section';
 import { TermText } from '../../components/TermText';
 import { useCompany } from '../../hooks/useCompanies';
 import { useFinancials } from '../../hooks/useFinancials';
 import { formatTrillion } from '../../utils/format';
 import styles from './CompanyInfo.module.css';
-
-const marketLabel = { KOSPI: '코스피', KOSDAQ: '코스닥' } as const;
+import { MARKET_LABELS } from '../../config/markets';
 
 /** 업종 + 소속 산업 칩 (산업 페이지로) */
 function IndustryLine({
@@ -40,44 +39,82 @@ function IndustryLine({
   );
 }
 
-/** 개요 탭의 기업 정보: 무슨 사업을 하나요? · 회사의 방향 · 기본 정보 */
-export function CompanyInfo({ stockCode }: { stockCode: string }) {
+/** 개요 "무슨 사업을 하나요?": 회사 소개, 업종·소속 산업, 주요 사업, 시가총액, 홈페이지 */
+export function CompanyBusiness({ stockCode }: { stockCode: string }) {
+  const { data: company, isPending, isError, error, refetch } = useCompany(stockCode);
+
+  if (isPending) return <div className={styles.skeleton} aria-hidden="true" />;
+  if (isError) {
+    return (
+      <Section title="무슨 사업을 하나요?">
+        <ErrorState title="기업 정보를 불러오지 못했어요" error={error} onRetry={() => refetch()} />
+      </Section>
+    );
+  }
+
+  const hasBusiness = company.business_description || company.business_segments.length > 0;
+
+  return (
+    <Section title="무슨 사업을 하나요?">
+      {company.business_description && (
+        <p className={styles.lead}>
+          <TermText text={company.business_description} />
+        </p>
+      )}
+      <IndustryLine sector={company.sector} industries={company.industries} />
+      {hasBusiness ? (
+        <ul className={styles.segments}>
+          {company.business_segments.map((segment) => (
+            <li key={segment.code} className={styles.segment}>
+              <p className={styles.segmentName}>{segment.name}</p>
+              <p className={styles.segmentDescription}>
+                <TermText text={segment.description} />
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <EmptyState
+          title="자료를 찾지 못했어요"
+          description="사업보고서 내용을 아직 불러오지 못했어요."
+        />
+      )}
+
+      {(company.market_cap || company.homepage_url) && (
+        <div className={styles.quickFacts}>
+          {company.market_cap && (
+            <p>
+              <span className={styles.industryLabel}>
+                <TermText text="시가총액" />
+              </span>{' '}
+              <strong>{formatTrillion(company.market_cap.value, { min: 0, max: 0 })}</strong>
+            </p>
+          )}
+          {company.homepage_url && (
+            <a
+              href={company.homepage_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.inlineLink}
+            >
+              회사 홈페이지 <Icon name="external" size={16} />
+            </a>
+          )}
+        </div>
+      )}
+    </Section>
+  );
+}
+
+/** 개요 아래쪽: 회사의 방향 · 기본 정보 (종목코드, DART, PBR) */
+export function CompanyMore({ stockCode }: { stockCode: string }) {
   const { data: company } = useCompany(stockCode);
   const { data: financials } = useFinancials(stockCode);
 
-  if (!company) return <p className={styles.loading}>기업 정보를 불러오고 있어요…</p>;
+  if (!company) return null;
 
   return (
     <div>
-      {company.business_description || company.business_segments.length > 0 ? (
-        <Section title="무슨 사업을 하나요?">
-          {company.business_description && (
-            <p className={styles.lead}>
-              <TermText text={company.business_description} />
-            </p>
-          )}
-          <IndustryLine sector={company.sector} industries={company.industries} />
-          <ul className={styles.segments}>
-            {company.business_segments.map((segment) => (
-              <li key={segment.code} className={styles.segment}>
-                <p className={styles.segmentName}>{segment.name}</p>
-                <p className={styles.segmentDescription}>
-                  <TermText text={segment.description} />
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      ) : (
-        <Section title="무슨 사업을 하나요?">
-          <IndustryLine sector={company.sector} industries={company.industries} />
-          <EmptyState
-            title="자료를 찾지 못했어요"
-            description="사업보고서 내용을 아직 불러오지 못했어요."
-          />
-        </Section>
-      )}
-
       {company.timeline.length > 0 && (
         <Section title="회사의 방향" description={`출처: ${company.timeline_source}`}>
           <ol className={styles.timeline}>
@@ -109,7 +146,7 @@ export function CompanyInfo({ stockCode }: { stockCode: string }) {
           <div>
             <dt>종목코드</dt>
             <dd>
-              {company.stock_code} · {marketLabel[company.market]}
+              {company.stock_code} · {MARKET_LABELS[company.market]}
             </dd>
           </div>
           {company.corp_code && (
@@ -118,41 +155,17 @@ export function CompanyInfo({ stockCode }: { stockCode: string }) {
               <dd>{company.corp_code}</dd>
             </div>
           )}
-          {company.market_cap && (
-            <div>
-              <dt>
-                <TermText text="시가총액" />
-              </dt>
-              <dd>
-                {formatTrillion(company.market_cap.value, { min: 0, max: 0 })}{' '}
-                <SampleBadge isSample={company.market_cap.is_sample} />
-              </dd>
-            </div>
-          )}
           {financials && (
             <div>
               <dt>
                 <TermText text="PBR" />
               </dt>
-              <dd>
-                {financials.indicators.pbr.value}배{' '}
-                <SampleBadge isSample={financials.indicators.pbr.is_sample} />
-              </dd>
+              <dd>{financials.indicators.pbr.value}배</dd>
             </div>
           )}
         </dl>
 
         <div className={styles.externalLinks}>
-          {company.homepage_url && (
-            <a
-              href={company.homepage_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.externalLink}
-            >
-              회사 홈페이지 <Icon name="external" size={16} />
-            </a>
-          )}
           <a
             href={company.dart_url}
             target="_blank"

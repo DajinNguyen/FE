@@ -1,7 +1,8 @@
+import { ApiError } from '../../api/errors';
 import { DataAsOf } from '../../components/DataAsOf';
+import { ErrorState } from '../../components/ErrorState';
 import { HorizontalBars } from '../../components/HorizontalBars';
 import { Icon } from '../../components/Icon';
-import { SampleBadge } from '../../components/SampleBadge';
 import { Section } from '../../components/Section';
 import { useFinancials } from '../../hooks/useFinancials';
 import type { PerformanceMetric } from '../../types';
@@ -31,7 +32,6 @@ function Metric({ label, metric }: { label: string; metric: PerformanceMetric })
             <span className="visually-hidden">{rate >= 0 ? '늘었어요' : '줄었어요'}</span>
             {formatSignedPercent(rate, 1)}
           </span>{' '}
-          <SampleBadge isSample={metric.yoy_is_sample} />
         </dd>
       )}
     </div>
@@ -40,14 +40,29 @@ function Metric({ label, metric }: { label: string; metric: PerformanceMetric })
 
 /** 개요 "최근 사업 성과": 실적 발표 요약 */
 export function RecentPerformance({ stockCode }: { stockCode: string }) {
-  const { data, isPending } = useFinancials(stockCode);
+  const { data, isPending, isError, error, refetch } = useFinancials(stockCode);
   const perf = data?.recent_performance;
 
-  if (isPending) return null;
+  if (isPending) {
+    return (
+      <Section title="최근 사업 성과">
+        <div className={styles.skeleton} aria-hidden="true" />
+      </Section>
+    );
+  }
+  // 404 는 "아직 자료가 없음"이라 에러가 아니라 빈 안내를 보여줘요.
+  const notFound = error instanceof ApiError && error.status === 404;
+  if (isError && !notFound) {
+    return (
+      <Section title="최근 사업 성과">
+        <ErrorState compact error={error} onRetry={() => refetch()} />
+      </Section>
+    );
+  }
   if (!perf) {
     return (
       <Section title="최근 사업 성과">
-        <p className={styles.empty}>최근 실적 발표 자료를 아직 불러오지 못했어요.</p>
+        <p className={styles.empty}>최근 실적 발표 자료가 아직 없어요.</p>
       </Section>
     );
   }
