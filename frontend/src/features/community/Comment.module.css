@@ -1,0 +1,304 @@
+/* 댓글·답글 */
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.title {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.thread {
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meta {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.meta strong {
+  color: var(--text-2);
+}
+
+.body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.mention {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: var(--sp-3);
+  margin-top: var(--sp-1);
+}
+
+.textButton {
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.textButton:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.textButton:disabled {
+  color: var(--text-3);
+  text-decoration: none;
+}
+
+.muted {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+/* 좋아요 (기업 댓글) */
+.likeButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.likeButton[aria-pressed='true'] {
+  color: var(--brand);
+}
+
+.replyArea {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 답글: 한 단계만 들여쓰기 */
+.toggleReplies {
+  align-self: flex-start;
+  margin-top: var(--sp-2);
+  color: var(--brand);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.replies {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+  padding-left: var(--sp-4);
+  border-left: 2px solid var(--line);
+  margin-left: var(--sp-2);
+}
+
+.replyForm {
+  margin-top: var(--sp-3);
+  padding-left: var(--sp-4);
+  margin-left: var(--sp-2);
+  border-left: 2px solid var(--brand-muted);
+}
+
+/* 이모지 */
+.emojiInline {
+  display: inline-block;
+  width: 1.4em;
+  height: 1.4em;
+  vertical-align: -0.3em;
+}
+
+.emojiOnly {
+  line-height: 1;
+}
+
+.emojiLarge {
+  width: 64px;
+  height: 64px;
+}
+
+.emojiPanel {
+  padding: var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.panelEmpty {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.emojiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: var(--sp-1);
+}
+
+.emojiButton {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  font-size: 1.4em;
+}
+
+.emojiButton:hover {
+  background: var(--surface);
+}
+
+/* 사진 */
+.thumbButton {
+  width: fit-content;
+  margin-top: var(--sp-1);
+  border-radius: var(--radius-sm);
+}
+
+.thumb {
+  display: block;
+  max-width: 160px;
+  max-height: 120px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.zoomed {
+  display: block;
+  width: 100%;
+  max-height: 70vh;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+}
+
+/* 입력창 */
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.input {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font: inherit;
+  resize: vertical;
+}
+
+.input:focus {
+  border-color: var(--brand);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--brand-weak);
+}
+
+.attachment {
+  position: relative;
+  width: fit-content;
+}
+
+.removeAttachment {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+.uploading {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+}
+
+.progress {
+  overflow: hidden;
+  width: 120px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--surface-strong);
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  background: var(--brand);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.toolButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  height: 36px;
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-full);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.toolButton[aria-pressed='true'] {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.toolButton:disabled {
+  border-style: dashed;
+  color: var(--text-3);
+  cursor: default;
+}
+
+.counter {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.error {
+  color: var(--caution);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}

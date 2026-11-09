@@ -46,7 +46,8 @@ describe('산업 페이지', () => {
       within(screen.getByRole('list', { name: '근거 뉴스' })).getAllByRole('link'),
     ).toHaveLength(2);
     const table = screen.getByRole('table', { name: /관심도 점수 구성/ });
-    expect(table).toHaveTextContent('주가 상승률+6.2%40%2.5');
+    expect(table).toHaveTextContent('주가 상승률+6.2%35%2.2');
+    expect(table).toHaveTextContent('커뮤니티 활발도+31.0%10%3.1');
     expect(await screen.findAllByRole('article')).toHaveLength(5);
     expect(screen.getByText(/관심이 몰린다는 것은 투자 추천이 아니에요/)).toBeInTheDocument();
   });

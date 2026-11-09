@@ -1,5 +1,7 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '../../components/Button';
+import { hasDailyLimit } from '../../config/usagePolicy';
+import { useUsageCredits, type PuzzleRewardResult } from '../../hooks/useUsageCredits';
 import type { CrosswordPuzzle } from '../../types';
 import { ClueList } from './ClueList';
 import { CrosswordGrid } from './CrosswordGrid';
@@ -17,6 +19,32 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
   const { model, state, dispatch, word, finished } = game;
   const inputRef = useRef<HTMLInputElement>(null);
   const hintLevel = state.hintLevels[word.index] ?? 0;
+  const { onPuzzleComplete, progress, puzzlesPerReward } = useUsageCredits();
+  const [reward, setReward] = useState<PuzzleRewardResult | null>(null);
+
+  // 퍼즐 3개를 정답 보기 없이 풀면 리포트 만들기 1회 보상. 같은 퍼즐은 하루 한 번만 세요.
+  // 이미 끝난 판을 다시 열었을 때는 세지 않아요. (이번에 다 푼 순간에만)
+  const finishedAtOpen = useRef(finished);
+  const usedReveal = state.revealed || state.revealedKeys.length > 0;
+  useEffect(() => {
+    if (!finished || finishedAtOpen.current) return;
+    setReward(onPuzzleComplete(puzzle.id, { revealed: usedReveal }));
+  }, [finished, usedReveal, puzzle.id, onPuzzleComplete]);
+
+  // 하루 만들기 횟수 제한이 있을 때만 보상 진행도를 보여줘요. (지금은 임시로 무제한)
+  const rewardText = !hasDailyLimit()
+    ? null
+    : reward === 'granted'
+      ? 'AI 리포트 1회가 추가됐어요'
+      : reward === 'progress'
+        ? `AI 리포트까지 퀴즈 ${progress}/${puzzlesPerReward}`
+        : reward === 'revealed'
+          ? '정답 보기를 쓴 퀴즈는 AI 리포트 보상에 세지 않아요'
+          : reward === 'guest'
+            ? '로그인하면 낱말퀴즈로 AI 리포트 기회를 더 받을 수 있어요'
+            : reward === 'daily-max'
+              ? '오늘 받을 수 있는 AI 리포트 보상을 다 받았어요'
+              : null;
 
   return (
     <div className={styles.game}>
@@ -80,6 +108,7 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
             {state.revealed
               ? '초록은 내가 맞힌 칸, 파랑은 정답으로 채운 칸이에요.'
               : `${formatClock(game.elapsedMs)} 걸렸고 힌트는 ${state.hintsUsed}번 썼어요.`}
+            {rewardText && <span className={styles.reward}>{rewardText}</span>}
           </p>
         ) : (
           <p className={styles.currentClue}>

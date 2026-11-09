@@ -1,0 +1,58 @@
+/* 모바일·태블릿: 무슨 사업 → 최근 사업 성과 → 주가 흐름 → AI 분석 보기 → 그 밖의 정보 */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'business'
+    'performance'
+    'price'
+    'cta'
+    'more';
+}
+
+.business {
+  grid-area: business;
+  min-width: 0;
+}
+
+.performance {
+  grid-area: performance;
+  min-width: 0;
+}
+
+.price {
+  grid-area: price;
+  min-width: 0;
+  padding-top: var(--sp-8);
+}
+
+.cta {
+  grid-area: cta;
+  padding-top: var(--sp-8);
+}
+
+.more {
+  grid-area: more;
+  min-width: 0;
+}
+
+/* PC: 왼쪽 본문 + 오른쪽 주가 흐름 (스크롤해도 따라와요) */
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas:
+      'business price'
+      'performance price'
+      'cta price'
+      'more price';
+    column-gap: var(--sp-12);
+  }
+
+  .price {
+    position: sticky;
+    top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
+    align-self: start;
+    padding-top: var(--sp-6);
+  }
+}

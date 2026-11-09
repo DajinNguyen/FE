@@ -30,3 +30,8 @@
   color: var(--caution);
   background: var(--caution-weak);
 }
+
+.none {
+  background: var(--surface-strong);
+  color: var(--text-2);
+}

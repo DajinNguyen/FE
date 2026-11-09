@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { ApiError } from '../api/errors';
 import { Button } from '../components/Button';
 import { DetailNotice } from '../components/DetailNotice';
 import { EmptyState } from '../components/EmptyState';
+import { ErrorState } from '../components/ErrorState';
 import { Icon } from '../components/Icon';
 import { Tabs } from '../components/Tabs';
 import { AnalysisTab } from '../features/analysis/AnalysisTab';
 import { CommunityTab } from '../features/community/CommunityTab';
-import { CompanyAside } from '../features/company/CompanyAside';
 import { CompanyHeader } from '../features/company/CompanyHeader';
 import {
   companyTabs,
@@ -31,7 +32,7 @@ export function CompanyPage() {
   const tabParam = searchParams.get('tab');
   const tab: CompanyTabId = isCompanyTabId(tabParam) ? tabParam : DEFAULT_COMPANY_TAB;
 
-  const { data: company, isError, error } = useCompany(stockCode);
+  const { data: company, isError, error, refetch } = useCompany(stockCode);
   const report = useCompanyReport(stockCode);
 
   const tabsAnchorRef = useRef<HTMLDivElement>(null);
@@ -78,11 +79,19 @@ export function CompanyPage() {
     return (
       <div className={styles.page}>
         {backLink}
-        <EmptyState
-          title={error.message}
-          description="기업 이름이나 종목코드를 다시 확인해 주세요."
-          action={<Button onClick={() => navigate('/')}>홈으로 가기</Button>}
-        />
+        {error instanceof ApiError && error.status === 404 ? (
+          <EmptyState
+            title={error.message}
+            description="기업 이름이나 종목코드를 다시 확인해 주세요."
+            action={<Button onClick={() => navigate('/')}>홈으로 가기</Button>}
+          />
+        ) : (
+          <ErrorState
+            title="기업 정보를 불러오지 못했어요"
+            error={error}
+            onRetry={() => refetch()}
+          />
+        )}
       </div>
     );
   }
@@ -106,32 +115,25 @@ export function CompanyPage() {
         />
       </div>
 
-      <div className={styles.layout}>
-        <div className={styles.content}>
-          {/* 탭을 오가도 그래프·리포트 상태가 유지되도록 모든 탭을 그려두고 숨겨요. */}
-          {companyTabs.map(({ id }) => (
-            <div
-              key={id}
-              role="tabpanel"
-              id={`company-panel-${id}`}
-              aria-labelledby={`company-tab-${id}`}
-              hidden={tab !== id}
-              className={styles.panel}
-            >
-              {isDetailTab(id) && <DetailNotice onBack={() => goToTab('overview')} />}
-              {id === 'overview' && <OverviewTab stockCode={stockCode} onGoToTab={goToTab} />}
-              {id === 'analysis' && <AnalysisTab flow={report} onGoToTab={goToTab} />}
-              {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
-              {id === 'news' && <NewsTab stockCode={stockCode} />}
-              {id === 'community' && <CommunityTab stockCode={stockCode} />}
-            </div>
-          ))}
-        </div>
-        {company && (
-          <div className={styles.sidebar}>
-            <CompanyAside stockCode={stockCode} />
+      <div className={styles.content}>
+        {/* 탭을 오가도 그래프·리포트 상태가 유지되도록 모든 탭을 그려두고 숨겨요. */}
+        {companyTabs.map(({ id }) => (
+          <div
+            key={id}
+            role="tabpanel"
+            id={`company-panel-${id}`}
+            aria-labelledby={`company-tab-${id}`}
+            hidden={tab !== id}
+            className={styles.panel}
+          >
+            {isDetailTab(id) && <DetailNotice onBack={() => goToTab('overview')} />}
+            {id === 'overview' && <OverviewTab stockCode={stockCode} onGoToTab={goToTab} />}
+            {id === 'analysis' && <AnalysisTab flow={report} onGoToTab={goToTab} />}
+            {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
+            {id === 'news' && <NewsTab stockCode={stockCode} />}
+            {id === 'community' && <CommunityTab stockCode={stockCode} />}
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

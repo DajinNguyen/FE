@@ -1,6 +1,27 @@
-.loading {
-  padding: var(--sp-12) 0;
-  color: var(--text-3);
+.skeleton {
+  height: 280px;
+  margin-top: var(--sp-6);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.quickFacts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-6);
+  margin-top: var(--sp-4);
+  font-size: var(--fs-sm);
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--text-1);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .lead {
@@ -31,9 +52,10 @@
 
 .industryChip {
   padding: 0 var(--sp-3);
-  border: 1px solid var(--line-strong);
+  border: 1px solid transparent;
+  background: var(--brand-weak);
   border-radius: var(--radius-full);
-  color: var(--text-1);
+  color: var(--brand-strong);
   font-weight: 700;
   line-height: 1.9;
 }
@@ -169,7 +191,7 @@
 .externalLinks {
   display: grid;
   max-width: 560px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--sp-2);
   margin-top: var(--sp-3);
 }

@@ -1,0 +1,718 @@
+{
+  "company": {
+    "stock_code": "005930",
+    "corp_code": "00126380",
+    "name": "삼성전자",
+    "name_en": "Samsung Electronics",
+    "sector": "반도체·전자제품",
+    "sector_group": "semiconductor",
+    "market": "KOSPI",
+    "current_price": {
+      "value": 128500,
+      "is_sample": true
+    },
+    "change_rate": {
+      "value": 1.82,
+      "is_sample": true
+    },
+    "one_liner": "스마트폰과 반도체를 만드는 회사예요",
+    "market_alert": null,
+    "market_cap": {
+      "value": 760,
+      "is_sample": true
+    },
+    "homepage_url": "https://www.samsung.com/sec/",
+    "dart_url": "https://dart.fss.or.kr/",
+    "business_description": "삼성전자는 우리가 매일 쓰는 스마트폰부터, 컴퓨터와 AI 서버 안에 들어가는 반도체까지 만드는 회사예요. 크게 네 가지 사업으로 돈을 벌어요.",
+    "business_segments": [
+      {
+        "code": "DS",
+        "name": "DS(반도체)",
+        "description": "컴퓨터·스마트폰·AI 서버에 들어가는 메모리 반도체(HBM 등)를 만들고, 다른 회사가 설계한 칩을 대신 만들어 주는 파운드리 사업도 해요."
+      },
+      {
+        "code": "MX",
+        "name": "MX·네트워크",
+        "description": "갤럭시 스마트폰·태블릿 같은 기기와, 휴대폰 통신에 쓰이는 네트워크 장비를 만들어요."
+      },
+      {
+        "code": "SDC",
+        "name": "SDC(디스플레이)",
+        "description": "스마트폰·TV·노트북에 들어가는 화면(디스플레이)을 만들어요."
+      },
+      {
+        "code": "HARMAN",
+        "name": "하만(전장·오디오)",
+        "description": "자동차에 들어가는 전자 장비와 스피커·헤드폰 같은 오디오 제품을 만들어요."
+      }
+    ],
+    "timeline": [
+      {
+        "year": "2023",
+        "title": "이익이 크게 줄었어요",
+        "description": "영업이익이 6.57조 원까지 줄었어요. 반도체 경기에 따라 실적이 크게 흔들릴 수 있다는 걸 보여준 해예요.",
+        "is_plan": false
+      },
+      {
+        "year": "2024",
+        "title": "이익을 다시 회복했어요",
+        "description": "매출 300.9조 원, 영업이익 32.7조 원으로 다시 크게 늘었어요.",
+        "is_plan": false
+      },
+      {
+        "year": "2025",
+        "title": "HBM으로 역대 최대 분기 매출",
+        "description": "HBM 판매가 늘면서 4분기 매출 93.8조 원으로 분기 기준 역대 최대를 기록했어요.",
+        "is_plan": false
+      },
+      {
+        "year": "2026",
+        "title": "AI 시대를 이끌겠다는 목표",
+        "description": "HBM4 제품 공급을 시작하고, AI 제품 경쟁력으로 AI 시대를 이끌겠다고 밝혔어요.",
+        "is_plan": true
+      }
+    ],
+    "timeline_source": "삼성전자 2025년 4분기 실적 발표 (2026년 1월)",
+    "price_as_of": null,
+    "industries": []
+  },
+  "financials": {
+    "stock_code": "005930",
+    "unit": "조 원",
+    "basis": "연결 기준",
+    "source": "삼성전자 공식 실적 발표 (2026년 1월)",
+    "annual": [
+      {
+        "fiscal_year": 2023,
+        "revenue": 258.94,
+        "operating_income": 6.57
+      },
+      {
+        "fiscal_year": 2024,
+        "revenue": 300.9,
+        "operating_income": 32.7
+      },
+      {
+        "fiscal_year": 2025,
+        "revenue": 333.6,
+        "operating_income": 43.6
+      }
+    ],
+    "latest_quarter": {
+      "label": "2025년 4분기",
+      "revenue": 93.8,
+      "operating_income": 20.1,
+      "note": "분기 기준 역대 최대"
+    },
+    "segments": {
+      "base_label": "2025년 4분기 기준",
+      "items": [
+        {
+          "code": "DS",
+          "name": "DS(반도체)",
+          "revenue": 44.0
+        },
+        {
+          "code": "MX",
+          "name": "MX·네트워크(스마트폰 등)",
+          "revenue": 29.3
+        },
+        {
+          "code": "SDC",
+          "name": "SDC(디스플레이)",
+          "revenue": 9.5
+        },
+        {
+          "code": "HARMAN",
+          "name": "하만(전장·오디오)",
+          "revenue": 4.6
+        }
+      ]
+    },
+    "indicators_as_of": "2025년 사업보고서",
+    "indicators": {
+      "roe": {
+        "value": 9.2,
+        "is_sample": true
+      },
+      "debt_ratio": {
+        "value": 27.1,
+        "is_sample": true
+      },
+      "per": {
+        "value": 18.5,
+        "is_sample": true
+      },
+      "pbr": {
+        "value": 1.9,
+        "is_sample": true
+      }
+    },
+    "recent_performance": {
+      "period_label": "2025년 4분기 실적",
+      "announced_at": "2026-01-29",
+      "revenue": {
+        "value": 93.8,
+        "unit": "조 원",
+        "yoy_change_rate": 23.7,
+        "yoy_is_sample": true
+      },
+      "operating_income": {
+        "value": 20.1,
+        "unit": "조 원",
+        "yoy_change_rate": 209.2,
+        "yoy_is_sample": true
+      },
+      "summary": "AI용 메모리(HBM) 판매가 늘면서 분기 기준 가장 많은 매출을 냈어요.",
+      "segments": [
+        {
+          "name": "DS(반도체)",
+          "revenue": 44.0,
+          "unit": "조 원"
+        },
+        {
+          "name": "MX·네트워크(스마트폰 등)",
+          "revenue": 29.3,
+          "unit": "조 원"
+        },
+        {
+          "name": "SDC(디스플레이)",
+          "revenue": 9.5,
+          "unit": "조 원"
+        },
+        {
+          "name": "하만(전장·오디오)",
+          "revenue": 4.6,
+          "unit": "조 원"
+        }
+      ],
+      "source": {
+        "title": "삼성전자 2025년 4분기 실적 발표",
+        "date": "2026-01-29",
+        "url": "https://dart.fss.or.kr/"
+      }
+    },
+    "benchmarks": {
+      "operating_margin": {
+        "basis": "sector_median",
+        "basis_value": 7.5,
+        "basis_label": "반도체 업종 중앙값"
+      },
+      "roe": {
+        "basis": "sector_median",
+        "basis_value": 8.1,
+        "basis_label": "반도체 업종 중앙값"
+      },
+      "debt_ratio": {
+        "basis": "general",
+        "basis_value": 100,
+        "basis_label": "일반적인 기준"
+      }
+    },
+    "flags": {
+      "is_financial": false,
+      "is_loss": false,
+      "is_capital_impaired": false
+    }
+  },
+  "report": {
+    "stock_code": "005930",
+    "status": "done",
+    "generated_at": "2026-10-06T09:00:00+09:00",
+    "headline": "AI용 메모리가 잘 팔리면서 3년 만에 이익이 크게 늘어난 회사예요",
+    "key_points": [
+      {
+        "category": "performance",
+        "title": "3년 동안 매출과 이익이 함께 늘었어요",
+        "before": {
+          "label": "영업이익",
+          "value": "6.57조 원",
+          "period": "2023"
+        },
+        "after": {
+          "label": "영업이익",
+          "value": "43.6조 원",
+          "period": "2025"
+        },
+        "reason": "2023년에는 반도체 가격이 떨어져 이익이 크게 줄었어요. 2024년부터 메모리 반도체가 다시 잘 팔리면서 이익이 회복됐어요.",
+        "meaning": "매출(258.94조 → 333.6조 원)보다 이익이 훨씬 빠르게 늘어서, 팔아서 남기는 돈이 많아졌다는 뜻이에요.",
+        "evidence": [
+          {
+            "type": "financials",
+            "label": "재무제표 2025 사업보고서",
+            "date": null
+          }
+        ],
+        "detail": {
+          "yearly": [
+            {
+              "year": "2023",
+              "revenue": 258.94,
+              "operating_income": 6.57,
+              "unit": "조 원"
+            },
+            {
+              "year": "2024",
+              "revenue": 300.9,
+              "operating_income": 32.7,
+              "unit": "조 원"
+            },
+            {
+              "year": "2025",
+              "revenue": 333.6,
+              "operating_income": 43.6,
+              "unit": "조 원"
+            }
+          ],
+          "related_news": [
+            {
+              "id": "samsung-2025q4",
+              "title": "삼성전자, 2025년 4분기 매출 93.8조 원… 분기 기준 역대 최대",
+              "press": "삼성전자 뉴스룸",
+              "published_at": "2026-01-29T09:00:00+09:00",
+              "url": "https://news.samsung.com/kr/",
+              "summary_short": "4분기 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 가장 좋은 실적을 냈어요.",
+              "summary_long": "2025년 4분기에 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 역대 가장 좋은 실적을 냈어요. AI용 메모리(HBM) 판매가 늘어난 덕분이에요.",
+              "company_stock_code": "005930",
+              "related_metric": {
+                "label": "2025년 매출",
+                "value": "333.6조 원"
+              }
+            }
+          ],
+          "related_disclosures": [
+            {
+              "title": "삼성전자 2025년 4분기 실적 발표",
+              "date": "2026-01-29",
+              "url": "https://dart.fss.or.kr/"
+            }
+          ]
+        }
+      },
+      {
+        "category": "revenue_source",
+        "title": "가장 많이 버는 곳은 반도체(DS) 사업이에요",
+        "before": null,
+        "after": {
+          "label": "DS(반도체) 매출",
+          "value": "44.0조 원",
+          "period": "2025년 4분기"
+        },
+        "reason": "2025년 4분기 사업별 매출 가운데 DS(반도체)가 44.0조 원으로 가장 컸고, 스마트폰 등 MX·네트워크가 29.3조 원으로 뒤를 이었어요.",
+        "meaning": "삼성전자의 실적은 반도체 시장 분위기에 가장 크게 영향을 받는다는 뜻이에요.",
+        "evidence": [
+          {
+            "type": "vision",
+            "label": "기업 비전",
+            "date": "2026-01-29"
+          },
+          {
+            "type": "financials",
+            "label": "재무제표 2025 사업보고서",
+            "date": null
+          }
+        ],
+        "detail": {
+          "yearly": [
+            {
+              "year": "2023",
+              "revenue": 258.94,
+              "operating_income": 6.57,
+              "unit": "조 원"
+            },
+            {
+              "year": "2024",
+              "revenue": 300.9,
+              "operating_income": 32.7,
+              "unit": "조 원"
+            },
+            {
+              "year": "2025",
+              "revenue": 333.6,
+              "operating_income": 43.6,
+              "unit": "조 원"
+            }
+          ],
+          "related_news": [
+            {
+              "id": "samsung-2025q4",
+              "title": "삼성전자, 2025년 4분기 매출 93.8조 원… 분기 기준 역대 최대",
+              "press": "삼성전자 뉴스룸",
+              "published_at": "2026-01-29T09:00:00+09:00",
+              "url": "https://news.samsung.com/kr/",
+              "summary_short": "4분기 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 가장 좋은 실적을 냈어요.",
+              "summary_long": "2025년 4분기에 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 역대 가장 좋은 실적을 냈어요. AI용 메모리(HBM) 판매가 늘어난 덕분이에요.",
+              "company_stock_code": "005930",
+              "related_metric": {
+                "label": "2025년 매출",
+                "value": "333.6조 원"
+              }
+            }
+          ],
+          "related_disclosures": [
+            {
+              "title": "삼성전자 2025년 4분기 실적 발표",
+              "date": "2026-01-29",
+              "url": "https://dart.fss.or.kr/"
+            }
+          ]
+        }
+      },
+      {
+        "category": "recent_change",
+        "title": "작년보다 영업이익이 약 33% 늘었어요",
+        "before": {
+          "label": "영업이익",
+          "value": "32.7조 원",
+          "period": "2024"
+        },
+        "after": {
+          "label": "영업이익",
+          "value": "43.6조 원",
+          "period": "2025"
+        },
+        "reason": "AI 서버에 들어가는 메모리(HBM) 판매가 늘어난 것이 큰 이유로 꼽혀요.",
+        "meaning": "AI 서버 수요가 계속 이어지는지가 앞으로의 실적에 중요하다는 뜻이에요.",
+        "evidence": [
+          {
+            "type": "financials",
+            "label": "재무제표 2025 사업보고서",
+            "date": null
+          },
+          {
+            "type": "news",
+            "label": "뉴스",
+            "date": "2026-01-29"
+          }
+        ],
+        "detail": {
+          "yearly": [
+            {
+              "year": "2023",
+              "revenue": 258.94,
+              "operating_income": 6.57,
+              "unit": "조 원"
+            },
+            {
+              "year": "2024",
+              "revenue": 300.9,
+              "operating_income": 32.7,
+              "unit": "조 원"
+            },
+            {
+              "year": "2025",
+              "revenue": 333.6,
+              "operating_income": 43.6,
+              "unit": "조 원"
+            }
+          ],
+          "related_news": [
+            {
+              "id": "samsung-2025q4",
+              "title": "삼성전자, 2025년 4분기 매출 93.8조 원… 분기 기준 역대 최대",
+              "press": "삼성전자 뉴스룸",
+              "published_at": "2026-01-29T09:00:00+09:00",
+              "url": "https://news.samsung.com/kr/",
+              "summary_short": "4분기 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 가장 좋은 실적을 냈어요.",
+              "summary_long": "2025년 4분기에 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 역대 가장 좋은 실적을 냈어요. AI용 메모리(HBM) 판매가 늘어난 덕분이에요.",
+              "company_stock_code": "005930",
+              "related_metric": {
+                "label": "2025년 매출",
+                "value": "333.6조 원"
+              }
+            }
+          ],
+          "related_disclosures": [
+            {
+              "title": "삼성전자 2025년 4분기 실적 발표",
+              "date": "2026-01-29",
+              "url": "https://dart.fss.or.kr/"
+            }
+          ]
+        }
+      },
+      {
+        "category": "risk",
+        "title": "반도체 경기에 따라 이익이 크게 흔들릴 수 있어요",
+        "before": {
+          "label": "영업이익",
+          "value": "6.57조 원",
+          "period": "2023"
+        },
+        "after": null,
+        "reason": "2023년처럼 반도체 가격이 떨어지면 이익이 크게 줄었어요. 매출에서 반도체가 차지하는 몫이 커서 영향도 커요.",
+        "meaning": "지금 실적이 좋아도 반도체 시장이 나빠지면 이익이 다시 줄어들 수 있다는 뜻이에요.",
+        "evidence": [
+          {
+            "type": "financials",
+            "label": "재무제표 2025 사업보고서",
+            "date": null
+          },
+          {
+            "type": "vision",
+            "label": "기업 비전",
+            "date": "2026-01-29"
+          }
+        ],
+        "detail": {
+          "yearly": [
+            {
+              "year": "2023",
+              "revenue": 258.94,
+              "operating_income": 6.57,
+              "unit": "조 원"
+            },
+            {
+              "year": "2024",
+              "revenue": 300.9,
+              "operating_income": 32.7,
+              "unit": "조 원"
+            },
+            {
+              "year": "2025",
+              "revenue": 333.6,
+              "operating_income": 43.6,
+              "unit": "조 원"
+            }
+          ],
+          "related_news": [
+            {
+              "id": "samsung-2025q4",
+              "title": "삼성전자, 2025년 4분기 매출 93.8조 원… 분기 기준 역대 최대",
+              "press": "삼성전자 뉴스룸",
+              "published_at": "2026-01-29T09:00:00+09:00",
+              "url": "https://news.samsung.com/kr/",
+              "summary_short": "4분기 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 가장 좋은 실적을 냈어요.",
+              "summary_long": "2025년 4분기에 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 역대 가장 좋은 실적을 냈어요. AI용 메모리(HBM) 판매가 늘어난 덕분이에요.",
+              "company_stock_code": "005930",
+              "related_metric": {
+                "label": "2025년 매출",
+                "value": "333.6조 원"
+              }
+            }
+          ],
+          "related_disclosures": [
+            {
+              "title": "삼성전자 2025년 4분기 실적 발표",
+              "date": "2026-01-29",
+              "url": "https://dart.fss.or.kr/"
+            }
+          ]
+        }
+      },
+      {
+        "category": "strength",
+        "title": "AI용 메모리(HBM)를 만드는 기술이 경쟁력이에요",
+        "before": null,
+        "after": null,
+        "reason": "HBM 판매를 늘린 데 이어, 다음 세대 제품인 HBM4 공급을 시작하겠다고 밝혔어요.",
+        "meaning": "AI 서버가 늘어날수록 이 회사의 반도체가 더 필요해질 수 있지만, 계획이 실제로 이뤄지는지는 지켜봐야 한다는 뜻이에요.",
+        "evidence": [
+          {
+            "type": "news",
+            "label": "뉴스",
+            "date": "2026-01-29"
+          },
+          {
+            "type": "vision",
+            "label": "기업 비전",
+            "date": "2026-01-29"
+          }
+        ],
+        "detail": {
+          "yearly": [
+            {
+              "year": "2023",
+              "revenue": 258.94,
+              "operating_income": 6.57,
+              "unit": "조 원"
+            },
+            {
+              "year": "2024",
+              "revenue": 300.9,
+              "operating_income": 32.7,
+              "unit": "조 원"
+            },
+            {
+              "year": "2025",
+              "revenue": 333.6,
+              "operating_income": 43.6,
+              "unit": "조 원"
+            }
+          ],
+          "related_news": [
+            {
+              "id": "samsung-hbm4",
+              "title": "삼성전자, HBM4 공급 시작 계획 발표",
+              "press": "삼성전자 뉴스룸",
+              "published_at": "2026-01-29T10:00:00+09:00",
+              "url": "https://news.samsung.com/kr/",
+              "summary_short": "다음 세대 AI 메모리인 HBM4 공급을 시작할 계획이라고 밝혔어요.",
+              "summary_long": "HBM 판매를 늘린 데 이어, 다음 세대 제품인 HBM4 공급을 시작할 계획이라고 밝혔어요. AI 제품 경쟁력으로 AI 시대를 이끌겠다는 방향이에요.",
+              "company_stock_code": "005930",
+              "related_metric": {
+                "label": "반도체(DS) 매출",
+                "value": "44.0조 원"
+              }
+            }
+          ],
+          "related_disclosures": [
+            {
+              "title": "삼성전자 2025년 4분기 실적 발표",
+              "date": "2026-01-29",
+              "url": "https://dart.fss.or.kr/"
+            }
+          ]
+        }
+      }
+    ],
+    "evidence": {
+      "financials": {
+        "unit": "조 원",
+        "years": [
+          "2023",
+          "2024",
+          "2025"
+        ],
+        "revenue": [
+          258.94,
+          300.9,
+          333.6
+        ],
+        "operating_income": [
+          6.57,
+          32.7,
+          43.6
+        ],
+        "highlights": [
+          {
+            "label": "매출",
+            "value": "333.6조 원",
+            "source": "삼성전자 공식 실적 발표 (2026년 1월)"
+          },
+          {
+            "label": "영업이익",
+            "value": "43.6조 원",
+            "source": "삼성전자 공식 실적 발표 (2026년 1월)"
+          },
+          {
+            "label": "영업이익률",
+            "value": "13.1%",
+            "source": "매출과 영업이익으로 계산"
+          },
+          {
+            "label": "부채비율",
+            "value": "27.1%",
+            "source": "예시 값 (확인 예정)",
+            "is_sample": true
+          }
+        ],
+        "base_date": "2025년 연간 · 연결 기준"
+      },
+      "news": [
+        {
+          "id": "samsung-2025q4",
+          "title": "삼성전자, 2025년 4분기 매출 93.8조 원… 분기 기준 역대 최대",
+          "press": "삼성전자 뉴스룸",
+          "published_at": "2026-01-29T09:00:00+09:00",
+          "url": "https://news.samsung.com/kr/",
+          "summary_short": "4분기 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 가장 좋은 실적을 냈어요.",
+          "summary_long": "2025년 4분기에 매출 93.8조 원, 영업이익 20.1조 원으로 분기 기준 역대 가장 좋은 실적을 냈어요. AI용 메모리(HBM) 판매가 늘어난 덕분이에요.",
+          "company_stock_code": "005930",
+          "related_metric": {
+            "label": "2025년 매출",
+            "value": "333.6조 원"
+          }
+        },
+        {
+          "id": "samsung-hbm4",
+          "title": "삼성전자, HBM4 공급 시작 계획 발표",
+          "press": "삼성전자 뉴스룸",
+          "published_at": "2026-01-29T10:00:00+09:00",
+          "url": "https://news.samsung.com/kr/",
+          "summary_short": "다음 세대 AI 메모리인 HBM4 공급을 시작할 계획이라고 밝혔어요.",
+          "summary_long": "HBM 판매를 늘린 데 이어, 다음 세대 제품인 HBM4 공급을 시작할 계획이라고 밝혔어요. AI 제품 경쟁력으로 AI 시대를 이끌겠다는 방향이에요.",
+          "company_stock_code": "005930",
+          "related_metric": {
+            "label": "반도체(DS) 매출",
+            "value": "44.0조 원"
+          }
+        }
+      ],
+      "vision": {
+        "summary": "스마트폰부터 AI 서버용 반도체까지 만드는 회사예요. 2026년에는 HBM4 공급을 시작하고, AI 제품 경쟁력으로 AI 시대를 이끌겠다는 방향을 밝혔어요.",
+        "revenue_mix": [
+          {
+            "name": "DS(반도체)",
+            "amount": 44.0,
+            "unit": "조 원",
+            "period": "2025년 4분기"
+          },
+          {
+            "name": "MX·네트워크(스마트폰 등)",
+            "amount": 29.3,
+            "unit": "조 원",
+            "period": "2025년 4분기"
+          },
+          {
+            "name": "SDC(디스플레이)",
+            "amount": 9.5,
+            "unit": "조 원",
+            "period": "2025년 4분기"
+          },
+          {
+            "name": "하만(전장·오디오)",
+            "amount": 4.6,
+            "unit": "조 원",
+            "period": "2025년 4분기"
+          }
+        ],
+        "source": "삼성전자 2025년 4분기 실적 발표",
+        "base_date": "2026년 1월"
+      }
+    },
+    "quiz": [
+      {
+        "question": "삼성전자의 2025년 매출은 얼마였을까요?",
+        "options": [
+          "258.94조 원",
+          "300.9조 원",
+          "333.6조 원"
+        ],
+        "answer_index": 2,
+        "explanation": "2025년 매출은 333.6조 원이에요. 2023년 258.94조 원 → 2024년 300.9조 원 → 2025년 333.6조 원으로 해마다 늘었어요."
+      },
+      {
+        "question": "2025년 4분기에 가장 많은 매출을 낸 사업은 무엇일까요?",
+        "options": [
+          "DS(반도체)",
+          "MX·네트워크(스마트폰 등)",
+          "하만(전장·오디오)"
+        ],
+        "answer_index": 0,
+        "explanation": "DS(반도체)가 44.0조 원으로 가장 많았어요. 스마트폰 등 MX·네트워크는 29.3조 원, 하만은 4.6조 원이었어요."
+      },
+      {
+        "question": "2023~2025년 중 영업이익이 가장 적었던 해는 언제일까요?",
+        "options": [
+          "2023년",
+          "2024년",
+          "2025년"
+        ],
+        "answer_index": 0,
+        "explanation": "2023년 영업이익은 6.57조 원으로 가장 적었어요. 2024년 32.7조 원, 2025년 43.6조 원으로 다시 늘었어요. 이처럼 반도체 경기에 따라 이익이 크게 달라질 수 있어요."
+      }
+    ],
+    "sources": [
+      "금융감독원 DART",
+      "한국거래소",
+      "삼성전자 실적 발표"
+    ],
+    "failure_reason": null,
+    "data_as_of": {
+      "financials": "2025년 사업보고서",
+      "price": "2026-10-05",
+      "news": "2026-01-29"
+    }
+  }
+}

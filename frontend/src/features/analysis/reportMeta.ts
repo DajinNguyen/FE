@@ -33,10 +33,7 @@ export const evidenceLabel: Record<EvidenceKind, string> = {
   vision: '기업 비전',
 };
 
-/** AI 분석 탭 안의 근거 자료 위치 */
-export const evidenceAnchorId = (kind: EvidenceKind) => `evidence-${kind}`;
-
-/** 근거 자료가 없을 때 대신 보여줄 상세 탭 */
+/** 근거 칩을 누르면 가는 상세 탭 */
 export const evidenceDetailTab: Record<EvidenceKind, CompanyTabId> = {
   financials: 'financials',
   news: 'news',

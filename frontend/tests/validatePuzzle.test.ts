@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { validatePuzzle } from '../src/features/crossword/validatePuzzle';
-import crosswordsJson from '../src/mocks/crosswords.json';
-import termsJson from '../src/mocks/terms.json';
+import crosswordsJson from './fixtures/crosswords.json';
+import termsJson from './fixtures/terms.json';
 import type { CrosswordPuzzle, Term } from '../src/types';
 
 const puzzles = crosswordsJson as CrosswordPuzzle[];
@@ -36,7 +36,7 @@ const tiny = (): CrosswordPuzzle => ({
 });
 
 describe('validatePuzzle', () => {
-  it('목 데이터 퍼즐 3개가 모두 검사를 통과해요', () => {
+  it('낱말퀴즈 퍼즐 3개가 모두 검사를 통과해요', () => {
     expect(puzzles).toHaveLength(3);
     for (const puzzle of puzzles) {
       expect(validatePuzzle(puzzle), puzzle.id).toEqual({ ok: true, errors: [] });

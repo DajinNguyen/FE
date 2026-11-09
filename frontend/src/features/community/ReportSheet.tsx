@@ -4,7 +4,7 @@ import { Sheet } from '../../components/Sheet';
 import { useReport } from '../../hooks/useReport';
 import type { ReportInput, ReportReason } from '../../types';
 import { reportReasonLabels, reportReasons } from './communityLabels';
-import styles from './CommunityPost.module.css';
+import styles from './Community.module.css';
 
 interface ReportSheetProps {
   /** 신고할 대상. null 이면 닫혀 있어요. */
@@ -29,11 +29,7 @@ export function ReportSheet({ target, onClose }: ReportSheetProps) {
   };
 
   return (
-    <Sheet
-      open={target !== null}
-      onClose={close}
-      title={target?.target_type === 'comment' ? '댓글 신고' : '글 신고'}
-    >
+    <Sheet open={target !== null} onClose={close} title="댓글 신고">
       <fieldset className={styles.reasons}>
         <legend>신고하는 이유를 골라 주세요</legend>
         {reportReasons.map((value) => (

@@ -32,20 +32,17 @@ describe('메인 화면', () => {
       'href',
       '/rankings/trading',
     );
-    expect(screen.getByRole('link', { name: /낱말퀴즈/ })).toHaveAttribute(
-      'href',
-      '/terms?mode=crossword',
-    );
+    expect(screen.getByRole('link', { name: /낱말퀴즈/ })).toHaveAttribute('href', '/terms');
     expect(screen.queryByRole('list', { name: '다진이 하는 일' })).not.toBeInTheDocument();
     expect(within(list).queryByText('예시 값')).not.toBeInTheDocument();
-    expect(screen.getByRole('complementary', { name: '다진 사용 방법' })).toHaveTextContent(
-      '기업을 검색하면 AI가 재무제표·뉴스를 근거로 쉽게 설명해요',
-    );
+    expect(screen.queryByText('다진 사용 방법')).not.toBeInTheDocument();
   });
 
   it('업종별 기업 탭 대신 관심이 몰리는 산업 아이콘을 보여줘요', async () => {
     renderWithProviders(<HomePage />);
-    expect(await screen.findByRole('list', { name: '관심이 몰리는 산업' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('list', { name: '관심이 몰리는 산업 상위 3개' }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('region', { name: '업종별 기업' })).not.toBeInTheDocument();
     expect(screen.queryByRole('region', { name: '떠오르는 기업' })).not.toBeInTheDocument();
   });

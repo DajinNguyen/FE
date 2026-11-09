@@ -1,8 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { EvidenceSection } from '../src/features/evidence/EvidenceSection';
+import { afterEach, describe, expect, it } from 'vitest';
 import { CompanyPage } from '../src/pages/CompanyPage';
 import { renderWithProviders } from './testUtils';
 
@@ -64,7 +63,6 @@ describe('기업 화면: AI 분석', () => {
     expect(first).toHaveTextContent('43.6조 원');
     expect(first).toHaveTextContent('6.6배');
     expect(within(now).queryByText('왜 그런가요?')).not.toBeInTheDocument();
-    expect(screen.getByText('이 분석의 근거')).toBeInTheDocument();
     // 기업 헤더에는 한 줄 소개 문장을 쓰지 않아요.
     expect(screen.queryByText('스마트폰과 반도체를 만드는 회사예요')).not.toBeInTheDocument();
   });
@@ -105,6 +103,33 @@ describe('기업 화면: AI 분석', () => {
     ).toBeInTheDocument();
   });
 
+  it('핵심 분석 아래에 재무·뉴스와 겹치는 근거 자료 섹션이 없고, 근거 칩을 누르면 재무 상세·뉴스 상세 탭으로 가요', async () => {
+    const user = userEvent.setup();
+    renderCompanyPage('005930');
+
+    const panel = await screen.findByRole('tabpanel', { name: 'AI 분석' });
+    await within(panel).findByRole('region', { name: '지금 어떤 상황인가요?' });
+    for (const name of ['근거 자료', '재무 핵심 수치', '관련 뉴스', '기업 비전']) {
+      expect(within(panel).queryByRole('region', { name })).not.toBeInTheDocument();
+    }
+    expect(within(panel).getByText(/투자 추천이 아닌 교육용 정보예요/)).toBeInTheDocument();
+
+    const now = within(panel).getByRole('region', { name: '지금 어떤 상황인가요?' });
+    await user.click(
+      within(now).getByRole('button', { name: /3년 동안 매출과 이익이 함께 늘었어요/ }),
+    );
+    await user.click(screen.getByRole('button', { name: '재무제표 2025 사업보고서' }));
+    expect(screen.getByRole('tab', { name: '재무 상세', selected: true })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: 'AI 분석' }));
+    const tech = await screen.findByRole('button', {
+      name: /AI용 메모리\(HBM\)를 만드는 기술이 경쟁력이에요/,
+    });
+    await user.click(tech);
+    await user.click(screen.getByRole('button', { name: /^뉴스/ }));
+    expect(screen.getByRole('tab', { name: '뉴스 상세', selected: true })).toBeInTheDocument();
+  });
+
   it('리포트가 없는 기업은 "아직 이 기업의 리포트가 없어요"를 보여주고, 실패하면 원인과 다시 시도를 보여줘요', async () => {
     const user = userEvent.setup();
     renderCompanyPage('000660');
@@ -141,27 +166,5 @@ describe('기업 화면: AI 분석', () => {
 
     await user.click(within(panel).getByRole('button', { name: '개요로 돌아가기' }));
     expect(screen.getByRole('tab', { name: '개요', selected: true })).toBeInTheDocument();
-  });
-});
-
-describe('근거 자료', () => {
-  it('일부 자료가 없으면 그 자리에만 "자료를 찾지 못했어요"를 보여줘요', () => {
-    renderWithProviders(
-      <EvidenceSection
-        evidence={{
-          financials: null,
-          news: [],
-          vision: {
-            summary: '스마트폰과 반도체를 만드는 회사예요.',
-            revenue_mix: [],
-            source: '사업보고서',
-          },
-        }}
-        onGoToTab={vi.fn()}
-      />,
-    );
-
-    expect(screen.getAllByText('자료를 찾지 못했어요')).toHaveLength(2);
-    expect(screen.getByText('스마트폰과 반도체를 만드는 회사예요.')).toBeInTheDocument();
   });
 });

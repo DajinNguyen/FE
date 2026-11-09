@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import { Button } from '../components/Button';
 import { CompanyRow } from '../components/CompanyRow';
 import { EmptyState } from '../components/EmptyState';
+import { ErrorState } from '../components/ErrorState';
 import { useCompaniesByCodes } from '../hooks/useCompanies';
 import { useOpenCompany } from '../hooks/useOpenCompany';
 import { useWatchlist } from '../hooks/useWatchlist';
@@ -10,7 +11,7 @@ import styles from './WatchlistPage.module.css';
 export function WatchlistPage() {
   const navigate = useNavigate();
   const { stockCodes } = useWatchlist();
-  const { data: companies } = useCompaniesByCodes(stockCodes);
+  const { data: companies, isPending, isError, error, refetch } = useCompaniesByCodes(stockCodes);
   const openCompany = useOpenCompany();
 
   // 목록을 다시 받아오는 동안에도, 방금 뺀 회사는 바로 사라지게 해요.
@@ -29,6 +30,14 @@ export function WatchlistPage() {
           description="회사 화면 오른쪽 위의 하트를 누르면 여기에 모여요."
           action={<Button onClick={() => navigate('/')}>회사 찾아보기</Button>}
         />
+      ) : isError ? (
+        <ErrorState
+          title="관심 기업 정보를 불러오지 못했어요"
+          error={error}
+          onRetry={() => refetch()}
+        />
+      ) : isPending ? (
+        <div className={styles.loading} aria-hidden="true" />
       ) : (
         <ul className={styles.list}>
           {visible.map((company) => (

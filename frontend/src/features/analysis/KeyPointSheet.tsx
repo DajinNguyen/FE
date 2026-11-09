@@ -1,12 +1,13 @@
 import { Fragment } from 'react';
 import { BarChart } from '../../components/BarChart';
+import { ClampText } from '../../components/ClampText';
 import { Icon } from '../../components/Icon';
 import { Sheet } from '../../components/Sheet';
 import { TermText } from '../../components/TermText';
 import type { EvidenceKind, KeyPoint } from '../../types';
 import { formatSignedPercent } from '../../utils/format';
 import { NewsList } from '../news/NewsList';
-import { evidenceChipText, keyPointLabel } from './reportMeta';
+import { describeChange, evidenceChipText, keyPointLabel } from './reportMeta';
 import styles from './KeyPointSheet.module.css';
 
 interface KeyPointSheetProps {
@@ -37,14 +38,20 @@ export function KeyPointSheet({ point, onClose, onEvidence }: KeyPointSheetProps
       {point && (
         <div className={styles.content}>
           {(point.before || point.after) && (
-            <p className={styles.change}>
+            <p
+              className={`${styles.change} ${styles[describeChange(point.before, point.after)?.direction ?? 'flat']}`}
+            >
               {point.before && (
                 <span>
                   {point.before.label} {point.before.value}{' '}
                   <span className={styles.period}>({point.before.period})</span>
                 </span>
               )}
-              {point.before && point.after && <span aria-hidden="true"> → </span>}
+              {point.before && point.after && (
+                <span className={styles.arrow} aria-hidden="true">
+                  →
+                </span>
+              )}
               {point.after && (
                 <span>
                   {!point.before || point.before.label !== point.after.label
@@ -61,13 +68,17 @@ export function KeyPointSheet({ point, onClose, onEvidence }: KeyPointSheetProps
             <div>
               <dt>왜 그런가요?</dt>
               <dd>
-                <TermText text={point.reason} />
+                <ClampText>
+                  <TermText text={point.reason} />
+                </ClampText>
               </dd>
             </div>
             <div>
               <dt>무슨 뜻인가요?</dt>
               <dd>
-                <TermText text={point.meaning} />
+                <ClampText>
+                  <TermText text={point.meaning} />
+                </ClampText>
               </dd>
             </div>
           </dl>

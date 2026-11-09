@@ -1,92 +1,73 @@
-/* 왼쪽 정렬 그리드: 본문(최대 860px) + 오른쪽 사이드바. 좁은 화면은 한 줄로 쌓여요. */
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-8);
-  padding-bottom: var(--sp-12);
-}
-
-.aside {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  padding: var(--sp-4) 0;
-  border-top: 1px solid var(--line);
-}
-
-.asideTitle {
-  font-size: var(--fs-base);
-  font-weight: 800;
-}
-
-.asideText {
-  color: var(--text-2);
-  font-size: var(--fs-sm);
-  line-height: var(--lh-body);
-}
-
-@media (min-width: 1024px) {
-  .layout {
-    grid-template-columns: minmax(0, 860px) minmax(0, 1fr);
-    gap: var(--sp-12);
-  }
-
-  .aside {
-    position: sticky;
-    top: calc(var(--header-h) + var(--sp-12));
-    align-self: start;
-    margin-top: var(--sp-12);
-  }
-}
-
+/* 가운데 정렬된 한 줄 (최대 1080px). 크게 → 보통 → 작게 순서로 내려가요. */
 .page {
   display: flex;
-  max-width: 860px;
+  max-width: 1080px;
+  margin-inline: auto;
   flex-direction: column;
-  gap: var(--sp-8);
-  padding-top: var(--sp-12);
-  padding-bottom: var(--sp-12);
+  gap: var(--sp-12);
+  padding-block: var(--sp-12);
 }
 
-.hero {
+.top {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
+  gap: var(--sp-6);
 }
 
-/* 900px 이상은 위쪽 메뉴에 검색창이 있어요. (AppHeader.module.css 와 같은 기준) */
+/* 좁은 화면 검색창: 가운데, 넓게. 900px 이상은 위쪽 메뉴에 있어요. (AppHeader.module.css 와 같은 기준) */
+.search {
+  width: 100%;
+  max-width: 640px;
+}
+
 @media (min-width: 900px) {
-  .hero {
+  .search {
     display: none;
   }
 }
 
-.hint {
-  color: var(--text-3);
+/* 작은 요소 두 개를 나란히 (좁은 화면은 세로) */
+.smallRow {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  align-items: start;
+  gap: var(--sp-6);
 }
 
-.section {
-  min-width: 0;
-}
-
-.sectionHead {
+.small {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--sp-1) var(--sp-4);
-  margin-bottom: var(--sp-3);
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--sp-2);
 }
 
-.sectionTitle {
-  font-size: var(--fs-xl);
+.smallHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.smallTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-md);
   font-weight: 800;
 }
 
-.sectionNote {
-  margin-top: 2px;
+.smallTitle svg {
+  color: var(--brand);
+}
+
+.smallNote {
   color: var(--text-3);
   font-size: var(--fs-xs);
+}
+
+.hint {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
 }
 
 .more {
@@ -101,9 +82,21 @@
   text-decoration: underline;
 }
 
+.loading {
+  height: 200px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+@media (max-width: 899px) {
+  .smallRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 719px) {
   .page {
-    gap: var(--sp-6);
-    padding-top: var(--sp-6);
+    gap: var(--sp-8);
+    padding-block: var(--sp-6);
   }
 }

@@ -1,15 +1,10 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { getMe, googleLoginUrl, logout as logoutRequest } from '../../api/auth';
-import { apiConfig } from '../../api/client';
-import { setSessionUser } from '../../api/session';
-import { useToast } from '../../hooks/useToast';
-import {
-  AuthContext,
-  DEV_USER,
-  displayName,
-  type AuthContextValue,
-  type AuthUser,
-} from './AuthContext';
+import { AuthContext, DEV_USER, type AuthContextValue, type AuthUser } from './AuthContext';
+
+const DEV_LOGIN_ENABLED =
+  import.meta.env.MODE === 'test' ||
+  (import.meta.env.DEV && import.meta.env.VITE_DEV_LOGIN === 'true');
 
 export function AuthProvider({
   children,
@@ -21,9 +16,6 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<AuthUser | null>(initialUser);
   const [isLoading, setIsLoading] = useState(true);
-  const { showToast } = useToast();
-  // 목 서버가 "내 글"을 알 수 있게 지금 사용자를 알려줘요. (실제 서버는 로그인 쿠키로 알아요)
-  setSessionUser(user ? { id: user.id ?? user.email, nickname: displayName(user) } : null);
 
   // 화면을 열 때마다 로그인 쿠키가 있는지 서버에 물어봐요.
   useEffect(() => {
@@ -48,10 +40,6 @@ export function AuthProvider({
       isLoggedIn: user !== null,
       isLoading,
       loginWithGoogle: () => {
-        if (apiConfig.useMock) {
-          showToast('목 데이터 모드에서는 Google 로그인 대신 [개발용 로그인]으로 확인해 주세요.');
-          return;
-        }
         window.location.href = googleLoginUrl();
       },
       logout: async () => {
@@ -61,9 +49,11 @@ export function AuthProvider({
           setUser(null);
         }
       },
-      devLogin: apiConfig.useMock ? () => setUser(DEV_USER) : undefined,
+      // 화면만 로그인 상태로 바꾸는 버튼이라 서버에 쓰면 401 이 나요.
+      // 그래서 기본은 꺼 두고, 개발 서버에서 VITE_DEV_LOGIN=true 일 때(와 테스트)만 보여요.
+      devLogin: DEV_LOGIN_ENABLED ? () => setUser(DEV_USER) : undefined,
     }),
-    [user, isLoading, showToast],
+    [user, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

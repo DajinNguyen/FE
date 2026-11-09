@@ -1,4 +1,5 @@
 import { DataAsOf } from '../components/DataAsOf';
+import { ErrorState } from '../components/ErrorState';
 import { CompanyListRow } from '../features/home/CompanyListRow';
 import { useHomeDashboard } from '../hooks/useHomeDashboard';
 import { useOpenCompany } from '../hooks/useOpenCompany';
@@ -7,7 +8,7 @@ import styles from './TradingRankingPage.module.css';
 
 /** 오늘 거래가 많은 기업 전체 순위 (메인 리스트와 같은 줄 디자인) */
 export function TradingRankingPage() {
-  const { data, isPending, isError } = useHomeDashboard();
+  const { data, isPending, isError, error, refetch } = useHomeDashboard();
   const openCompany = useOpenCompany();
 
   return (
@@ -25,7 +26,10 @@ export function TradingRankingPage() {
       </header>
 
       {isError && (
-        <p className={styles.hint}>목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>
+        <ErrorState title="목록을 불러오지 못했어요" error={error} onRetry={() => refetch()} />
+      )}
+      {data && data.trading_value_top.length === 0 && (
+        <p className={styles.hint}>아직 보여줄 기업이 없어요.</p>
       )}
       {isPending && <div className={styles.loading} aria-hidden="true" />}
 
