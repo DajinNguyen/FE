@@ -23,7 +23,7 @@ interface CommentComposerProps {
   /** 답글의 답글이면 대상 닉네임 */
   replyTo?: string;
   placeholder?: string;
-  /** 최대 글자 수. 기업 댓글은 2,000자, 답글은 500자 */
+  /** 최대 글자 수. 기업 댓글·답글 모두 500자 */
   maxLength?: number;
   autoFocus?: boolean;
   onCancel?: () => void;

@@ -180,11 +180,11 @@ describe('이모지·사진·신고', () => {
     expect(await within(item).findByRole('button', { name: '신고함' })).toBeDisabled();
   });
 
-  it('기업 댓글은 2,000자, 답글은 500자까지 쓸 수 있어요', async () => {
+  it('기업 댓글과 답글은 500자까지 쓸 수 있어요', async () => {
     const user = userEvent.setup();
     renderWithProviders(<CommunityTab stockCode="005930" />);
-    expect(screen.getByLabelText('댓글 입력')).toHaveAttribute('maxlength', '2000');
-    expect(screen.getByText('0/2,000')).toBeInTheDocument();
+    expect(screen.getByLabelText('댓글 입력')).toHaveAttribute('maxlength', '500');
+    expect(screen.getByText('0/500')).toBeInTheDocument();
 
     const first = await commentItem('메모리를 여러 층 쌓은 거라고 들었는데');
     await user.click(within(first).getAllByRole('button', { name: '답글' })[0]);

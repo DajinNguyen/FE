@@ -2,7 +2,7 @@
  * 커뮤니티 규칙. 화면 검사에 써요. (실제 서버도 같은 규칙으로 한 번 더 검사해야 해요)
  */
 export const COMMUNITY_LIMITS = {
-  bodyMax: 2000,
+  bodyMax: 500,
   commentMax: 500,
   /** 도배 방지: 같은 사람은 1분에 글 1개·댓글 5개까지 (⚠️ 임시값, 확정 필요) */
   postsPerMinute: 1,
