@@ -61,6 +61,19 @@
   border-bottom: 1px solid var(--line-strong);
 }
 
+/* 좋은 점·지켜볼 점: 연한 초록·주황 면 + 라벨 (ToneBadge) */
+.point[data-tone='positive'] {
+  background: var(--color-positive-bg);
+}
+
+.point[data-tone='caution'] {
+  background: var(--color-caution-bg);
+}
+
+.point[data-tone] .pointHead {
+  padding-inline: var(--sp-3);
+}
+
 /* 한 줄: 결론 문장 ··· 핵심 숫자 ▾ */
 .pointHead {
   display: flex;
@@ -77,7 +90,11 @@
 }
 
 .pointTitle {
+  display: flex;
   flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1) var(--sp-2);
   font-size: var(--fs-lg);
   font-weight: var(--fw-semibold);
   line-height: var(--lh-tight);

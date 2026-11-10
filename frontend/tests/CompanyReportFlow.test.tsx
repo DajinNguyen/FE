@@ -67,6 +67,28 @@ describe('기업 화면: AI 분석', () => {
     expect(screen.queryByText('스마트폰과 반도체를 만드는 회사예요')).not.toBeInTheDocument();
   });
 
+  it('핵심 경쟁력은 "좋은 점", 위험 요인은 "지켜볼 점" 라벨이 붙고, 상세 시트에도 같은 라벨이 나와요', async () => {
+    const user = userEvent.setup();
+    renderCompanyPage('005930');
+
+    const company = await screen.findByRole('region', { name: '어떤 회사인가요?' });
+    const now = screen.getByRole('region', { name: '지금 어떤 상황인가요?' });
+    const watch = screen.getByRole('region', { name: '무엇을 조심해야 하나요?' });
+
+    const strength = within(company).getByRole('button', { name: /경쟁력이에요/ });
+    expect(strength).toHaveTextContent('좋은 점');
+    expect(strength.closest('li')).toHaveAttribute('data-tone', 'positive');
+    const risk = within(watch).getByRole('button', { name: /흔들릴 수 있어요/ });
+    expect(risk).toHaveTextContent('지켜볼 점');
+    expect(risk.closest('li')).toHaveAttribute('data-tone', 'caution');
+    // 나머지 포인트에는 라벨이 없어요.
+    expect(within(now).queryByText(/좋은 점|지켜볼 점/)).not.toBeInTheDocument();
+
+    await user.click(risk);
+    const sheet = await screen.findByRole('dialog');
+    expect(within(sheet).getByText('지켜볼 점')).toBeInTheDocument();
+  });
+
   it('포인트를 누르면 상세 시트에 과거 → 현재 숫자, 이유·의미, 연도별 매출·영업이익 막대(값 표시), 근거 뉴스·공시가 나와요', async () => {
     const user = userEvent.setup();
     renderCompanyPage('005930');

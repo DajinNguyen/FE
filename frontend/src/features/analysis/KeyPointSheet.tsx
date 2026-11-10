@@ -7,7 +7,8 @@ import { TermText } from '../../components/TermText';
 import type { EvidenceKind, KeyPoint } from '../../types';
 import { formatSignedPercent } from '../../utils/format';
 import { NewsList } from '../news/NewsList';
-import { describeChange, evidenceChipText, keyPointLabel } from './reportMeta';
+import { describeChange, evidenceChipText, keyPointLabel, keyPointTone } from './reportMeta';
+import { ToneBadge } from './ToneBadge';
 import styles from './KeyPointSheet.module.css';
 
 interface KeyPointSheetProps {
@@ -26,6 +27,7 @@ export function KeyPointSheet({ point, onClose, onEvidence }: KeyPointSheetProps
   const first = yearly[0];
   const last = yearly.at(-1);
   const unit = last?.unit ?? '';
+  const tone = point ? keyPointTone[point.category] : undefined;
 
   return (
     <Sheet
@@ -37,6 +39,11 @@ export function KeyPointSheet({ point, onClose, onEvidence }: KeyPointSheetProps
     >
       {point && (
         <div className={styles.content}>
+          {tone && (
+            <p>
+              <ToneBadge tone={tone} />
+            </p>
+          )}
           {(point.before || point.after) && (
             <p
               className={`${styles.change} ${styles[describeChange(point.before, point.after)?.direction ?? 'flat']}`}

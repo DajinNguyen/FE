@@ -27,6 +27,22 @@ export const keyPointLabel: Record<KeyPointCategory, string> = {
   strength: '핵심 경쟁력',
 };
 
+/**
+ * 좋은 점·지켜볼 점 표시. 핵심 경쟁력은 좋은 점, 위험·변화 요인은 지켜볼 점이에요.
+ * 나머지 분류는 표시하지 않아요. (색은 tokens.css 의 --color-positive / --color-caution)
+ */
+export type KeyPointTone = 'positive' | 'caution';
+
+export const keyPointTone: Partial<Record<KeyPointCategory, KeyPointTone>> = {
+  strength: 'positive',
+  risk: 'caution',
+};
+
+export const toneLabel: Record<KeyPointTone, string> = {
+  positive: '좋은 점',
+  caution: '지켜볼 점',
+};
+
 export const evidenceLabel: Record<EvidenceKind, string> = {
   financials: '재무제표',
   news: '뉴스',

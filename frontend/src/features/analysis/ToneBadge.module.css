@@ -1,0 +1,25 @@
+.badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-2);
+  border: 1px solid;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.positive {
+  border-color: var(--color-positive-line);
+  background: var(--color-positive-bg);
+  color: var(--color-positive);
+}
+
+.caution {
+  border-color: var(--color-caution-line);
+  background: var(--color-caution-bg);
+  color: var(--color-caution);
+}
