@@ -26,6 +26,7 @@ body {
     sans-serif;
   font-size: var(--fs-base);
   line-height: var(--lh-body);
+  font-weight: var(--fw-regular);
   font-variant-numeric: tabular-nums;
   word-break: keep-all;
   overflow-wrap: anywhere;
@@ -47,8 +48,15 @@ h1,
 h2,
 h3,
 h4 {
+  font-weight: var(--fw-semibold);
   line-height: var(--lh-tight);
   text-wrap: balance;
+}
+
+/* 문단 속 강조는 핵심 숫자 정도만, 볼드(700) 대신 semibold 로 */
+strong,
+b {
+  font-weight: var(--fw-semibold);
 }
 
 ul,

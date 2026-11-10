@@ -4,7 +4,7 @@
   justify-content: center;
   gap: var(--sp-1);
   border-radius: var(--radius-sm);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   transition:
     background var(--dur) var(--ease),
     transform 120ms var(--ease);

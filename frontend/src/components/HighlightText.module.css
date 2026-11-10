@@ -2,5 +2,5 @@
   border-radius: 3px;
   background: transparent;
   color: var(--brand-strong);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }

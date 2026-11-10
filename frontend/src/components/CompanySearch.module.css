@@ -127,7 +127,7 @@
   padding: var(--sp-1) var(--sp-2) var(--sp-2);
   color: var(--text-3);
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 .textButton {
@@ -166,7 +166,7 @@
 
 .name {
   overflow: hidden;
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -197,7 +197,7 @@
   border-radius: 6px;
   background: var(--surface-strong);
   color: var(--text-2);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .recentIcon {
@@ -207,7 +207,7 @@
 
 .recentName {
   flex: 1;
-  font-weight: 600;
+  font-weight: var(--fw-regular);
 }
 
 .code {

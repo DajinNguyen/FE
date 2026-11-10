@@ -31,7 +31,7 @@
 
 .countTitle {
   font-size: var(--fs-lg);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .list {
@@ -76,7 +76,7 @@
   gap: var(--sp-3);
   padding: var(--sp-2) 0;
   color: var(--text-1);
-  font-weight: 600;
+  font-weight: var(--fw-regular);
   cursor: pointer;
 }
 

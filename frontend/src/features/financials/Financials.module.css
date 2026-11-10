@@ -6,7 +6,7 @@
 .chartSentence {
   margin-top: var(--sp-4);
   font-size: var(--fs-md);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .caption {
@@ -24,12 +24,12 @@
 .quarterLabel {
   color: var(--text-2);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .quarterValue {
   margin-top: 2px;
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 /* 주요 지표 (높은 편·보통·낮은 편) */
@@ -52,26 +52,26 @@
 
 .signalLabel {
   color: var(--text-2);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .signalValue {
   margin-top: 2px;
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
 }
 
 .signalDescription {
   margin-top: var(--sp-1);
-  font-weight: 500;
+  font-weight: var(--fw-regular);
 }
 
 .signalComparison {
   margin-top: var(--sp-1);
   color: var(--text-1);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-regular);
 }
 
 .signalCriteria {
@@ -90,7 +90,7 @@
   padding: var(--sp-3) 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .chevron {
@@ -128,11 +128,11 @@
 
 .table thead th {
   color: var(--text-3);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
 }
 
 .table tbody th {
-  font-weight: 600;
+  font-weight: var(--fw-medium);
 }
 
 /* 3년 실적과 사업별 매출을 나란히 */

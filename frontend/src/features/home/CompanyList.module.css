@@ -28,7 +28,7 @@
   min-width: 2ch;
   color: var(--text-1);
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   text-align: right;
 }
 
@@ -53,7 +53,7 @@
 
 .name {
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   line-height: var(--lh-tight);
 }
 
@@ -63,7 +63,7 @@
   background: var(--caution-weak);
   color: var(--caution);
   font-size: var(--fs-xs);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .oneLiner {
@@ -77,13 +77,13 @@
   margin-top: var(--sp-1);
   color: var(--text-1);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-regular);
 }
 
 .aiLabel {
   flex-shrink: 0;
   color: var(--brand);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .side {

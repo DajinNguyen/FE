@@ -27,5 +27,5 @@
 .footerBrand {
   margin-bottom: var(--sp-1);
   color: var(--text-2);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }

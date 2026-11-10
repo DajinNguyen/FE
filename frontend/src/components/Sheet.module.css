@@ -53,13 +53,13 @@
 .eyebrow {
   color: var(--text-3);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .title {
   margin-top: var(--sp-1);
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .body {

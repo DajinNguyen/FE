@@ -12,7 +12,7 @@
 
 .title {
   font-size: var(--fs-3xl);
-  font-weight: 800;
+  font-weight: var(--fw-bold);
   letter-spacing: -0.02em;
 }
 
@@ -52,7 +52,7 @@
   border-radius: var(--radius-full);
   color: var(--text-2);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .filterChip[aria-pressed='true'] {
@@ -63,7 +63,7 @@
 
 .filterCount {
   opacity: 0.6;
-  font-weight: 600;
+  font-weight: var(--fw-regular);
 }
 
 .gameWrap {
@@ -105,12 +105,12 @@
 .counter {
   margin-right: 2px;
   color: var(--text-1);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .knownText strong {
   color: var(--text-1);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .track {
@@ -144,7 +144,7 @@
 
 .doneTitle {
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .doneText {
@@ -168,7 +168,7 @@
 .asideTitle {
   margin-bottom: var(--sp-2);
   font-size: var(--fs-lg);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .termList {
@@ -202,7 +202,7 @@
 .termChip.current {
   background: var(--surface-strong);
   color: var(--text-1);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .statusDot,

@@ -5,7 +5,7 @@
 
 .title {
   font-size: var(--fs-md);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 .description {

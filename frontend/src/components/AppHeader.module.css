@@ -45,7 +45,7 @@
   padding: var(--sp-2) 14px;
   border-radius: var(--radius-sm);
   color: var(--text-3);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   white-space: nowrap;
   transition:
     background var(--dur) var(--ease),

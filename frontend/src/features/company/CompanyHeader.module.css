@@ -29,7 +29,7 @@
   align-items: center;
   gap: var(--sp-2);
   font-size: var(--fs-3xl);
-  font-weight: 800;
+  font-weight: var(--fw-bold);
   line-height: var(--lh-tight);
   letter-spacing: -0.02em;
 }
@@ -40,7 +40,7 @@
   background: var(--caution-weak);
   color: var(--caution);
   font-size: var(--fs-xs);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   letter-spacing: 0;
 }
 
@@ -48,9 +48,8 @@
   margin-top: 2px;
   color: var(--text-3);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-regular);
 }
-
 
 .quote {
   display: flex;
@@ -65,7 +64,7 @@
   align-items: center;
   gap: var(--sp-2);
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
 }
 
@@ -83,7 +82,7 @@
   border-left: 1px solid var(--line-strong);
   color: var(--text-1);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .chip:first-child {
@@ -93,7 +92,7 @@
 
 .chipLabel {
   color: var(--text-3);
-  font-weight: 600;
+  font-weight: var(--fw-regular);
 }
 
 @media (max-width: 719px) {

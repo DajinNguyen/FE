@@ -116,7 +116,7 @@
   display: block;
   margin-top: var(--sp-1);
   color: var(--brand);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .finished strong {
@@ -172,13 +172,13 @@
   left: 4px;
   color: var(--text-2);
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   line-height: 1;
 }
 
 .letter {
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .currentClue {
@@ -193,7 +193,7 @@
   margin-left: var(--sp-2);
   color: var(--caution);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .hintText {
@@ -225,7 +225,7 @@
 .clueTitle {
   margin-bottom: var(--sp-2);
   font-size: var(--fs-lg);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .clueList {
@@ -261,7 +261,7 @@
 
 .clueNumber {
   min-width: 2ch;
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .clueText {
@@ -284,7 +284,7 @@
   align-self: center;
   color: var(--caution);
   font-size: var(--fs-xs);
-  font-weight: 800;
+  font-weight: var(--fw-medium);
 }
 
 .mobileClues {
@@ -295,7 +295,7 @@
   padding: var(--sp-3) 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
 }
 
@@ -360,7 +360,7 @@
   padding: var(--sp-2) var(--sp-4);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   text-align: left;
 }
 
@@ -372,7 +372,7 @@
 .pickMeta {
   color: var(--text-3);
   font-size: var(--fs-xs);
-  font-weight: 500;
+  font-weight: var(--fw-regular);
 }
 
 .loading {

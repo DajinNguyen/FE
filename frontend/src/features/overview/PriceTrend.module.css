@@ -6,7 +6,7 @@
 
 .title {
   font-size: var(--fs-lg);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .summary {
@@ -17,7 +17,7 @@
 
 .price {
   font-size: var(--fs-2xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
   line-height: var(--lh-tight);
 }
