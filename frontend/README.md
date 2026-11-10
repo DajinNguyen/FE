@@ -26,7 +26,7 @@ npm run build      # 타입 검사 + 프로덕션 빌드
 
 ## 기술 스택
 
-React 19 + TypeScript + Vite · TanStack Query · React Router · CSS Modules + CSS 변수 토큰 · Recharts · Pretendard · Vitest + RTL · ESLint + Prettier
+React 19 + TypeScript + Vite · TanStack Query · React Router · CSS Modules + CSS 변수 토큰 · Recharts · Wanted Sans · Vitest + RTL · ESLint + Prettier
 
 ## 폴더 구조
 
