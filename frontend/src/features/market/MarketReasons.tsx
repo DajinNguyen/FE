@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { industryIcon } from '../../config/industryIcons';
+import { industryColorStyle, industryIcon } from '../../config/industryIcons';
 import { useMarketSummary } from '../../hooks/useMarketSummary';
 import type { MarketReason } from '../../types';
 import { NewsList } from '../news/NewsList';
@@ -26,11 +26,16 @@ function IndustryChip({ id, name, changeRate }: { id: string; name: string; chan
 
 function ReasonItem({ reason }: { reason: MarketReason }) {
   // 이유 앞 아이콘: 첫 번째 관련 산업 (산업 id 와 아이콘 이름이 같아요)
-  const Icon = industryIcon(reason.industries[0]?.industry_id ?? '');
+  const industryId = reason.industries[0]?.industry_id ?? '';
+  const Icon = industryIcon(industryId);
   return (
     <li className={styles.reason}>
       <div className={styles.reasonHead}>
-        <span className={styles.reasonIcon} aria-hidden="true">
+        <span
+          className={styles.reasonIcon}
+          style={industryColorStyle(industryId)}
+          aria-hidden="true"
+        >
           <Icon size={20} strokeWidth={1.75} />
         </span>
         <h3 className={styles.reasonTitle}>{reason.title}</h3>

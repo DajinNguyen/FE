@@ -13,7 +13,7 @@ import {
   HEAT_PERIODS,
   HEAT_WEIGHTS,
 } from '../config/industryHeat';
-import { industryIcon } from '../config/industryIcons';
+import { industryColorStyle, industryIcon } from '../config/industryIcons';
 import { changeDirection, signedPercent } from '../features/industry/industryText';
 import { NewsList } from '../features/news/NewsList';
 import { useIndustry } from '../hooks/useIndustries';
@@ -116,7 +116,11 @@ export function IndustryPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <span className={styles.icon} aria-hidden="true">
+        <span
+          className={styles.icon}
+          style={industryColorStyle(detail.icon_key)}
+          aria-hidden="true"
+        >
           <Icon size={32} strokeWidth={1.75} />
         </span>
         <div className={styles.headText}>

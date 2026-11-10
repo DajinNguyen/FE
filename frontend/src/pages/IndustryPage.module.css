@@ -19,9 +19,9 @@
   width: 64px;
   height: 64px;
   place-items: center;
-  border: 1px solid var(--line-strong);
   border-radius: var(--radius-full);
-  color: var(--brand);
+  background: var(--industry-bg, var(--brand-weak));
+  color: var(--industry-fg, var(--brand));
 }
 
 .headText {

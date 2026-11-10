@@ -144,8 +144,8 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-full);
-  background: var(--brand-weak);
-  color: var(--brand);
+  background: var(--industry-bg, var(--brand-weak));
+  color: var(--industry-fg, var(--brand));
 }
 
 .reasonTitle {
