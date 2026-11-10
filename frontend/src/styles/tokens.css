@@ -49,6 +49,14 @@
   --caution-weak: #fbebe4;
   --rise: #c42b31;
   --fall: #2c63c4;
+  /* AI 리포트 좋은 점(초록)·지켜볼 점(주황). 주가 빨강·파랑과 헷갈리지 않게 따로 둬요.
+   * 지켜볼 점 글자는 지정색 #b5650f 가 배경 위 3.9:1 이라 4.5:1 이 되도록 조금 진하게 했어요. */
+  --color-positive: #1e7a4c;
+  --color-positive-bg: #e6f4ec;
+  --color-positive-line: #bfe3cd;
+  --color-caution: #9a550c;
+  --color-caution-bg: #fdf1e2;
+  --color-caution-line: #f3d3a8;
   --rise-line: #e5484d;
   --fall-line: #3e7be0;
   --avatar-1: #d9ecea;
@@ -176,6 +184,12 @@
     --caution-weak: #3b2219;
     --rise: #ff6b6f;
     --fall: #6c9cf0;
+    --color-positive: #7fd3a2;
+    --color-positive-bg: #15301f;
+    --color-positive-line: #2c5a3f;
+    --color-caution: #f2b462;
+    --color-caution-bg: #36260f;
+    --color-caution-line: #6b4a1c;
     --rise-line: #ff6b6f;
     --fall-line: #6c9cf0;
     --avatar-1: #1f2e2b;
@@ -248,6 +262,12 @@
   --caution-weak: #3b2219;
   --rise: #ff6b6f;
   --fall: #6c9cf0;
+  --color-positive: #7fd3a2;
+  --color-positive-bg: #15301f;
+  --color-positive-line: #2c5a3f;
+  --color-caution: #f2b462;
+  --color-caution-bg: #36260f;
+  --color-caution-line: #6b4a1c;
   --rise-line: #ff6b6f;
   --fall-line: #6c9cf0;
   --avatar-1: #1f2e2b;

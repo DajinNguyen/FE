@@ -1,6 +1,7 @@
 import { Icon } from '../../components/Icon';
 import type { KeyPoint } from '../../types';
-import { describeChange } from './reportMeta';
+import { describeChange, keyPointTone } from './reportMeta';
+import { ToneBadge } from './ToneBadge';
 import styles from './AiAnalysis.module.css';
 
 interface KeyPointRowProps {
@@ -18,16 +19,20 @@ const directionLabel = { up: '증가', down: '감소', flat: '' } as const;
 export function KeyPointRow({ point, onOpen }: KeyPointRowProps) {
   const change = describeChange(point.before, point.after);
   const keyValue = point.after;
+  const tone = keyPointTone[point.category];
 
   return (
-    <li className={styles.point}>
+    <li className={styles.point} data-tone={tone}>
       <button
         type="button"
         className={styles.pointHead}
         aria-haspopup="dialog"
         onClick={() => onOpen(point)}
       >
-        <span className={styles.pointTitle}>{point.title}</span>
+        <span className={styles.pointTitle}>
+          {tone && <ToneBadge tone={tone} />}
+          {point.title}
+        </span>
         {keyValue && (
           <span className={styles.keyValue}>
             {keyValue.value}
