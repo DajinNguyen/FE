@@ -6,41 +6,41 @@
  * - text-1~3 은 바탕(bg, surface) 위에서 4.5:1 이상이에요. text-4 는 글자에 쓰지 않아요(테두리·비활성 표시용).
  */
 :root {
-  /* 색 — 1안 딥 틸 (2026-11-02)
-   * page(연한 브랜드 톤) 위에 흰 카드(bg)를 올려요. 흰색은 카드·입력창·시트에만 써요.
+  /* 색 — 라이트는 인디고 (2026-11-10, 좋은 점 초록과 겹치지 않게 딥 틸에서 바꿈), 다크는 딥 틸 그대로
+   * page(연한 브랜드 톤) 위에 흰 카드(bg)를 올려요. brand-weak 는 surface 보다 한 단계 밝게 둬서 surface 위 상자도 보이게 해요. 흰색은 카드·입력창·시트에만 써요.
    * deep: 헤더·메인 맨 위 띠 같은 진한 면 / brand: 버튼·링크·활성 탭 / point: 순위 배지처럼 몇 곳에만
    * rise·fall 은 숫자 글자용(배경 대비 4.5:1 이상), rise-line·fall-line 은 그래프 선용이에요.
    * ind-*: 산업 TOP 3 카드의 산업별 배경(bg)·아이콘(fg) */
-  --deep: #0e4a47;
+  --deep: #2e2a78;
   --on-deep: #ffffff;
   --on-deep-sub: rgba(255, 255, 255, 0.8);
   --on-deep-surface: rgba(255, 255, 255, 0.14);
   --on-deep-line: rgba(255, 255, 255, 0.4);
-  --brand: #11756f;
-  --brand-strong: #0e4a47;
-  --brand-weak: #d9ecea;
-  --brand-muted: #9ccdc7;
-  --brand-card: #0e5a56;
+  --brand: #5146d9;
+  --brand-strong: #2e2a78;
+  --brand-weak: #efedfb;
+  --brand-muted: #b9b4ee;
+  --brand-card: #3a35a0;
   --on-brand: #ffffff;
   --on-brand-sub: rgba(255, 255, 255, 0.8);
   --on-brand-card: #ffffff;
   --on-brand-card-sub: rgba(255, 255, 255, 0.8);
   --point: #f2a93b;
-  --on-point: #14201f;
-  --page: #eef6f5;
+  --on-point: #1a1933;
+  --page: #f3f2fc;
   --bg: #ffffff;
-  --bg-outside: #e2efed;
-  --surface: #e2efed;
-  --surface-strong: #d3e3e0;
-  --line: #d3e3e0;
-  --line-strong: #8eaaa6;
-  --cw-block: #14302d;
+  --bg-outside: #e8e6f8;
+  --surface: #e8e6f8;
+  --surface-strong: #dcdaf0;
+  --line: #dcdaf0;
+  --line-strong: #9c99c4;
+  --cw-block: #1e1b4f;
   --cw-cell: #ffffff;
-  --chart-muted: #7fa6a1;
-  --text-1: #14201f;
-  --text-2: #2f3f3d;
-  --text-3: #5a6b69;
-  --text-4: #93a6a3;
+  --chart-muted: #a19fd0;
+  --text-1: #1a1933;
+  --text-2: #36345a;
+  --text-3: #5e5c78;
+  --text-4: #a19fbd;
   --good: #1b7a46;
   --good-weak: #e3f2e8;
   --normal: #9a5b00;
@@ -51,15 +51,15 @@
   --fall: #2c63c4;
   --rise-line: #e5484d;
   --fall-line: #3e7be0;
-  --avatar-1: #d9ecea;
-  --avatar-2: #d9ecea;
-  --avatar-3: #d9ecea;
-  --avatar-4: #d9ecea;
-  --avatar-5: #d9ecea;
-  --avatar-text: #0e4a47;
-  --overlay: rgba(8, 24, 23, 0.45);
-  --shadow-float: 0 4px 16px rgba(14, 74, 71, 0.08);
-  --shadow-pop: 0 12px 32px rgba(14, 74, 71, 0.16);
+  --avatar-1: #efedfb;
+  --avatar-2: #efedfb;
+  --avatar-3: #efedfb;
+  --avatar-4: #efedfb;
+  --avatar-5: #efedfb;
+  --avatar-text: #2e2a78;
+  --overlay: rgba(20, 18, 50, 0.45);
+  --shadow-float: 0 4px 16px rgba(46, 42, 120, 0.08);
+  --shadow-pop: 0 12px 32px rgba(46, 42, 120, 0.16);
   --ind-ai-bg: #e8e6fb;
   --ind-ai-fg: #5246c8;
   --ind-semiconductor-bg: #e3eefb;
@@ -69,7 +69,7 @@
   --ind-bio-bg: #fbe8ef;
   --ind-bio-fg: #b8436b;
   --ind-internet-bg: #fff1dd;
-  --ind-internet-fg: #a8620e;
+  --ind-internet-fg: #b86e12;
   --ind-auto-bg: #e9eef2;
   --ind-auto-fg: #4a5a68;
   --ind-shipbuilding-bg: #e0f2f4;
