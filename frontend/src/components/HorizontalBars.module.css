@@ -14,11 +14,11 @@
 
 .label {
   color: var(--text-2);
-  font-weight: 500;
+  font-weight: var(--fw-regular);
 }
 
 .value {
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
 }
 

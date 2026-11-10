@@ -95,7 +95,7 @@ function LastPriceLabel({
         textAnchor="end"
         fill="var(--bg)"
         fontSize="var(--fs-xs)"
-        fontWeight={700}
+        style={{ fontWeight: 'var(--fw-semibold)' }}
       >
         {formatAxisPrice(value)}
       </text>

@@ -16,12 +16,12 @@
 
 .change strong {
   font-size: var(--fs-2xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .arrow {
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-regular);
 }
 
 /* 늘었으면 빨강, 줄었으면 파랑 (현재 숫자와 화살표만) */
@@ -40,7 +40,7 @@
 .date {
   color: var(--text-3);
   font-size: var(--fs-xs);
-  font-weight: 500;
+  font-weight: var(--fw-regular);
 }
 
 .explain {
@@ -53,7 +53,7 @@
 .explain dt {
   color: var(--text-2);
   font-size: var(--fs-sm);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .explain dd {
@@ -71,7 +71,7 @@
 
 .blockTitle {
   font-size: var(--fs-base);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .unit {
@@ -87,7 +87,7 @@
   justify-content: space-between;
   gap: var(--sp-2);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .chartChange {
@@ -105,7 +105,7 @@
 
 .evidenceLabel {
   color: var(--text-3);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .evidenceLink {
@@ -113,7 +113,7 @@
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-full);
   color: var(--text-1);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
   line-height: 1.9;
 }
 
@@ -136,7 +136,7 @@
 
 .disclosures a {
   color: var(--text-1);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
   text-decoration: underline;
   text-underline-offset: 3px;
 }

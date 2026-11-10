@@ -22,7 +22,7 @@
 
 .title {
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-medium);
   line-height: var(--lh-tight);
 }
 
@@ -62,7 +62,7 @@
 
 .compact .title {
   font-size: var(--fs-base);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .compact .summary {

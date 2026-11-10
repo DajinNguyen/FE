@@ -5,7 +5,7 @@
   padding: 3px 10px;
   border-radius: var(--radius-full);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   white-space: nowrap;
 }
 

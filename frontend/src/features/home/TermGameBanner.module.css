@@ -27,7 +27,7 @@
 
 .title {
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .text,
@@ -38,7 +38,7 @@
 
 .reward {
   color: var(--brand);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .links {
@@ -53,7 +53,7 @@
   align-items: center;
   color: var(--brand);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .go:hover {

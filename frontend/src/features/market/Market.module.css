@@ -27,7 +27,7 @@
 .headline {
   max-width: 760px;
   font-size: var(--fs-4xl);
-  font-weight: 800;
+  font-weight: var(--fw-bold);
   letter-spacing: -0.02em;
   line-height: var(--lh-tight);
   text-wrap: balance;
@@ -35,7 +35,7 @@
 
 .failTitle {
   font-size: var(--fs-2xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .meta {
@@ -66,11 +66,11 @@
 
 .indexName {
   color: var(--text-2);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .indexValue {
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   text-align: right;
 }
 
@@ -79,7 +79,7 @@
   align-items: baseline;
   justify-content: flex-end;
   gap: 2px;
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 .change > span:first-child {
@@ -111,7 +111,7 @@
 
 .reasonsTitle {
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .reasonList {
@@ -150,7 +150,7 @@
 
 .reasonTitle {
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   line-height: var(--lh-tight);
 }
 
@@ -174,7 +174,7 @@
   border-radius: var(--radius-full);
   color: var(--brand-strong);
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   line-height: 1.9;
 }
 
@@ -192,7 +192,7 @@
   margin-bottom: var(--sp-1);
   color: var(--text-3);
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 /* 불러오는 중: 실제와 비슷한 크기로 자리를 잡아 둬요 */

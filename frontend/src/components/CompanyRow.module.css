@@ -24,7 +24,7 @@
 .rank {
   width: 16px;
   color: var(--brand);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   text-align: center;
 }
 
@@ -37,7 +37,7 @@
 
 .name {
   font-size: var(--fs-md);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 .meta {
@@ -56,7 +56,7 @@
 }
 
 .priceValue {
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
 }
 

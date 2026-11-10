@@ -10,13 +10,13 @@
   gap: var(--sp-1);
   color: var(--text-3);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .setupTitle {
   margin-top: var(--sp-2);
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   letter-spacing: -0.02em;
 }
 
@@ -47,13 +47,13 @@
 .recordRow dt {
   color: var(--text-3);
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: var(--fw-regular);
 }
 
 .recordRow dd {
   margin-top: 2px;
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .startButton {
@@ -71,13 +71,13 @@
 .progress {
   color: var(--brand);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .streak {
   color: var(--normal);
   font-size: var(--fs-sm);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .track {
@@ -99,7 +99,7 @@
   margin-top: var(--sp-6);
   color: var(--text-2);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 .prompt {
@@ -116,13 +116,13 @@
   background: var(--brand-weak);
   color: var(--brand-strong);
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .promptTerm {
   margin-top: var(--sp-2);
   font-size: var(--fs-2xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   letter-spacing: -0.02em;
   word-break: keep-all;
 }
@@ -130,7 +130,7 @@
 .promptMeaning {
   margin-top: var(--sp-2);
   font-size: var(--fs-md);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
   line-height: 1.55;
   word-break: keep-all;
 }
@@ -160,7 +160,7 @@
   padding: var(--sp-3) var(--sp-4);
   border-radius: var(--radius-sm);
   background: var(--bg);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   line-height: 1.5;
   text-align: left;
   word-break: keep-all;
@@ -174,7 +174,7 @@
   justify-content: center;
   min-height: 72px;
   font-size: var(--fs-2xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .option:disabled,
@@ -190,7 +190,7 @@
 .correct {
   background: var(--good-weak);
   color: var(--good);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .wrong {
@@ -215,7 +215,7 @@
 .feedbackTitle {
   margin-bottom: var(--sp-1);
   font-size: var(--fs-base);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .feedbackCorrect .feedbackTitle {
@@ -242,12 +242,12 @@
 .score {
   margin-top: var(--sp-2);
   font-size: var(--fs-xl);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 .score strong {
   color: var(--brand);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .resultMessage {
@@ -259,7 +259,7 @@
   margin-top: var(--sp-1);
   color: var(--text-3);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
 }
 
 .wrongSection {
@@ -268,7 +268,7 @@
 
 .wrongTitle {
   font-size: var(--fs-base);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .wrongList {
@@ -285,7 +285,7 @@
 }
 
 .wrongTerm {
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .wrongMeaning {

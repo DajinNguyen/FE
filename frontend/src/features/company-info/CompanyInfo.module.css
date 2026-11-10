@@ -19,7 +19,7 @@
   align-items: center;
   gap: var(--sp-1);
   color: var(--text-1);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -27,7 +27,7 @@
 .lead {
   max-width: var(--reading-max-width);
   font-size: var(--fs-md);
-  font-weight: 500;
+  font-weight: var(--fw-regular);
 }
 
 .industryLine {
@@ -43,7 +43,7 @@
 .industryLabel {
   color: var(--text-3);
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .industryLabel:not(:first-child) {
@@ -56,7 +56,7 @@
   background: var(--brand-weak);
   border-radius: var(--radius-full);
   color: var(--brand-strong);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   line-height: 1.9;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .segmentName {
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .segmentDescription {
@@ -140,18 +140,18 @@
   gap: var(--sp-2);
   color: var(--text-2);
   font-size: var(--fs-sm);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .planTag {
   color: var(--text-3);
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 .timelineTitle {
   margin-top: 2px;
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .timelineDescription {
@@ -184,7 +184,7 @@
 
 .facts dd {
   margin: 0;
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   text-align: right;
 }
 
@@ -209,5 +209,5 @@
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }

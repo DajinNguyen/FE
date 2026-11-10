@@ -33,7 +33,7 @@
 
 .title {
   font-size: var(--fs-3xl);
-  font-weight: 800;
+  font-weight: var(--fw-bold);
   line-height: var(--lh-tight);
 }
 
@@ -57,14 +57,14 @@
 
 .sectionTitle {
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .sectionNote {
   margin-left: var(--sp-2);
   color: var(--text-3);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-regular);
 }
 
 .why {
@@ -84,7 +84,7 @@
   border-radius: var(--radius-full);
   color: var(--text-1);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
 }
 
 .newsChip:hover {
@@ -127,17 +127,17 @@
 .table thead th {
   color: var(--text-3);
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .table tbody th {
-  font-weight: 600;
+  font-weight: var(--fw-medium);
 }
 
 .table tfoot th,
 .table tfoot td {
   border-bottom: none;
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .criteria {
@@ -170,7 +170,7 @@
   width: 24px;
   flex-shrink: 0;
   color: var(--text-2);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
@@ -185,7 +185,7 @@
 
 .companyName {
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .companyIntro {
@@ -203,12 +203,12 @@
 }
 
 .cap {
-  font-weight: 700;
+  font-weight: var(--fw-regular);
 }
 
 .rate {
   font-size: var(--fs-xs);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
 }
 
 .rise {
@@ -229,7 +229,7 @@
 
 .homeLink {
   color: var(--brand);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 .disclaimer {

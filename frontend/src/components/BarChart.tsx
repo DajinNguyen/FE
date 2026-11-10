@@ -50,7 +50,11 @@ export function BarChart({ data, formatValue, ariaLabel, height = 200 }: BarChar
               dataKey="value"
               position="top"
               formatter={(value) => formatValue(Number(value))}
-              style={{ fill: 'var(--text-2)', fontSize: 'var(--fs-xs)', fontWeight: 700 }}
+              style={{
+                fill: 'var(--text-2)',
+                fontSize: 'var(--fs-xs)',
+                fontWeight: 'var(--fw-semibold)',
+              }}
             />
           </Bar>
         </RechartsBarChart>

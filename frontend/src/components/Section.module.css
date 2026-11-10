@@ -17,7 +17,7 @@
 
 .title {
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   letter-spacing: -0.02em;
 }
 

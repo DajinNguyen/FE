@@ -24,13 +24,13 @@
 
 .hotTitle {
   font-size: var(--fs-2xl);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .criteriaButton {
   color: var(--brand);
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -99,13 +99,13 @@
   background: var(--point);
   color: var(--on-point);
   font-size: var(--fs-xs);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   line-height: 1.7;
 }
 
 .hotName {
   font-size: var(--fs-md);
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
   line-height: var(--lh-tight);
   word-break: keep-all;
 }
@@ -121,7 +121,7 @@
 }
 
 .hotMetric span {
-  font-weight: 800;
+  font-weight: var(--fw-semibold);
 }
 
 .hotAsOf {
