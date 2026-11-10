@@ -15,6 +15,9 @@
   --text-1: var(--on-deep);
   --text-2: var(--on-deep-sub);
   --text-3: var(--on-deep-sub);
+  /* 다시 시도 버튼(secondary) 면도 띠 위에서 반투명 흰색으로 */
+  --surface: var(--on-deep-surface);
+  --surface-strong: var(--on-deep-line);
 }
 
 .headlineBlock {
