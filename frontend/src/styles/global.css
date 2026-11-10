@@ -1,4 +1,8 @@
-@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+/* Wanted Sans (SIL OFL 1.1) — 쓰는 굵기 400·500·600·700 만, 글자 범위별로 나눈 파일이라 필요한 글자만 내려받아요. */
+@import 'wanted-sans/fonts/webfonts/static/split/WantedSans-Regular.css';
+@import 'wanted-sans/fonts/webfonts/static/split/WantedSans-Medium.css';
+@import 'wanted-sans/fonts/webfonts/static/split/WantedSans-SemiBold.css';
+@import 'wanted-sans/fonts/webfonts/static/split/WantedSans-Bold.css';
 @import './tokens.css';
 
 *,
@@ -15,15 +19,7 @@ body {
   margin: 0;
   background: var(--page);
   color: var(--text-1);
-  font-family:
-    'Pretendard Variable',
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    'Apple SD Gothic Neo',
-    'Noto Sans KR',
-    sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-base);
   line-height: var(--lh-body);
   font-weight: var(--fw-regular);

@@ -102,6 +102,9 @@
   --fs-3xl: 30px; /* 페이지 제목 */
   --fs-4xl: 40px;
 
+  /* 글꼴 (대체 글꼴: 시스템 → 애플 고딕 → 맑은 고딕) */
+  --font-sans: 'Wanted Sans', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+
   --lh-body: 1.7;
   --lh-tight: 1.35;
 
