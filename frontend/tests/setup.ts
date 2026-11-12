@@ -4,6 +4,7 @@ import { afterEach, beforeEach } from 'vitest';
 import { resetPersistentStores } from '../src/hooks/persistentStore';
 import { resetCommunityStore } from './fixtures/community';
 import { failRequests, installFetchStub } from './fixtures/fetchStub';
+import { resetMeStore } from './fixtures/me';
 import { resetSessionUser } from './fixtures/session';
 
 // 앱은 실제 API 를 불러요. 테스트에서는 fetch 를 가로채 fixtures 데이터로 응답해요.
@@ -16,6 +17,7 @@ afterEach(() => {
   window.localStorage.clear();
   resetPersistentStores();
   resetCommunityStore();
+  resetMeStore();
   resetSessionUser();
   failRequests(null);
 });

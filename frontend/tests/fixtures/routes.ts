@@ -3,6 +3,7 @@
  * 테스트(fetchStub.ts)와 스크린샷용 가짜 API 서버가 같이 써요. 앱 코드에서는 쓰지 않아요.
  */
 import { ApiError } from '../../src/api/errors';
+import * as me from './me';
 import * as server from './mockServer';
 import type { HeatPeriod, PostCategory, PostSort, PricePeriod } from '../../src/types';
 
@@ -89,6 +90,8 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   ['GET', /^\/api\/home$/, async () => server.getHomeDashboard()],
   ['GET', /^\/api\/auth\/me$/, async () => server.getMe()],
   ['POST', /^\/api\/auth\/logout$/, async () => server.logout()],
+  ['GET', /^\/api\/me\/term-progress$/, async () => me.getTermProgress()],
+  ['PUT', /^\/api\/me\/term-progress$/, async (_, __, body) => me.putTermProgress(body)],
 ];
 
 /** 이 조건에 맞는 요청은 서버 에러(503)로 응답해요. 테스트에서 실패 화면을 확인할 때 써요. */

@@ -9,6 +9,7 @@ import {
   termCategoryLabels,
   type TermCategoryFilter,
 } from '../features/term-cards/termCategories';
+import { MyLearningRecord } from '../features/term-cards/MyLearningRecord';
 import { TermFlipCard } from '../features/term-cards/TermFlipCard';
 import { TermGame } from '../features/term-game/TermGame';
 import { useTermProgress, type TermMark } from '../hooks/useTermProgress';
@@ -79,7 +80,7 @@ export function TermCardsPage() {
 
   const answer = (value: TermMark) => {
     if (!term) return;
-    mark(term.id, value);
+    mark(term, value);
     setFlipped(false);
     setIndex((i) => i + 1);
   };
@@ -115,6 +116,8 @@ export function TermCardsPage() {
           />
         </div>
       </header>
+
+      <MyLearningRecord />
 
       {mode !== 'crossword' && (
         <div className={styles.filters} role="group" aria-label="용어 분류">
@@ -282,7 +285,6 @@ export function TermCardsPage() {
                 <span className={`${styles.dot} ${styles.review}`} /> 다시 볼래요
                 <span className={styles.dot} /> 아직 안 봤어요
               </p>
-              <p className={styles.notice}>로그인하면 외운 용어와 진행 상황이 저장돼요</p>
             </aside>
           </div>
         </>

@@ -3,6 +3,7 @@ import { Button } from '../../components/Button';
 import { Icon } from '../../components/Icon';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { useTermGameRecord } from '../../hooks/useTermGameRecord';
+import { useTermProgress } from '../../hooks/useTermProgress';
 import type { Term } from '../../types';
 import { termCategoryLabels } from '../term-cards/termCategories';
 import {
@@ -50,6 +51,7 @@ const resultMessage = (score: number, total: number) => {
 /** 용어 게임: 뜻 맞히기 / 용어 맞히기 / OX, 한 판 10문제 */
 export function TermGame({ terms, allTerms, categoryLabel }: TermGameProps) {
   const { record, saveRound } = useTermGameRecord();
+  const { recordAnswer } = useTermProgress();
   const [mode, setMode] = useState<GameMode>('mixed');
   const [questions, setQuestions] = useState<GameQuestion[] | null>(null);
   const [index, setIndex] = useState(0);
@@ -181,6 +183,7 @@ export function TermGame({ terms, allTerms, categoryLabel }: TermGameProps) {
     const correct = optionIndex === question.answerIndex;
     setSelected(optionIndex);
     setAnswers((prev) => [...prev, { question, correct }]);
+    recordAnswer(question.term, correct);
     const nextStreak = correct ? streak + 1 : 0;
     setStreak(nextStreak);
     setBestStreak((best) => Math.max(best, nextStreak));
