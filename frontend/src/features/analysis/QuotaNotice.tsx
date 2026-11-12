@@ -36,5 +36,10 @@ export function QuotaNotice({ quota }: { quota: ReportQuota }) {
     );
   }
   if (!Number.isFinite(quota.remaining)) return null;
-  return <p className={styles.quota}>오늘 {quota.remaining}번 더 만들 수 있어요</p>;
+  return (
+    <p className={styles.quota}>
+      오늘 {quota.remaining}번 더 만들 수 있어요
+      {quota.bonus > 0 && ` (낱말퀴즈 보상 ${quota.bonus}회 포함)`}
+    </p>
+  );
 }

@@ -62,6 +62,8 @@ export function useReportQuota() {
     consume,
     /** 오늘 낱말퀴즈로 횟수를 더 받을 수 있는지 */
     canEarnMore,
+    /** 오늘 낱말퀴즈로 받은 추가 횟수 */
+    bonus,
   };
 }
 

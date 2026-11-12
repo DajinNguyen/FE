@@ -1,69 +1,98 @@
 import { useCallback } from 'react';
+import { getUsageCredits, postPuzzleCompletion } from '../api/me';
 import { PUZZLE_REWARD } from '../config/usagePolicy';
-import { createPersistentStore, usePersistentStore } from './persistentStore';
-import { useAuth } from './useAuth';
+import {
+  applyCompletion,
+  emptyCredits,
+  forToday,
+  type PuzzleRewardResult,
+} from '../features/crossword/puzzleReward';
+import type { UsageCredits } from '../types';
+import { localDate } from '../utils/date';
+import { createSyncedRecord } from './syncedRecord';
 
-/**
- * 낱말퀴즈 보상: 정답 보기 없이 퍼즐 3개를 풀 때마다 리포트 만들기 1회 추가 (하루 최대 2회).
- * 지금은 기기(localStorage)에 기록해요. 서버가 관리하게 되면 이 훅 안만 서버 값으로 바꾸면 돼요.
- */
-interface RewardRecord {
-  /** 기록한 날짜 (YYYY-MM-DD). 날짜가 바뀌면 0부터 다시 세요. */
-  date: string;
-  /** 오늘 정답 보기 없이 다 푼 퍼즐 id (같은 퍼즐은 한 번만) */
-  puzzles: string[];
+export type { PuzzleRewardResult } from '../features/crossword/puzzleReward';
+
+/** 서버에 아직 못 보낸 완료 기록을 차례로 보내고, 서버가 판단한 보상 상태를 받아요. */
+async function sendCompletions(credits: UsageCredits): Promise<UsageCredits> {
+  let latest: UsageCredits | null = null;
+  for (const { synced, ...completion } of credits.completions) {
+    if (synced !== false) continue;
+    latest = await postPuzzleCompletion(completion);
+  }
+  return latest ?? (await getUsageCredits());
 }
 
-const rewardStore = createPersistentStore<RewardRecord>('dajin:puzzle-rewards', {
-  date: '',
-  puzzles: [],
+/** 못 보낸 완료 기록이 남아 있으면 서버 상태 위에 같은 규칙으로 다시 적용해요. */
+function keepUnsent(server: UsageCredits, local: UsageCredits): UsageCredits {
+  const today = localDate();
+  const sent = new Set(server.completions.map((c) => `${c.puzzle_id}@${c.completed_at}`));
+  return local.completions
+    .filter((c) => c.synced === false && !sent.has(`${c.puzzle_id}@${c.completed_at}`))
+    .reduce((acc, c) => applyCompletion(acc, c, { member: true, today }).credits, server);
+}
+
+const creditsRecord = createSyncedRecord<UsageCredits>({
+  name: 'puzzle-rewards-v2',
+  empty: emptyCredits,
+  load: getUsageCredits,
+  save: sendCompletions,
+  merge: keepUnsent,
+  // 비로그인 때 푼 퍼즐은 로그인해도 보상으로 옮기지 않아요. (악용 방지, 기기 기록은 그대로 둬요)
+  isEmpty: () => true,
 });
 
-const todayString = () => {
-  const now = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-};
+/** 낱말퀴즈 보상 Provider (AppProviders 에 있어요) */
+export const UsageCreditsProvider = creditsRecord.Provider;
 
 const { puzzlesPerReward, dailyMax } = PUZZLE_REWARD;
-/** 보상을 다 받는 데 필요한 퍼즐 수 (이보다 많이 풀어도 더 세지 않아요) */
-const maxCounted = puzzlesPerReward * dailyMax;
 
 /**
- * granted  : 이번 퍼즐로 3개를 채워 1회 추가
- * progress : 셌지만 아직 3개가 안 됐어요
- * revealed : 정답 보기를 써서 세지 않아요
- * guest    : 로그인하지 않아서 세지 않아요
- * daily-max: 오늘 보상을 다 받았어요
- * already  : 오늘 이미 센 퍼즐이에요
+ * 낱말퀴즈 보상: 정답 보기 없이 퍼즐 3개를 풀 때마다 리포트 만들기 1회 추가 (하루 최대 2회, 로그인 사용자만).
+ * 로그인하면 완료 기록을 서버에 보내고 서버가 보상을 판단해요. 비로그인은 기기에 개수만 세요.
  */
-export type PuzzleRewardResult =
-  'granted' | 'progress' | 'revealed' | 'guest' | 'daily-max' | 'already';
-
 export function useUsageCredits() {
-  const record = usePersistentStore(rewardStore);
-  const { isLoggedIn } = useAuth();
-  const solved = isLoggedIn && record.date === todayString() ? record.puzzles.length : 0;
-  const bonus = Math.min(Math.floor(solved / puzzlesPerReward), dailyMax);
-  const canEarnMore = isLoggedIn && bonus < dailyMax;
-  /** 다음 보상까지 푼 개수 (0~2). 보상을 다 받았으면 3 */
-  const progress = canEarnMore ? solved % puzzlesPerReward : puzzlesPerReward;
+  const { data, update, storage } = creditsRecord.useRecord();
+  const member = storage === 'server';
+  const today = forToday(data, localDate());
+  const rewardsToday = member ? today.rewards_today : 0;
+  const canEarnMore = member && rewardsToday < dailyMax;
+  /** 다음 보상까지 푼 개수 (0~3). 오늘 보상을 다 받았으면 3 */
+  const progress = member && !canEarnMore ? puzzlesPerReward : today.progress;
 
   /** 낱말퀴즈를 다 풀었을 때 불러요. */
   const onPuzzleComplete = useCallback(
     (puzzleId: string, { revealed }: { revealed: boolean }): PuzzleRewardResult => {
-      if (revealed) return 'revealed';
-      if (PUZZLE_REWARD.membersOnly && !isLoggedIn) return 'guest';
-      const current = rewardStore.get();
-      const list = current.date === todayString() ? current.puzzles : [];
-      if (list.includes(puzzleId)) return 'already';
-      if (list.length >= maxCounted) return 'daily-max';
-      const next = [...list, puzzleId];
-      rewardStore.set({ date: todayString(), puzzles: next });
-      return next.length % puzzlesPerReward === 0 ? 'granted' : 'progress';
+      let result: PuzzleRewardResult = 'progress';
+      const now = new Date();
+      update((prev) => {
+        const applied = applyCompletion(
+          prev,
+          {
+            puzzle_id: puzzleId,
+            completed_at: now.toISOString(),
+            revealed,
+            // 로그인 사용자는 서버에 보내야 하는 기록이에요.
+            ...(member ? { synced: false } : {}),
+          },
+          { member, today: localDate(now) },
+        );
+        result = applied.result;
+        return applied.credits;
+      });
+      return result;
     },
-    [isLoggedIn],
+    [update, member],
   );
 
-  return { bonus, canEarnMore, progress, puzzlesPerReward, onPuzzleComplete };
+  return {
+    /** 오늘 받은 보상 = 리포트 만들기 추가 횟수 */
+    bonus: rewardsToday,
+    rewardsToday,
+    dailyMax,
+    canEarnMore,
+    progress,
+    puzzlesPerReward,
+    onPuzzleComplete,
+  };
 }

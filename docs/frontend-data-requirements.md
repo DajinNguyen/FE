@@ -223,16 +223,9 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
   - 제한에 걸리면 `POST /report` 가 `429` + `code: "DAILY_LIMIT"` 으로 알려 주기
 - 이미 만들어진 리포트 보기(`GET /report`)는 제한하지 않아요.
 
-### 낱말퀴즈 완료 보상 (2026-11-02 변경, 임시값 확정 필요)
+### 낱말퀴즈 완료 보상 (2026-11-13 서버 저장으로 변경, 임시값 확정 필요)
 
-- **퍼즐 3개**를 [정답 보기] 없이 다 풀면 리포트 만들기 1회 추가, 보상은 하루 최대 2회(퍼즐 6개), 로그인 사용자만. 같은 퍼즐은 하루 한 번만 세요.
-- 퀴즈를 다 풀면 "AI 리포트까지 퀴즈 1/3", 3개를 채우면 "AI 리포트 1회가 추가됐어요"를 보여줘요.
-- 값: `frontend/src/config/usagePolicy.ts` 의 `PUZZLE_REWARD`. 지금은 기기(localStorage)에 기록해요 (`useUsageCredits`).
-- 서버로 옮길 때 필요한 것 (제안):
-  - `POST /api/learn/crosswords/{puzzle_id}/complete` (body `{ "revealed": false }`) → `{ "counted": true, "solved_today": 2, "bonus_today": 0 }`
-  - 남은 횟수 응답에 오늘 받은 보상 횟수 포함
-- 퍼즐이 지금 3개뿐이라, 같은 퍼즐을 하루 한 번만 세면 보상은 하루 1회까지만 받을 수 있어요. 퍼즐을 6개 이상으로 늘려야 하루 2회가 가능해요.
-- 하루 횟수 제한은 지금 임시로 무제한이라 보상 안내 문구는 숨겨져 있어요. 제한 값이 생기면 저절로 보여요.
+→ **14. 낱말퀴즈 보상** 을 봐 주세요.
 
 ## 5. 뉴스 (2026-10-27 형식 변경)
 
@@ -562,6 +555,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | 용어 학습 | 낱말퀴즈 목록·퍼즐 | `GET /api/learn/crosswords`, `GET /api/learn/crosswords/{puzzle_id}` | 백엔드 `app/schemas/crossword.py` |
 | 용어 학습·용어 설명 | 카드 학습·문제·용어 밑줄 | `GET /api/terms` | API_SPEC 10) |
 | 용어 학습 | 내 학습 기록 (로그인 사용자) | `GET·PUT /api/me/term-progress` | 13 |
+| 용어 학습·AI 분석 | 낱말퀴즈 보상 (로그인 사용자) | `GET /api/me/usage-credits`, `POST /api/me/puzzle-completions` | 14 |
 
 ### 주가 흐름 그래프 색 (2026-11-02)
 
@@ -729,4 +723,50 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 
 - 학습 메인 "내 학습 기록": 외운 용어 수(`mastered`), 오늘 학습 수(`last_studied_at` 이 오늘), 연속 학습일(`study_dates`).
 - 지금 로그인 API(Google)는 있지만 이 API 가 없어서, 로컬에서는 개발용 로그인 + 테스트 서버(`tests/fixtures/me.ts`)로 흐름만 확인했어요.
+
+## 14. 낱말퀴즈 보상 `GET /api/me/usage-credits`, `POST /api/me/puzzle-completions` (2026-11-13 추가, 백엔드 필요)
+
+낱말퀴즈 3개를 [정답 보기] 없이 끝까지 풀면 AI 리포트 만들기 1회 추가. 타입: `frontend/src/types/learning.ts` (`UsageCredits`, `PuzzleCompletion`)
+규칙(임시값): `frontend/src/config/usagePolicy.ts` 의 `PUZZLE_REWARD`, 계산: `frontend/src/features/crossword/puzzleReward.ts`
+
+| 규칙 | 값 (임시값, 확정 필요) |
+|---|---|
+| 보상 1회에 필요한 퀴즈 | 3개 (`puzzlesPerReward`) |
+| 하루 최대 보상 | 2회 = 퀴즈 6개분 (`dailyMax`) |
+| [정답 보기]를 쓴 퀴즈 | 개수에 넣지 않아요 |
+| 같은 퀴즈 | 하루 한 번만 세요 |
+| 누가 받나요 | 로그인 사용자만. 비로그인은 기기에 개수만 세고(최대 3/3) "로그인하면 보상을 받을 수 있어요" |
+| 날짜가 바뀌면 | 오늘 보상 횟수는 0부터. 센 퀴즈 수(예: 2/3)는 남겨요 (`keepProgressAcrossDays: true`) |
+
+- 비로그인 때 푼 퀴즈는 로그인해도 보상으로 옮기지 않아요.
+- 퀴즈를 다 풀면 `POST /api/me/puzzle-completions` 로 알려요. 실패하면 기기에 두고 다시 보내요 (13과 같은 방식).
+- **보상 지급과 악용 방지(중복 완료, 시간 조작)는 서버에서 판단해야 해요.** 프론트 계산은 화면에 바로 보여주기 위한 것이고, 응답 값으로 덮어써요.
+  - "오늘"은 서버 시간으로 판단해 주세요 (`completed_at` 은 기기 시간이라 바꿀 수 있어요).
+  - 같은 퀴즈 중복 완료, 퀴즈를 열지도 않고 완료만 보내는 요청 등은 서버에서 걸러 주세요.
+- 리포트 만들기 남은 횟수는 지금 프론트가 `하루 횟수 + rewards_today` 로 계산해요 (4. 이용 제한). 서버가 남은 횟수를 관리하게 되면 이 응답에 함께 넣어 주세요.
+- 하루 만들기 횟수가 지금 임시로 무제한이라, 보상 안내 문구(퀴즈 완료 화면·AI 분석 탭·메인)는 숨겨져 있어요. `USAGE_POLICY` 에 제한 값이 생기면 저절로 보여요.
+
+```json
+// POST /api/me/puzzle-completions 요청
+{ "puzzle_id": "crossword-basic-1", "completed_at": "2026-11-13T09:12:00+09:00", "revealed": false }
+
+// GET /api/me/usage-credits, POST 응답
+{
+  "date": "2026-11-13",
+  "rewards_today": 1,
+  "progress": 0,
+  "counted_today": ["crossword-basic-1", "crossword-basic-2", "crossword-basic-3"],
+  "completions": [
+    { "puzzle_id": "crossword-basic-1", "completed_at": "2026-11-13T09:12:00+09:00", "revealed": false }
+  ]
+}
+```
+
+| 칸 | 뜻 |
+|---|---|
+| `date` | `rewards_today`·`counted_today` 의 기준 날짜 (서버 날짜) |
+| `rewards_today` | 오늘 받은 보상 횟수 (0~2) = 오늘 리포트 만들기 추가 횟수 |
+| `progress` | 다음 보상까지 센 퀴즈 수 (0~2) |
+| `counted_today` | 오늘 개수에 넣은 퀴즈 id |
+| `completions` | 최근 완료 기록 (최근 50개). 요청에 온 `completed_at` 을 그대로 돌려주세요 (프론트가 보낸 기록인지 확인할 때 써요) |
 
