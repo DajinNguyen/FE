@@ -555,6 +555,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | 기업 상세 > 개요 | 최근 사업 성과 | `GET /api/companies/{stock_code}/financials` (`recent_performance`) | 1 |
 | 기업 상세 > 개요 | 주가 흐름 (1달·3달·6달·1년) | `GET /api/companies/{stock_code}/prices?period=` | API_SPEC 7) |
 | 기업 상세 > AI 분석 | 리포트 보기 / 만들기 | `GET·POST /api/companies/{stock_code}/report` | 3 |
+| 기업 상세 > 재무 상세 | 맨 위 최근 사업 성과 분석 | `GET /api/companies/{stock_code}/performance` | 12 |
 | 기업 상세 > 재무 상세 | 재무제표·주요 지표 | `GET /api/companies/{stock_code}/financials` | 1 |
 | 기업 상세 > 뉴스 상세 | 기업 뉴스 (페이지) | `GET /api/companies/{stock_code}/news?page=&size=` | 5 |
 | 기업 상세 > 커뮤니티 | 글·댓글·좋아요·신고 | 8-1 의 API 전부 | 8 |
@@ -649,3 +650,41 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | `market_cap` | null 이면 시가총액 숨김 |
 
 - 재무·리포트 자료가 아직 없는 기업은 지금처럼 `404 DATA_NOT_FOUND` 로 주면 "아직 자료가 없어요" 안내가 나와요.
+
+## 12. 최근 사업 성과 분석 `GET /api/companies/{stock_code}/performance` (2026-11-13 추가, 백엔드 필요)
+
+개요 "최근 사업 성과" 아래 [자세히 보기] → 재무 상세 맨 위 "최근 사업 성과 분석"으로 이동해요.
+타입: `frontend/src/types/performance.ts` (`PerformanceDetail`), 예시: `frontend/tests/fixtures/performance.ts`
+
+```json
+{
+  "period_label": "2025년 4분기",
+  "announced_at": "2026-01-29",
+  "unit": "조 원",
+  "summary": { "revenue": 93.8, "operating_income": 20.1, "operating_margin": 21.4 },
+  "yoy": { "revenue_rate": 23.7, "operating_income_rate": 209.2 },
+  "qoq": { "revenue_rate": 8.9, "operating_income_rate": 64.8 },
+  "quarterly": [{ "quarter": "25.4Q", "revenue": 93.8, "operating_income": 20.1, "operating_margin": 21.4 }],
+  "segments": [{ "name": "DS(반도체)", "revenue": 44.0, "operating_income": 16.4, "yoy_rate": 45.2, "comment": "AI 서버용 메모리(HBM) 판매가 늘었어요." }],
+  "reasons": [{
+    "title": "AI용 메모리 판매가 크게 늘었어요",
+    "description": "…",
+    "evidence": [{ "type": "disclosure", "label": "2025년 4분기 실적 발표", "date": "2026-01-29", "url": "https://dart.fss.or.kr/..." }]
+  }],
+  "source": { "title": "삼성전자 2025년 4분기 연결 실적", "date": "2026-01-29", "url": "https://dart.fss.or.kr/..." }
+}
+```
+
+| 칸 | 화면 | 없을 때 |
+|---|---|---|
+| `period_label`, `announced_at`, `unit` | 제목 옆 "2025년 4분기 · 2026년 1월 29일 발표 · 단위: 조 원" | 필수 |
+| `summary` | 실적 요약 (매출·영업이익·영업이익률 %) | `null` → 그 블록만 "자료가 없어요" |
+| `yoy`, `qoq` | 작년 같은 분기·지난 분기 대비 변화율(%) + ▲▼. 비교 기준 값은 `quarterly` 에서 4분기 전·1분기 전을 찾아 보여줘요 | `null` 또는 칸별 `null` → "자료가 없어요" |
+| `quarterly` | 오래된 분기 → 최근 분기 순서, **최대 8개**. 매출·영업이익 막대 + 영업이익률 선, 모든 값 표시 | 빈 배열 → "자료가 없어요" |
+| `segments` | 사업마다 매출, 영업이익, 작년 대비 변화율, 한 줄 설명 | 사업별 영업이익을 공개하지 않으면 `operating_income: null` (매출만 보여요). 빈 배열 → "자료가 없어요" |
+| `reasons` | "왜 이렇게 됐나요?" 2~3개, 근거 칩 `type` 은 `disclosure`(공시) · `news`(뉴스) | 빈 배열 → "자료가 없어요" |
+| `source` | 출처: DART 공시명 · 날짜 (링크) | `null` → "출처: 자료가 없어요" |
+
+- 기업은 있는데 실적 자료가 없으면 `404` 로 답해 주세요 → 섹션 전체가 "자료가 없어요".
+- 설명 문장(`comment`, `reasons`)은 지난 실적을 쉬운 말로 풀어 주세요. 앞으로의 주가·실적 예측이나 투자 권유 표현은 넣지 말아 주세요.
+

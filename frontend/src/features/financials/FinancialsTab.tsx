@@ -10,9 +10,21 @@ import { formatTrillion } from '../../utils/format';
 import { IndicatorSignals } from './IndicatorSignals';
 import { AnnualFinancialsSection } from './AnnualFinancialsSection';
 import { buildIndicators } from './indicators';
+import { PerformanceAnalysis } from './PerformanceAnalysis';
 import styles from './Financials.module.css';
 
+/** 재무 상세: 맨 위 최근 사업 성과 분석 → 연간 재무·사업별 매출 → 주요 지표 → 원본 숫자 */
 export function FinancialsTab({ stockCode }: { stockCode: string }) {
+  return (
+    <div>
+      {/* 개요 [자세히 보기]로 바로 스크롤해 오도록 재무제표 로딩과 상관없이 먼저 그려요 */}
+      <PerformanceAnalysis stockCode={stockCode} />
+      <FinancialStatements stockCode={stockCode} />
+    </div>
+  );
+}
+
+function FinancialStatements({ stockCode }: { stockCode: string }) {
   const { data: financials, isPending, isError, error, refetch } = useFinancials(stockCode);
   const [showRaw, setShowRaw] = useState(true);
 

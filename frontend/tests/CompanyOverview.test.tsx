@@ -33,7 +33,7 @@ describe('기업 개요', () => {
 
   it('실적 자료가 없는 기업은 안내 문구를 보여줘요', async () => {
     // 테스트 데이터에는 000660 의 재무 자료가 없어요 (서버가 404 로 답해요)
-    renderWithProviders(<RecentPerformance stockCode="000660" />);
+    renderWithProviders(<RecentPerformance stockCode="000660" onGoToTab={() => {}} />);
     expect(await screen.findByText('최근 실적 발표 자료가 아직 없어요.')).toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });

@@ -5,6 +5,7 @@ import type {
   CompanyReport,
   CompanySummary,
   Financials,
+  PerformanceDetail,
   PriceHistory,
   PricePeriod,
 } from '../types';
@@ -33,6 +34,13 @@ export function getCompany(stockCode: string) {
 export function getFinancials(stockCode: string) {
   return request<Financials>({
     path: `/api/companies/${stockCode}/financials`,
+  });
+}
+
+/** 재무 상세 "최근 사업 성과 분석" (실적 요약·비교·분기 흐름·사업별·이유·출처) */
+export function getPerformanceDetail(stockCode: string) {
+  return request<PerformanceDetail>({
+    path: `/api/companies/${stockCode}/performance`,
   });
 }
 

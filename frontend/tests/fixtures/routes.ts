@@ -22,6 +22,11 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   ['GET', /^\/api\/companies\/(\w+)\/financials$/, async ([, code]) => server.getFinancials(code)],
   [
     'GET',
+    /^\/api\/companies\/(\w+)\/performance$/,
+    async ([, code]) => server.getPerformanceDetail(code),
+  ],
+  [
+    'GET',
     /^\/api\/companies\/(\w+)\/prices$/,
     async ([, code], q) => server.getPriceHistory(code, (q.get('period') ?? '3m') as PricePeriod),
   ],

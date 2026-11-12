@@ -1,0 +1,287 @@
+/* 재무 상세 "최근 사업 성과 분석" */
+.block + .block {
+  margin-top: var(--sp-8);
+}
+
+.blockTitle {
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.muted {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.rise,
+.fall {
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rise {
+  color: var(--rise);
+}
+
+.fall {
+  color: var(--fall);
+}
+
+dl.summary,
+.compare dl,
+.segmentValues {
+  margin: 0;
+}
+
+.summary dd,
+.compare dd,
+.segmentValues dd {
+  margin: 0;
+}
+
+/* 1) 실적 요약: 큰 숫자 3개 */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-4);
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.summary dt {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+
+.summary dd {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-tight);
+}
+
+/* 2) 이전과 비교 */
+.compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-4);
+}
+
+.compareCard {
+  padding: var(--sp-4);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.compareLabel {
+  margin-bottom: var(--sp-2);
+  font-weight: var(--fw-semibold);
+}
+
+.compareRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-1) 0;
+  font-size: var(--fs-sm);
+}
+
+.compareRow dt {
+  color: var(--text-2);
+}
+
+.base {
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 3) 분기별 흐름 */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin-bottom: var(--sp-2);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.legendUnit {
+  margin-left: auto;
+  color: var(--text-3);
+}
+
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-xs);
+}
+
+.swatchRevenue {
+  background: var(--chart-muted);
+}
+
+.swatchIncome {
+  background: var(--brand);
+}
+
+.swatchMargin {
+  height: 2px;
+  background: var(--text-2);
+}
+
+.chartScroll {
+  overflow-x: auto;
+}
+
+.chart {
+  min-width: 560px;
+  height: 280px;
+}
+
+/* 4) 사업별 성과 */
+.segments {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+
+.segment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.segmentName {
+  font-weight: var(--fw-semibold);
+}
+
+.segmentValues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-4);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.segmentValues div {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.segmentValues dt {
+  color: var(--text-3);
+}
+
+.segmentValues dd {
+  font-weight: var(--fw-semibold);
+}
+
+.segmentComment {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+}
+
+/* 5) 왜 이렇게 됐나요? */
+.reasons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding-left: var(--sp-6);
+  list-style: decimal;
+}
+
+.reason {
+  padding-left: var(--sp-1);
+}
+
+.reason::marker {
+  color: var(--brand);
+  font-weight: var(--fw-semibold);
+}
+
+.reasonTitle {
+  font-weight: var(--fw-semibold);
+}
+
+.reasonText {
+  margin-top: var(--sp-1);
+  color: var(--text-2);
+  line-height: var(--lh-body);
+}
+
+.evidence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+}
+
+.chip:hover {
+  border-color: var(--brand);
+}
+
+.chipType {
+  color: var(--brand-strong);
+  font-weight: var(--fw-semibold);
+}
+
+/* 6) 출처 */
+.source {
+  margin-top: var(--sp-6);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.source a {
+  color: var(--text-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.skeleton {
+  height: 320px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+@media (max-width: 719px) {
+  .summary dd {
+    font-size: var(--fs-xl);
+  }
+
+  .compare,
+  .segments {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .legendUnit {
+    margin-left: 0;
+  }
+}
