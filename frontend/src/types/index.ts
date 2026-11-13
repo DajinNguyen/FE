@@ -1,6 +1,7 @@
 export type * from './common';
 export type * from './company';
 export type * from './financials';
+export type * from './performance';
 export type * from './news';
 export type * from './report';
 export type * from './term';

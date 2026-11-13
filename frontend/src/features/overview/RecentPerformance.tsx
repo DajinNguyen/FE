@@ -5,6 +5,8 @@ import { HorizontalBars } from '../../components/HorizontalBars';
 import { Icon } from '../../components/Icon';
 import { Section } from '../../components/Section';
 import { useFinancials } from '../../hooks/useFinancials';
+import type { GoToTab } from '../companyTabs';
+import { PERFORMANCE_ANCHOR } from '../financials/PerformanceAnalysis';
 import type { PerformanceMetric } from '../../types';
 import { formatSignedPercent } from '../../utils/format';
 import styles from './RecentPerformance.module.css';
@@ -38,8 +40,14 @@ function Metric({ label, metric }: { label: string; metric: PerformanceMetric })
   );
 }
 
-/** 개요 "최근 사업 성과": 실적 발표 요약 */
-export function RecentPerformance({ stockCode }: { stockCode: string }) {
+/** 개요 "최근 사업 성과": 실적 발표 요약. [자세히 보기]는 재무 상세의 분석으로 이동해요. */
+export function RecentPerformance({
+  stockCode,
+  onGoToTab,
+}: {
+  stockCode: string;
+  onGoToTab: GoToTab;
+}) {
   const { data, isPending, isError, error, refetch } = useFinancials(stockCode);
   const perf = data?.recent_performance;
 
@@ -96,6 +104,13 @@ export function RecentPerformance({ stockCode }: { stockCode: string }) {
         </a>{' '}
         · <DataAsOf value={perf.source.date} suffix="공시" />
       </p>
+      <button
+        type="button"
+        className={styles.more}
+        onClick={() => onGoToTab('financials', PERFORMANCE_ANCHOR)}
+      >
+        자세히 보기 <Icon name="chevronRight" size={16} />
+      </button>
     </Section>
   );
 }

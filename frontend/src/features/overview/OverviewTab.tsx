@@ -23,7 +23,7 @@ export function OverviewTab({ stockCode, onGoToTab }: OverviewTabProps) {
         <CompanyBusiness stockCode={stockCode} />
       </div>
       <div className={styles.performance}>
-        <RecentPerformance stockCode={stockCode} />
+        <RecentPerformance stockCode={stockCode} onGoToTab={onGoToTab} />
       </div>
       <div className={styles.price}>
         <PriceTrend stockCode={stockCode} />

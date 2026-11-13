@@ -11,6 +11,7 @@ import termsJson from './terms.json';
 import { hotIndustries, industryRecords } from './industries';
 import { industryDetail, industryNews } from './industryDetails';
 import { marketSummary } from './market';
+import { performanceDetails } from './performance';
 import { companyNews, marketNews } from './news';
 import samsungJson from './samsungElectronics.json';
 import { ApiError } from '../../src/api/errors';
@@ -27,6 +28,7 @@ import type {
   MarketSummary,
   NewsItem,
   NewsPage,
+  PerformanceDetail,
   PriceHistory,
   PricePeriod,
   SectorGroup,
@@ -120,6 +122,15 @@ export async function getCompany(stockCode: string): Promise<CompanyDetail> {
 export async function getFinancials(stockCode: string): Promise<Financials> {
   await wait(250);
   return getData(stockCode).financials;
+}
+
+/** 재무 상세 "최근 사업 성과 분석" (자료가 없는 기업은 404) */
+export async function getPerformanceDetail(stockCode: string): Promise<PerformanceDetail> {
+  await wait(250);
+  findCompany(stockCode);
+  const data = performanceDetails[stockCode];
+  if (!data) throw new ApiError('실적 자료가 없어요', 404, 'PERFORMANCE_NOT_FOUND');
+  return data;
 }
 
 /** 기업 뉴스: 최신순, 페이지 단위 */
