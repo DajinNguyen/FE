@@ -561,6 +561,7 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | 기업 상세 > 커뮤니티 | 글·댓글·좋아요·신고 | 8-1 의 API 전부 | 8 |
 | 용어 학습 | 낱말퀴즈 목록·퍼즐 | `GET /api/learn/crosswords`, `GET /api/learn/crosswords/{puzzle_id}` | 백엔드 `app/schemas/crossword.py` |
 | 용어 학습·용어 설명 | 카드 학습·문제·용어 밑줄 | `GET /api/terms` | API_SPEC 10) |
+| 용어 학습 | 내 학습 기록 (로그인 사용자) | `GET·PUT /api/me/term-progress` | 13 |
 
 ### 주가 흐름 그래프 색 (2026-11-02)
 
@@ -687,4 +688,45 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 
 - 기업은 있는데 실적 자료가 없으면 `404` 로 답해 주세요 → 섹션 전체가 "자료가 없어요".
 - 설명 문장(`comment`, `reasons`)은 지난 실적을 쉬운 말로 풀어 주세요. 앞으로의 주가·실적 예측이나 투자 권유 표현은 넣지 말아 주세요.
+
+## 13. 로그인 사용자별 학습 기록 `GET·PUT /api/me/term-progress` (2026-11-13 추가, 백엔드 필요)
+
+용어 학습(카드 학습·문제)의 기록을 로그인 사용자별로 서버에 저장해요. 다른 기기에서 로그인해도 이어서 학습할 수 있어요.
+타입: `frontend/src/types/learning.ts` (`TermProgress`), 저장 로직: `frontend/src/hooks/useTermProgress.ts`, `syncedRecord.tsx`
+
+- 비로그인: 기기(localStorage `dajin:term-progress-v2`)에만 저장하고 "로그인하면 기록이 저장돼요"를 보여줘요.
+- 로그인: `GET` 으로 불러오고, 바뀌면 0.5초 모았다가 `PUT` 으로 **전체를 한 번에** 저장해요.
+- 처음 로그인하면 기기 기록과 서버 기록을 합쳐서 `PUT` 하고 기기 기록은 지워요.
+  용어별로 더 진행된 상태(`new` < `learning` < `mastered`)를 남기고, 같으면 최근에 학습한 쪽, 맞힌·틀린 수는 큰 값.
+- 저장 실패: 기기(`dajin:term-progress-v2:pending`)에 임시로 두고 3초 → 10초 → 30초 → 60초 간격으로 다시 시도, "기록 저장에 실패했어요, 다시 시도할게요" 토스트.
+- 로그인 쿠키가 없으면 `401`. 기록이 없는 사용자는 빈 기록(`terms: {}`)으로 답해 주세요.
+
+```json
+{
+  "terms": {
+    "stock": {
+      "status": "mastered",
+      "correct_count": 3,
+      "wrong_count": 1,
+      "last_studied_at": "2026-11-13T09:12:00+09:00",
+      "set_id": "basic"
+    }
+  },
+  "set_progress": [{ "set_id": "basic", "mastered": 1, "studied": 1 }],
+  "study_dates": ["2026-11-12", "2026-11-13"]
+}
+```
+
+| 칸 | 뜻 |
+|---|---|
+| `terms` | 용어 id(`GET /api/terms` 의 `id`) → 기록. 한 번도 학습하지 않은 용어는 없어요 |
+| `status` | `new` 처음 · `learning` 익히는 중([다시 볼래요]·문제 틀림) · `mastered` 외웠어요([알았어요]) |
+| `correct_count`, `wrong_count` | 문제에서 맞힌·틀린 횟수 |
+| `last_studied_at` | 마지막으로 학습한 시각 (ISO) |
+| `set_id` | 세트 = 용어 분류(`category`) |
+| `set_progress` | 세트별 외운 수·학습한 수 (전체 용어 수는 서버가 알고 있어서 보내지 않아요) |
+| `study_dates` | 학습한 날 (기기 날짜 기준, 최근 60일). 학습 메인 "연속 학습일" 계산에 써요 |
+
+- 학습 메인 "내 학습 기록": 외운 용어 수(`mastered`), 오늘 학습 수(`last_studied_at` 이 오늘), 연속 학습일(`study_dates`).
+- 지금 로그인 API(Google)는 있지만 이 API 가 없어서, 로컬에서는 개발용 로그인 + 테스트 서버(`tests/fixtures/me.ts`)로 흐름만 확인했어요.
 

@@ -3,24 +3,31 @@ import { useState, type ReactNode } from 'react';
 import { ToastProvider } from './components/ToastProvider';
 import { TermSheetProvider } from './components/TermSheetProvider';
 import { AuthProvider } from './features/auth/AuthProvider';
+import type { AuthUser } from './features/auth/AuthContext';
 import { LoginSheetProvider } from './features/auth/LoginSheetProvider';
+import { TermProgressProvider } from './hooks/useTermProgress';
 import { createQueryClient } from './queryClient';
 
 export function AppProviders({
   children,
   queryClient,
+  initialUser,
 }: {
   children: ReactNode;
   queryClient?: QueryClient;
+  /** 테스트에서 로그인한 상태로 시작할 때 */
+  initialUser?: AuthUser | null;
 }) {
   const [client] = useState(() => queryClient ?? createQueryClient());
   return (
     <QueryClientProvider client={client}>
       <ToastProvider>
-        <AuthProvider>
-          <LoginSheetProvider>
-            <TermSheetProvider>{children}</TermSheetProvider>
-          </LoginSheetProvider>
+        <AuthProvider initialUser={initialUser}>
+          <TermProgressProvider>
+            <LoginSheetProvider>
+              <TermSheetProvider>{children}</TermSheetProvider>
+            </LoginSheetProvider>
+          </TermProgressProvider>
         </AuthProvider>
       </ToastProvider>
     </QueryClientProvider>

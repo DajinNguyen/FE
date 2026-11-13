@@ -1,0 +1,77 @@
+/* 학습 메인 "내 학습 기록" */
+.record {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-8);
+  margin-bottom: var(--sp-6);
+  padding: var(--sp-4) var(--sp-6);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.title {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-8);
+  margin: 0;
+}
+
+.stats div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+
+.stats dt {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.stats dd {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  margin-left: 2px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+}
+
+.notice {
+  margin-left: auto;
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.login {
+  margin-left: var(--sp-1);
+  color: var(--brand-strong);
+  font-weight: var(--fw-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 719px) {
+  .record {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--sp-4);
+  }
+
+  .stats {
+    gap: var(--sp-2) var(--sp-6);
+  }
+
+  .notice {
+    margin-left: 0;
+  }
+}
