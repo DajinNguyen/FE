@@ -6,6 +6,7 @@ import { AuthProvider } from './features/auth/AuthProvider';
 import type { AuthUser } from './features/auth/AuthContext';
 import { LoginSheetProvider } from './features/auth/LoginSheetProvider';
 import { TermProgressProvider } from './hooks/useTermProgress';
+import { UsageCreditsProvider } from './hooks/useUsageCredits';
 import { createQueryClient } from './queryClient';
 
 export function AppProviders({
@@ -24,9 +25,11 @@ export function AppProviders({
       <ToastProvider>
         <AuthProvider initialUser={initialUser}>
           <TermProgressProvider>
-            <LoginSheetProvider>
-              <TermSheetProvider>{children}</TermSheetProvider>
-            </LoginSheetProvider>
+            <UsageCreditsProvider>
+              <LoginSheetProvider>
+                <TermSheetProvider>{children}</TermSheetProvider>
+              </LoginSheetProvider>
+            </UsageCreditsProvider>
           </TermProgressProvider>
         </AuthProvider>
       </ToastProvider>

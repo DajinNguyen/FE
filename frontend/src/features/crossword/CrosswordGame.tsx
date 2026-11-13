@@ -19,15 +19,23 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
   const { model, state, dispatch, word, finished } = game;
   const inputRef = useRef<HTMLInputElement>(null);
   const hintLevel = state.hintLevels[word.index] ?? 0;
-  const { onPuzzleComplete, progress, puzzlesPerReward } = useUsageCredits();
+  const { onPuzzleComplete, progress, puzzlesPerReward, rewardsToday, dailyMax } =
+    useUsageCredits();
   const [reward, setReward] = useState<PuzzleRewardResult | null>(null);
 
   // 퍼즐 3개를 정답 보기 없이 풀면 리포트 만들기 1회 보상. 같은 퍼즐은 하루 한 번만 세요.
   // 이미 끝난 판을 다시 열었을 때는 세지 않아요. (이번에 다 푼 순간에만)
   const finishedAtOpen = useRef(finished);
   const usedReveal = state.revealed || state.revealedKeys.length > 0;
+  // 다 푼 순간 한 번만 알려요. ([다시 하기] 후 다시 다 풀면 또 알려요)
+  const reported = useRef(false);
   useEffect(() => {
-    if (!finished || finishedAtOpen.current) return;
+    if (!finished) {
+      reported.current = false;
+      return;
+    }
+    if (finishedAtOpen.current || reported.current) return;
+    reported.current = true;
     setReward(onPuzzleComplete(puzzle.id, { revealed: usedReveal }));
   }, [finished, usedReveal, puzzle.id, onPuzzleComplete]);
 
@@ -35,15 +43,15 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
   const rewardText = !hasDailyLimit()
     ? null
     : reward === 'granted'
-      ? 'AI 리포트 1회가 추가됐어요'
+      ? `AI 리포트 1회가 추가됐어요 (오늘 보상 ${rewardsToday}/${dailyMax})`
       : reward === 'progress'
         ? `AI 리포트까지 퀴즈 ${progress}/${puzzlesPerReward}`
         : reward === 'revealed'
-          ? '정답 보기를 쓴 퀴즈는 AI 리포트 보상에 세지 않아요'
+          ? '정답 보기를 사용한 퀴즈는 보상 개수에 포함되지 않아요'
           : reward === 'guest'
-            ? '로그인하면 낱말퀴즈로 AI 리포트 기회를 더 받을 수 있어요'
+            ? `AI 리포트까지 퀴즈 ${progress}/${puzzlesPerReward} · 로그인하면 보상을 받을 수 있어요`
             : reward === 'daily-max'
-              ? '오늘 받을 수 있는 AI 리포트 보상을 다 받았어요'
+              ? '오늘 받을 수 있는 보상을 모두 받았어요'
               : null;
 
   return (

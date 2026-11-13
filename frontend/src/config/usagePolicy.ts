@@ -13,7 +13,7 @@ export const USAGE_POLICY = {
 /**
  * 낱말퀴즈 완료 보상. ⚠️ 임시값, 확정 필요.
  * 퍼즐 3개를 [정답 보기] 없이 다 풀면 리포트 만들기 1회 추가, 보상은 하루 최대 2회, 로그인 사용자만.
- * (같은 퍼즐은 하루에 한 번만 세요)
+ * (같은 퍼즐은 하루에 한 번만 세요. 실제 지급·악용 방지는 서버가 판단해요)
  */
 export const PUZZLE_REWARD = {
   /** 보상 1회에 필요한 퍼즐 수 */
@@ -21,6 +21,8 @@ export const PUZZLE_REWARD = {
   /** 하루 최대 보상 횟수 */
   dailyMax: 2,
   membersOnly: true,
+  /** 날짜가 바뀌어도 다음 보상까지 센 퍼즐 수(예: 2/3)를 남길지. (오늘 보상 횟수는 항상 0부터) ⚠️ 임시값 */
+  keepProgressAcrossDays: true,
 } as const;
 
 /** 메인·횟수 소진 안내에 쓰는 보상 문구 */

@@ -1,11 +1,10 @@
 import { act, renderHook, screen } from '@testing-library/react';
-import type { ReactNode } from 'react';
 import { Route, Routes } from 'react-router';
 import { describe, expect, it } from 'vitest';
-import { AuthContext } from '../src/features/auth/AuthContext';
+import { DEV_USER } from '../src/features/auth/AuthContext';
 import { useReportQuota } from '../src/hooks/useReportQuota';
 import { CompanyPage } from '../src/pages/CompanyPage';
-import { renderWithProviders } from './testUtils';
+import { providersWrapper, renderWithProviders } from './testUtils';
 
 const renderCompanyPage = (stockCode: string) =>
   renderWithProviders(
@@ -41,19 +40,7 @@ describe('AI 리포트 이용 제한 (임시 정책: 하루 횟수 제한 없음
   });
 
   it('로그인 사용자도 하루 횟수 제한 없이 계속 만들 수 있어요', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <AuthContext.Provider
-        value={{
-          user: { email: 'test@example.com', name: '테스트' },
-          isLoggedIn: true,
-          isLoading: false,
-          loginWithGoogle: () => {},
-          logout: async () => {},
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
-    );
+    const wrapper = providersWrapper(DEV_USER);
     window.localStorage.setItem('dajin:report-usage', JSON.stringify({ date: today(), count: 2 }));
     const { result } = renderHook(() => useReportQuota(), { wrapper });
 
