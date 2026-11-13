@@ -19,7 +19,14 @@ export interface NewsItem {
   company_stock_code: string | null;
   /** 이 기사와 연결되는 숫자 (예: { label: "2025년 매출", value: "333.6조 원" }). 없으면 null */
   related_metric: { label: string; value: string } | null;
+  /** AI가 판단한 호재/악재 정도 (아주 좋음 ~ 아주 나쁨) */
+  sentiment: NewsSentiment;
+  /** sentiment 판단 이유를 한 줄 쉬운 말로 설명 (전문 용어 없이) */
+  sentiment_reason: string;
 }
+
+/** 뉴스 호재/악재 판단 5단계 */
+export type NewsSentiment = 'very_good' | 'good' | 'neutral' | 'bad' | 'very_bad';
 
 /** GET /api/companies/{stock_code}/news?page=&size= 응답 */
 export interface NewsPage {

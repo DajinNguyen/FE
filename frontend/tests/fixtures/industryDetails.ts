@@ -223,6 +223,8 @@ export function industryNews(industryId: string): NewsItem[] {
     summary_long: null,
     company_stock_code: null,
     related_metric: null,
+    sentiment: 'neutral' as const,
+    sentiment_reason: '업종 전체의 사실을 전달하는 소식이라 좋다 나쁘다로 가르기 애매해요.',
   }));
 }
 

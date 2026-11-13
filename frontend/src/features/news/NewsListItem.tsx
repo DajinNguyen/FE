@@ -1,5 +1,6 @@
 import { Icon } from '../../components/Icon';
 import { TermText } from '../../components/TermText';
+import { NEWS_SENTIMENT_CLASS_KEY, NEWS_SENTIMENT_LABELS } from '../../config/newsSentiment';
 import type { NewsItem } from '../../types';
 import { formatRelativeTime } from '../../utils/format';
 import styles from './News.module.css';
@@ -38,6 +39,13 @@ export function NewsListItem({ item, compact = false }: NewsListItemProps) {
         <p className={styles.metric}>
           관련 숫자 {item.related_metric.label} <strong>{item.related_metric.value}</strong>
         </p>
+      )}
+      <span className={`${styles.sentiment} ${styles[NEWS_SENTIMENT_CLASS_KEY[item.sentiment]]}`}>
+        <span className={styles.sentimentDot} aria-hidden="true" />
+        {NEWS_SENTIMENT_LABELS[item.sentiment]}
+      </span>
+      {!compact && item.sentiment_reason && (
+        <p className={styles.sentimentReason}>{item.sentiment_reason}</p>
       )}
     </article>
   );

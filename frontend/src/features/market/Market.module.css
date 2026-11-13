@@ -112,9 +112,25 @@
   background: var(--surface);
 }
 
+.reasonsHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+}
+
 .reasonsTitle {
   font-size: var(--fs-xl);
   font-weight: var(--fw-semibold);
+}
+
+.criteriaButton {
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .reasonList {

@@ -16,6 +16,7 @@ import {
 import { industryColorStyle, industryIcon } from '../config/industryIcons';
 import { changeDirection, signedPercent } from '../features/industry/industryText';
 import { NewsList } from '../features/news/NewsList';
+import { NewsSentimentCriteriaSheet } from '../features/news/NewsSentimentCriteriaSheet';
 import { useIndustry } from '../hooks/useIndustries';
 import { useIndustryNews } from '../hooks/useNews';
 import type { IndustryDetail } from '../types';
@@ -84,6 +85,7 @@ export function IndustryPage() {
   const { data: detail, isPending, isError, error, refetch } = useIndustry(industryId);
   const news = useIndustryNews(industryId);
   const [companyCount, setCompanyCount] = useState(COMPANY_PAGE);
+  const [newsCriteriaOpen, setNewsCriteriaOpen] = useState(false);
 
   if (isPending) return <div className={styles.page} aria-busy="true" />;
   if (isError && !(error instanceof ApiError && error.status === 404)) {
@@ -172,9 +174,18 @@ export function IndustryPage() {
       </section>
 
       <section className={styles.section} aria-labelledby="industry-news">
-        <h2 id="industry-news" className={styles.sectionTitle}>
-          관련 뉴스
-        </h2>
+        <div className={styles.sectionHead}>
+          <h2 id="industry-news" className={styles.sectionTitle}>
+            관련 뉴스
+          </h2>
+          <button
+            type="button"
+            className={styles.criteriaButton}
+            onClick={() => setNewsCriteriaOpen(true)}
+          >
+            기준 보기
+          </button>
+        </div>
         <NewsList
           items={news.data ?? []}
           isPending={news.isPending}
@@ -182,6 +193,10 @@ export function IndustryPage() {
           error={news.error}
           onRetry={() => news.refetch()}
           label="관련 뉴스"
+        />
+        <NewsSentimentCriteriaSheet
+          open={newsCriteriaOpen}
+          onClose={() => setNewsCriteriaOpen(false)}
         />
       </section>
 
