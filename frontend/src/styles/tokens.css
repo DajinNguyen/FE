@@ -57,6 +57,18 @@
   --color-caution: #9a550c;
   --color-caution-bg: #fdf1e2;
   --color-caution-line: #f3d3a8;
+  /* 뉴스 호재·악재 5단계(아주 좋음~아주 나쁨) 배지 색. 신호등처럼 초록~빨강 순이에요.
+   * 아주 좋음·나쁨은 good·caution 을 그대로 쓰고, 좋음·아주 나쁨만 새로 둬요(겹치는 톤이 없어서). */
+  --sentiment-very-good: var(--good);
+  --sentiment-very-good-weak: var(--good-weak);
+  --sentiment-good: #3f9d63;
+  --sentiment-good-weak: #eaf6ee;
+  --sentiment-neutral: var(--text-3);
+  --sentiment-neutral-weak: var(--surface-strong);
+  --sentiment-bad: var(--caution);
+  --sentiment-bad-weak: var(--caution-weak);
+  --sentiment-very-bad: #9c2b22;
+  --sentiment-very-bad-weak: #f8e6e4;
   --rise-line: #e5484d;
   --fall-line: #3e7be0;
   --avatar-1: #efedfb;
@@ -203,6 +215,16 @@
     --color-caution: #f2b462;
     --color-caution-bg: #36260f;
     --color-caution-line: #6b4a1c;
+    --sentiment-very-good: var(--good);
+    --sentiment-very-good-weak: var(--good-weak);
+    --sentiment-good: #74c492;
+    --sentiment-good-weak: #173224;
+    --sentiment-neutral: var(--text-3);
+    --sentiment-neutral-weak: var(--surface-strong);
+    --sentiment-bad: var(--caution);
+    --sentiment-bad-weak: var(--caution-weak);
+    --sentiment-very-bad: #e2645c;
+    --sentiment-very-bad-weak: #3a1816;
     --rise-line: #ff6b6f;
     --fall-line: #6c9cf0;
     --avatar-1: #1f2e2b;
@@ -281,6 +303,16 @@
   --color-caution: #f2b462;
   --color-caution-bg: #36260f;
   --color-caution-line: #6b4a1c;
+  --sentiment-very-good: var(--good);
+  --sentiment-very-good-weak: var(--good-weak);
+  --sentiment-good: #74c492;
+  --sentiment-good-weak: #173224;
+  --sentiment-neutral: var(--text-3);
+  --sentiment-neutral-weak: var(--surface-strong);
+  --sentiment-bad: var(--caution);
+  --sentiment-bad-weak: var(--caution-weak);
+  --sentiment-very-bad: #e2645c;
+  --sentiment-very-bad-weak: #3a1816;
   --rise-line: #ff6b6f;
   --fall-line: #6c9cf0;
   --avatar-1: #1f2e2b;

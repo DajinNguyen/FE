@@ -55,6 +55,77 @@
   color: var(--text-1);
 }
 
+/* 호재·악재 배지: 색 동그라미 + 글자 (StatusBadge 와 같은 모양) */
+.sentiment {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+
+.sentimentDot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.veryGood {
+  color: var(--sentiment-very-good);
+  background: var(--sentiment-very-good-weak);
+}
+
+.good {
+  color: var(--sentiment-good);
+  background: var(--sentiment-good-weak);
+}
+
+.neutral {
+  color: var(--sentiment-neutral);
+  background: var(--sentiment-neutral-weak);
+}
+
+.bad {
+  color: var(--sentiment-bad);
+  background: var(--sentiment-bad-weak);
+}
+
+.veryBad {
+  color: var(--sentiment-very-bad);
+  background: var(--sentiment-very-bad-weak);
+}
+
+.sentimentReason {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+/* 뉴스 목록 헤더의 "기준 보기" (산업 TOP3 과 같은 모양) */
+.criteriaButton {
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* "기준 보기" 시트 안의 단계별 설명 목록 */
+.criteria {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+  padding-left: var(--sp-6);
+  list-style: disc;
+  line-height: var(--lh-body);
+}
+
 /* 작게: 근거 뉴스 */
 .compact {
   padding: var(--sp-2) 0;
@@ -67,6 +138,11 @@
 
 .compact .summary {
   font-size: var(--fs-sm);
+}
+
+/* 작은 목록은 공간이 좁아서 이유 문장은 숨기고 동그라미·라벨만 보여줘요 */
+.compact .sentimentReason {
+  display: none;
 }
 
 .more {

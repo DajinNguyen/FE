@@ -60,6 +60,22 @@
   font-weight: var(--fw-semibold);
 }
 
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+}
+
+.criteriaButton {
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .sectionNote {
   margin-left: var(--sp-2);
   color: var(--text-3);

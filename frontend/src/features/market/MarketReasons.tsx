@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router';
 import { industryColorStyle, industryIcon } from '../../config/industryIcons';
 import { useMarketSummary } from '../../hooks/useMarketSummary';
 import type { MarketReason } from '../../types';
 import { NewsList } from '../news/NewsList';
+import { NewsSentimentCriteriaSheet } from '../news/NewsSentimentCriteriaSheet';
 import styles from './Market.module.css';
 
 /** 산업 칩: "반도체 ▲2.1%" → 산업 페이지 (색은 숫자에만, 화살표와 글자로도 알려줘요) */
@@ -66,6 +68,7 @@ function ReasonItem({ reason }: { reason: MarketReason }) {
 /** 오늘 시장, 왜 움직였나요? 이유 3개 (각 이유 앞에 관련 산업 아이콘) */
 export function MarketReasons() {
   const { data, isPending } = useMarketSummary();
+  const [criteriaOpen, setCriteriaOpen] = useState(false);
   // 실패 안내는 맨 위 시장 한마디 자리에서 한 번만 보여줘요.
   if (isPending) {
     return <div className={`${styles.skeleton} ${styles.skeletonReasons}`} aria-hidden="true" />;
@@ -74,14 +77,24 @@ export function MarketReasons() {
   if (reasons.length === 0) return null;
   return (
     <section aria-labelledby="market-reasons" className={styles.reasons}>
-      <h2 id="market-reasons" className={styles.reasonsTitle}>
-        오늘 시장, 왜 움직였나요?
-      </h2>
+      <div className={styles.reasonsHead}>
+        <h2 id="market-reasons" className={styles.reasonsTitle}>
+          오늘 시장, 왜 움직였나요?
+        </h2>
+        <button
+          type="button"
+          className={styles.criteriaButton}
+          onClick={() => setCriteriaOpen(true)}
+        >
+          기준 보기
+        </button>
+      </div>
       <ol className={styles.reasonList}>
         {reasons.slice(0, 3).map((reason) => (
           <ReasonItem key={reason.title} reason={reason} />
         ))}
       </ol>
+      <NewsSentimentCriteriaSheet open={criteriaOpen} onClose={() => setCriteriaOpen(false)} />
     </section>
   );
 }

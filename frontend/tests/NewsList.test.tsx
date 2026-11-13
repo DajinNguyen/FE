@@ -16,6 +16,8 @@ const item: NewsItem = {
   summary_long: null,
   company_stock_code: null,
   related_metric: null,
+  sentiment: 'neutral',
+  sentiment_reason: '수출 통계를 전달하는 사실 보도예요.',
 };
 
 describe('뉴스 목록', () => {

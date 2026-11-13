@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { BarChart } from '../../components/BarChart';
 import { ClampText } from '../../components/ClampText';
 import { Icon } from '../../components/Icon';
@@ -7,6 +7,7 @@ import { TermText } from '../../components/TermText';
 import type { EvidenceKind, KeyPoint } from '../../types';
 import { formatSignedPercent } from '../../utils/format';
 import { NewsList } from '../news/NewsList';
+import { NewsSentimentCriteriaSheet } from '../news/NewsSentimentCriteriaSheet';
 import { describeChange, evidenceChipText, keyPointLabel, keyPointTone } from './reportMeta';
 import { ToneBadge } from './ToneBadge';
 import styles from './KeyPointSheet.module.css';
@@ -22,6 +23,7 @@ const changeRate = (from: number, to: number) =>
 
 /** 핵심 포인트 상세 (모바일은 아래에서, PC는 오른쪽 패널): 숫자 변화 → 이유 → 연도별 막대 → 근거 뉴스·공시 */
 export function KeyPointSheet({ point, onClose, onEvidence }: KeyPointSheetProps) {
+  const [newsCriteriaOpen, setNewsCriteriaOpen] = useState(false);
   const detail = point?.detail;
   const yearly = detail?.yearly ?? [];
   const first = yearly[0];
@@ -147,8 +149,21 @@ export function KeyPointSheet({ point, onClose, onEvidence }: KeyPointSheetProps
 
           {detail && detail.related_news.length > 0 && (
             <section className={styles.block} aria-label="근거 뉴스">
-              <h3 className={styles.blockTitle}>근거 뉴스</h3>
+              <div className={styles.blockHead}>
+                <h3 className={styles.blockTitle}>근거 뉴스</h3>
+                <button
+                  type="button"
+                  className={styles.criteriaButton}
+                  onClick={() => setNewsCriteriaOpen(true)}
+                >
+                  기준 보기
+                </button>
+              </div>
               <NewsList items={detail.related_news} compact label="근거 뉴스 목록" />
+              <NewsSentimentCriteriaSheet
+                open={newsCriteriaOpen}
+                onClose={() => setNewsCriteriaOpen(false)}
+              />
             </section>
           )}
 
