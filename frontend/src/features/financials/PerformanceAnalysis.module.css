@@ -99,57 +99,6 @@ dl.summary,
   font-variant-numeric: tabular-nums;
 }
 
-/* 3) 분기별 흐름 */
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2) var(--sp-4);
-  margin-bottom: var(--sp-2);
-  color: var(--text-2);
-  font-size: var(--fs-xs);
-}
-
-.legend li {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-1);
-}
-
-.legendUnit {
-  margin-left: auto;
-  color: var(--text-3);
-}
-
-.swatch {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: var(--radius-xs);
-}
-
-.swatchRevenue {
-  background: var(--chart-muted);
-}
-
-.swatchIncome {
-  background: var(--brand);
-}
-
-.swatchMargin {
-  height: 2px;
-  background: var(--text-2);
-}
-
-.chartScroll {
-  overflow-x: auto;
-}
-
-.chart {
-  min-width: 560px;
-  height: 280px;
-}
-
 /* 4) 사업별 성과 */
 .segments {
   display: grid;
@@ -279,9 +228,5 @@ dl.summary,
   .compare,
   .segments {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .legendUnit {
-    margin-left: 0;
   }
 }
