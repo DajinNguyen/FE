@@ -14,7 +14,26 @@ const LINE_LABEL_ROOM = 28;
 /** 라벨과 막대 끝 사이 (px) */
 export const LABEL_GAP = 5;
 
+/** 숫자 라벨 높이 (px, CSS line-height 1 × 글자 크기) */
+const LABEL_HEIGHT = 13;
+
 const money = (v: number) => v.toFixed(1);
+
+type LabelPlace = 'outside' | 'inside';
+
+/**
+ * 한 분기의 두 막대(매출·영업이익) 라벨 자리. 기본은 막대 끝 바로 밖이에요.
+ * 두 막대 끝 높이가 비슷해 바깥 라벨끼리 겹치면, 짧은 막대의 라벨을 막대 안쪽 끝에 대비되는 색으로 넣어요.
+ * (막대가 라벨보다 짧으면 안에 넣지 않고 밖에 둬요.) 값은 부호 있는 막대 길이(px)예요.
+ */
+export function placeLabels(a: number, b: number): [LabelPlace, LabelPlace] {
+  const sameSide = Math.sign(a) === Math.sign(b);
+  const overlap = sameSide && Math.abs(Math.abs(a) - Math.abs(b)) < LABEL_HEIGHT + 2;
+  if (!overlap) return ['outside', 'outside'];
+  const fits = (len: number) => Math.abs(len) >= LABEL_HEIGHT + LABEL_GAP * 2;
+  if (Math.abs(a) <= Math.abs(b)) return fits(a) ? ['inside', 'outside'] : ['outside', 'outside'];
+  return fits(b) ? ['outside', 'inside'] : ['outside', 'outside'];
+}
 
 /**
  * 분기별 흐름: 위 영업이익률(%) 선, 아래 매출·영업이익 막대. 두 그래프가 분기 칸을 같이 써요.
@@ -39,19 +58,24 @@ export function QuarterlyChart({ data, unit }: { data: QuarterPerformance[]; uni
   const n = data.length;
   const columns = { '--columns': n } as CSSProperties;
 
-  const bar = (value: number, kind: 'revenue' | 'income') => {
+  const bar = (value: number, kind: 'revenue' | 'income', place: LabelPlace) => {
     const length = barLength(value, range, BAR_AREA);
     const up = value >= 0;
     const position = up
       ? { bottom: barPanel - baseline, height: length }
       : { top: baseline, height: length };
-    const label = up
-      ? { bottom: barPanel - baseline + length + LABEL_GAP }
-      : { top: baseline + length + LABEL_GAP };
+    // 라벨은 막대 끝을 따라가요: 밖이면 끝에서 LABEL_GAP 만큼 떨어져, 안이면 끝 안쪽으로 LABEL_GAP
+    const offset = place === 'outside' ? length + LABEL_GAP : length - LABEL_GAP - LABEL_HEIGHT;
+    const label = up ? { bottom: barPanel - baseline + offset } : { top: baseline + offset };
     return (
       <div className={`${styles.barSlot} ${styles[kind]}`}>
         <div className={styles.bar} data-bar={kind} style={position} />
-        <span className={styles.barLabel} data-label={kind} style={label}>
+        <span
+          className={`${styles.barLabel} ${place === 'inside' ? styles.inside : ''}`}
+          data-label={kind}
+          data-place={place}
+          style={label}
+        >
           {money(value)}
         </span>
       </div>
@@ -113,12 +137,19 @@ export function QuarterlyChart({ data, unit }: { data: QuarterPerformance[]; uni
                   style={{ top: baseline - (t / range) * BAR_AREA }}
                 />
               ))}
-              {data.map((d) => (
-                <div key={d.quarter} className={styles.column}>
-                  {bar(d.revenue, 'revenue')}
-                  {bar(d.operating_income, 'income')}
-                </div>
-              ))}
+              {data.map((d) => {
+                const [revenuePlace, incomePlace] = placeLabels(
+                  barLength(d.revenue, range, BAR_AREA) * Math.sign(d.revenue || 1),
+                  barLength(d.operating_income, range, BAR_AREA) *
+                    Math.sign(d.operating_income || 1),
+                );
+                return (
+                  <div key={d.quarter} className={styles.column}>
+                    {bar(d.revenue, 'revenue', revenuePlace)}
+                    {bar(d.operating_income, 'income', incomePlace)}
+                  </div>
+                );
+              })}
             </div>
             <div className={styles.axis}>
               {niceTicks(max).map((t) => (
