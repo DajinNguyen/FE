@@ -4,43 +4,109 @@ import { ErrorState } from '../../components/ErrorState';
 import { HorizontalBars } from '../../components/HorizontalBars';
 import { Icon } from '../../components/Icon';
 import { Section } from '../../components/Section';
-import { useFinancials } from '../../hooks/useFinancials';
+import { usePerformanceDetail } from '../../hooks/usePerformanceDetail';
+import type { PerformanceDetail } from '../../types';
+import { formatAmount, formatSignedPercent } from '../../utils/format';
 import type { GoToTab } from '../companyTabs';
 import { PERFORMANCE_ANCHOR } from '../financials/PerformanceAnalysis';
-import type { PerformanceMetric } from '../../types';
-import { formatSignedPercent } from '../../utils/format';
 import styles from './RecentPerformance.module.css';
 
-/** "2026-01-29" → "2026년 1월" */
+const TITLE = '최근 사업 성과';
+
+/** "2026-01-29" → "2026년 1월 발표" */
 const announcedText = (date: string) => {
   const [year, month] = date.split('-');
   return `${year}년 ${Number(month)}월 발표`;
 };
 
-function Metric({ label, metric }: { label: string; metric: PerformanceMetric }) {
-  const rate = metric.yoy_change_rate;
+/** 큰 숫자 + 작은 단위, 아래 "작년 같은 분기보다 ▲+23.7%" */
+function Metric({
+  label,
+  value,
+  unit,
+  rate,
+}: {
+  label: string;
+  value: number;
+  unit: string;
+  rate: number | null | undefined;
+}) {
   return (
     <div className={styles.metric}>
       <dt className={styles.metricLabel}>{label}</dt>
       <dd className={styles.metricValue}>
-        {metric.value.toLocaleString('ko-KR')}
-        <span className={styles.unit}>{metric.unit}</span>
+        {formatAmount(value)}
+        <span className={styles.unit}>{unit}</span>
       </dd>
-      {rate !== null && (
+      {rate != null && (
         <dd className={styles.yoy}>
           작년 같은 분기보다{' '}
           <span className={rate >= 0 ? styles.rise : styles.fall}>
             <span aria-hidden="true">{rate >= 0 ? '▲' : '▼'}</span>
             <span className="visually-hidden">{rate >= 0 ? '늘었어요' : '줄었어요'}</span>
             {formatSignedPercent(rate, 1)}
-          </span>{' '}
+          </span>
         </dd>
       )}
     </div>
   );
 }
 
-/** 개요 "최근 사업 성과": 실적 발표 요약. [자세히 보기]는 재무 상세의 분석으로 이동해요. */
+/** 재무 상세 분석(PerformanceDetail)을 요약해요. 화면에서 새 숫자를 만들지 않고 받은 값만 써요. */
+function Summary({ data, onMore }: { data: PerformanceDetail; onMore: () => void }) {
+  const { summary, yoy, unit, source } = data;
+  const segments = [...data.segments].sort((a, b) => b.revenue - a.revenue);
+  return (
+    <>
+      {summary && (
+        <dl className={styles.metrics}>
+          <Metric label="매출" value={summary.revenue} unit={unit} rate={yoy?.revenue_rate} />
+          <Metric
+            label="영업이익"
+            value={summary.operating_income}
+            unit={unit}
+            rate={yoy?.operating_income_rate}
+          />
+        </dl>
+      )}
+      {data.ai_summary && (
+        <p className={styles.summary}>
+          <span className={styles.aiLabel}>AI 한 줄 요약</span> {data.ai_summary}
+        </p>
+      )}
+      {segments.length > 0 && (
+        <div className={styles.segments}>
+          <p className={styles.segmentsTitle}>사업별 매출</p>
+          <HorizontalBars
+            data={segments.map((s) => ({ id: s.name, label: s.name, value: s.revenue }))}
+            formatValue={(v) => formatAmount(v, unit)}
+          />
+        </div>
+      )}
+      {source && (
+        <p className={styles.source}>
+          출처:{' '}
+          <a href={source.url} target="_blank" rel="noopener noreferrer">
+            {source.title} <Icon name="external" size={14} />
+            <span className="visually-hidden">(새 창에서 열려요)</span>
+          </a>{' '}
+          · <DataAsOf value={source.date} suffix="공시" />
+        </p>
+      )}
+      <button type="button" className={styles.more} onClick={onMore}>
+        자세히 보기 <Icon name="chevronRight" size={16} />
+      </button>
+    </>
+  );
+}
+
+const hasAny = (d: PerformanceDetail) =>
+  Boolean(d.summary || d.ai_summary || d.segments.length > 0 || d.source);
+
+/**
+ * 개요 "최근 사업 성과": 재무 상세 "최근 사업 성과 분석"과 같은 데이터(usePerformanceDetail)를 요약해요.
+ * [자세히 보기]는 재무 상세의 분석 위치로 이동해요.
+ */
 export function RecentPerformance({
   stockCode,
   onGoToTab,
@@ -48,12 +114,11 @@ export function RecentPerformance({
   stockCode: string;
   onGoToTab: GoToTab;
 }) {
-  const { data, isPending, isError, error, refetch } = useFinancials(stockCode);
-  const perf = data?.recent_performance;
+  const { data, isPending, isError, error, refetch } = usePerformanceDetail(stockCode);
 
   if (isPending) {
     return (
-      <Section title="최근 사업 성과">
+      <Section title={TITLE}>
         <div className={styles.skeleton} aria-hidden="true" />
       </Section>
     );
@@ -62,55 +127,25 @@ export function RecentPerformance({
   const notFound = error instanceof ApiError && error.status === 404;
   if (isError && !notFound) {
     return (
-      <Section title="최근 사업 성과">
+      <Section title={TITLE}>
         <ErrorState compact error={error} onRetry={() => refetch()} />
       </Section>
     );
   }
-  if (!perf) {
+  if (!data || !hasAny(data)) {
     return (
-      <Section title="최근 사업 성과">
-        <p className={styles.empty}>최근 실적 발표 자료가 아직 없어요.</p>
+      <Section title={TITLE}>
+        <p className={styles.empty}>아직 최근 실적 자료가 없어요</p>
       </Section>
     );
   }
 
   return (
     <Section
-      title="최근 사업 성과"
-      description={`${perf.period_label} · ${announcedText(perf.announced_at)}`}
+      title={TITLE}
+      description={`${data.period_label} 실적 · ${announcedText(data.announced_at)}`}
     >
-      <dl className={styles.metrics}>
-        <Metric label="매출" metric={perf.revenue} />
-        <Metric label="영업이익" metric={perf.operating_income} />
-      </dl>
-      <p className={styles.summary}>
-        <span className={styles.aiLabel}>AI 한 줄 요약</span> {perf.summary}
-      </p>
-      {perf.segments.length > 0 && (
-        <div className={styles.segments}>
-          <p className={styles.segmentsTitle}>사업별 매출</p>
-          <HorizontalBars
-            data={perf.segments.map((s) => ({ id: s.name, label: s.name, value: s.revenue }))}
-            formatValue={(v) => `${v.toLocaleString('ko-KR')}${perf.segments[0].unit}`}
-          />
-        </div>
-      )}
-      <p className={styles.source}>
-        출처:{' '}
-        <a href={perf.source.url} target="_blank" rel="noopener noreferrer">
-          {perf.source.title} <Icon name="external" size={14} />
-          <span className="visually-hidden">(새 창에서 열려요)</span>
-        </a>{' '}
-        · <DataAsOf value={perf.source.date} suffix="공시" />
-      </p>
-      <button
-        type="button"
-        className={styles.more}
-        onClick={() => onGoToTab('financials', PERFORMANCE_ANCHOR)}
-      >
-        자세히 보기 <Icon name="chevronRight" size={16} />
-      </button>
+      <Summary data={data} onMore={() => onGoToTab('financials', PERFORMANCE_ANCHOR)} />
     </Section>
   );
 }

@@ -5,7 +5,7 @@ import { Icon } from '../../components/Icon';
 import { Section } from '../../components/Section';
 import { usePerformanceDetail } from '../../hooks/usePerformanceDetail';
 import type { PerformanceDetail } from '../../types';
-import { formatSignedPercent } from '../../utils/format';
+import { formatAmount, formatSignedPercent } from '../../utils/format';
 import { QuarterlyChart } from './QuarterlyChart';
 import styles from './PerformanceAnalysis.module.css';
 
@@ -52,7 +52,7 @@ function Block({ title, empty, children }: { title: string; empty: boolean; chil
 
 function Analysis({ data }: { data: PerformanceDetail }) {
   const { unit, summary, quarterly } = data;
-  const money = (v: number) => `${v.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}${unit}`;
+  const money = (v: number) => formatAmount(v, unit);
   // 비교 기준 값은 분기 흐름에서 찾아요 (최근 분기 = 맨 끝, 작년 같은 분기 = 4분기 전)
   const last = quarterly.length - 1;
   const comparisons = [

@@ -9,6 +9,15 @@ export function formatTrillion(value: number, fractionDigits: { min?: number; ma
   return `${value.toLocaleString('ko-KR', { minimumFractionDigits: min, maximumFractionDigits: max })}조 원`;
 }
 
+/** 금액 표기 통일: 소수 첫째 자리까지 항상. 44 → "44.0", (44, "조 원") → "44.0조 원" */
+export function formatAmount(value: number, unit = '') {
+  const text = value.toLocaleString('ko-KR', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+  return `${text}${unit}`;
+}
+
 /** 1.82 → "+1.82%" */
 export function formatSignedPercent(value: number, digits = 2) {
   const sign = value > 0 ? '+' : '';

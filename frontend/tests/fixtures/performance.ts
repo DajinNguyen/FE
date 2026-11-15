@@ -13,6 +13,7 @@ export const performanceDetails: Record<string, PerformanceDetail> = {
     period_label: '2025년 4분기',
     announced_at: '2026-01-29',
     unit: '조 원',
+    ai_summary: 'AI용 메모리(HBM) 판매가 늘면서 분기 기준 가장 많은 매출을 냈어요.',
     summary: { revenue: 93.8, operating_income: 20.1, operating_margin: 21.4 },
     yoy: { revenue_rate: 23.7, operating_income_rate: 209.2 },
     qoq: { revenue_rate: 8.9, operating_income_rate: 64.8 },
