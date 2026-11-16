@@ -72,8 +72,9 @@ export async function getCompanyReport(stockCode: string): Promise<CompanyReport
  * 응답이 status: "generating" 이면 훅이 GET 으로 다 될 때까지 다시 물어봐요(폴링).
  * 백엔드가 바로 "done" 을 돌려줘도 그대로 동작해요.
  */
+/** 만들기 요청. 서버가 7 ADK 를 빼고 남은 잔액(balance)을 함께 보내요. (실패하면 서버가 되돌려요) */
 export function generateReport(stockCode: string) {
-  return request<CompanyReport>({
+  return request<CompanyReport & { balance?: number }>({
     path: `/api/companies/${stockCode}/report`,
     method: 'POST',
   });

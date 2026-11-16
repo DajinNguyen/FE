@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { generateReport, getCompanyReport } from '../api/companies';
+import { ApiError } from '../api/errors';
+import { ADK_COST, formatAdk } from '../config/currency';
 import type { CompanyReport } from '../types';
-import { useReportQuota } from './useReportQuota';
+import { useRequireLogin } from './useRequireLogin';
 import { useToast } from './useToast';
+import { useWallet } from './useWallet';
 
 /**
  * 화면에서 구분하는 리포트 상태
@@ -30,7 +33,8 @@ const reportKey = (stockCode: string) => ['companies', stockCode, 'report'] as c
 export function useCompanyReport(stockCode: string) {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const quota = useReportQuota();
+  const wallet = useWallet();
+  const requireLogin = useRequireLogin();
   const [cancelled, setCancelled] = useState(false);
 
   const query = useQuery({
@@ -44,7 +48,10 @@ export function useCompanyReport(stockCode: string) {
 
   const mutation = useMutation({
     mutationFn: () => generateReport(stockCode),
-    onSuccess: (report) => queryClient.setQueryData(reportKey(stockCode), report),
+    onSuccess: ({ balance, ...report }) => {
+      queryClient.setQueryData(reportKey(stockCode), report);
+      if (typeof balance === 'number') wallet.applyBalance(balance);
+    },
   });
 
   const data = query.data;
@@ -86,16 +93,52 @@ export function useCompanyReport(stockCode: string) {
     if (regenerateFailed) showToast('리포트를 다시 만들지 못했어요. 기존 리포트를 보여드릴게요.');
   }, [regenerateFailed, showToast]);
 
+  // 만들기·다시 만들기 비용 (이미 만든 리포트 보기는 무료)
+  const cost = ADK_COST.report;
+  // 잔액을 불러오는 중에는 버튼만 잠가요. (부족 안내는 잔액을 안 뒤에)
+  const balanceKnown = wallet.balance !== null;
+  const shortage = wallet.isLoggedIn && balanceKnown && !wallet.canAfford(cost);
+  const blocked = shortage || (wallet.isLoggedIn && !balanceKnown);
+
+  // 직접 만들기를 눌렀는데 실패했으면 ADK 가 빠지지 않았다고 알려요.
+  // 요청 자체가 실패하면 서버가 빼지 않았고, 만드는 중에 실패하면 서버가 되돌려요.
+  const chargeNotice = !requested
+    ? null
+    : mutation.isError
+      ? `${formatAdk(cost)}는 차감되지 않았어요.`
+      : data?.status === 'failed'
+        ? `만들지 못해서 ${formatAdk(cost)}는 돌려드렸어요.`
+        : null;
+
+  // 만들기가 끝나거나 실패하면 서버 잔액·내역을 다시 불러와요.
+  const settled = requested && !generating;
+  const { refetch: refetchWallet, isLoggedIn } = wallet;
+  useEffect(() => {
+    if (settled && isLoggedIn) void refetchWallet();
+  }, [settled, isLoggedIn, refetchWallet]);
+
+  // 잔액이 부족하다고 서버가 막으면 지갑을 새로 불러와 버튼을 잠가요.
+  const insufficient =
+    mutation.error instanceof ApiError && mutation.error.code === 'INSUFFICIENT_BALANCE';
+  useEffect(() => {
+    if (insufficient) void refetchWallet();
+  }, [insufficient, refetchWallet]);
+
   const { mutate } = mutation;
-  const { blocked, consume } = quota;
-  /** 만들기·다시 만들기. 이용 제한에 걸리면 아무것도 하지 않아요. (버튼도 비활성화돼요) */
+  /**
+   * 만들기·다시 만들기 (7 ADK). 비로그인은 로그인 시트(가입 선물 안내)를 띄우고,
+   * 잔액이 부족하면 아무것도 하지 않아요. (버튼도 비활성화돼요)
+   */
   const generate = useCallback(() => {
+    if (!isLoggedIn) {
+      requireLogin(undefined, 'adk');
+      return;
+    }
     if (blocked) return;
-    consume();
     setCancelled(false);
     setRequested(true);
     mutate();
-  }, [blocked, consume, mutate]);
+  }, [isLoggedIn, blocked, requireLogin, mutate]);
 
   /** 기다리기를 멈춰요. (서버 작업 취소 API가 생기면 여기서 함께 불러요) */
   const cancel = useCallback(() => setCancelled(true), []);
@@ -110,8 +153,8 @@ export function useCompanyReport(stockCode: string) {
     reload: query.refetch,
     generate,
     cancel,
-    /** 남은 횟수·제한 상태 (리포트 보기는 제한 없음) */
-    quota,
+    /** 만들기 비용·잔액 (리포트 보기는 무료) */
+    adk: { cost, balance: wallet.balance, isLoggedIn, shortage, blocked, chargeNotice },
   };
 }
 
