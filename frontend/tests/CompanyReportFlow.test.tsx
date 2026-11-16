@@ -2,15 +2,16 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
+import { DEV_USER, type AuthUser } from '../src/features/auth/AuthContext';
 import { CompanyPage } from '../src/pages/CompanyPage';
 import { renderWithProviders } from './testUtils';
 
-const renderCompanyPage = (stockCode: string, tab = 'analysis') =>
+const renderCompanyPage = (stockCode: string, tab = 'analysis', user: AuthUser | null = null) =>
   renderWithProviders(
     <Routes>
       <Route path="/companies/:stockCode" element={<CompanyPage />} />
     </Routes>,
-    { route: tab ? `/companies/${stockCode}?tab=${tab}` : `/companies/${stockCode}` },
+    { route: tab ? `/companies/${stockCode}?tab=${tab}` : `/companies/${stockCode}`, user },
   );
 
 afterEach(() => {
@@ -154,23 +155,26 @@ describe('기업 화면: AI 분석', () => {
 
   it('리포트가 없는 기업은 "아직 이 기업의 리포트가 없어요"를 보여주고, 실패하면 원인과 다시 시도를 보여줘요', async () => {
     const user = userEvent.setup();
-    renderCompanyPage('000660');
+    renderCompanyPage('000660', 'analysis', DEV_USER);
 
     expect(await screen.findByText('아직 이 기업의 리포트가 없어요')).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'AI 리포트 만들기' }));
+    await screen.findByText('내 잔액 50 ADK');
+    await user.click(screen.getByRole('button', { name: 'AI 리포트 만들기 · 7 ADK' }));
 
     const alert = await screen.findByRole('alert');
     expect(within(alert).getByText('리포트를 만들지 못했어요')).toBeInTheDocument();
     expect(within(alert).getByText(/재무제표를 아직 불러오지 못했어요/)).toBeInTheDocument();
-    expect(within(alert).getByRole('button', { name: '다시 시도' })).toBeInTheDocument();
+    expect(within(alert).getByRole('button', { name: '다시 시도 · 7 ADK' })).toBeInTheDocument();
+    expect(within(alert).getByText('만들지 못해서 7 ADK는 돌려드렸어요.')).toBeInTheDocument();
   });
 
   it('다시 만들기가 실패해도 기존 리포트는 그대로 두고 토스트로 알려요', async () => {
     window.history.replaceState(null, '', '/?mock_report=fail');
     const user = userEvent.setup();
-    renderCompanyPage('005930');
+    renderCompanyPage('005930', 'analysis', DEV_USER);
 
-    await user.click(await screen.findByRole('button', { name: '다시 만들기' }));
+    await screen.findByText('내 잔액 50 ADK');
+    await user.click(await screen.findByRole('button', { name: '다시 만들기 · 7 ADK' }));
 
     expect(
       await screen.findByText('리포트를 다시 만들지 못했어요. 기존 리포트를 보여드릴게요.'),

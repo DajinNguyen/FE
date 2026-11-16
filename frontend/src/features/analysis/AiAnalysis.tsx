@@ -8,7 +8,8 @@ import type { CompanyReport, EvidenceKind, KeyPoint } from '../../types';
 import { useState } from 'react';
 import { KeyPointRow } from './KeyPointRow';
 import { KeyPointSheet } from './KeyPointSheet';
-import { QuotaNotice } from './QuotaNotice';
+import { ChargeNotice, CostNotice } from './CostNotice';
+import { formatAdk } from '../../config/currency';
 import { RegenerateProgress, ReportSkeleton, ReportWaiting } from './ReportWaiting';
 import { groupKeyPoints } from './reportMeta';
 import styles from './AiAnalysis.module.css';
@@ -48,9 +49,10 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
     reload,
     generate,
     cancel,
-    quota,
+    adk,
   } = flow;
-  const blocked = quota.blocked !== null;
+  const { blocked } = adk;
+  const cost = ` · ${formatAdk(adk.cost)}`;
   const [openPoint, setOpenPoint] = useState<KeyPoint | null>(null);
 
   return (
@@ -79,9 +81,9 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
             </p>
             <div className={styles.actionRow}>
               <Button size="lg" onClick={generate} disabled={blocked}>
-                AI 리포트 만들기
+                AI 리포트 만들기{cost}
               </Button>
-              <QuotaNotice quota={quota} />
+              <CostNotice adk={adk} />
             </div>
           </div>
         )}
@@ -94,11 +96,12 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
           <div className={styles.emptyCard} role="alert">
             <p className={styles.emptyTitle}>리포트를 만들지 못했어요</p>
             <p className={styles.emptyText}>{failureReason}</p>
+            <ChargeNotice adk={adk} />
             <div className={styles.actionRow}>
               <Button size="lg" onClick={generate} disabled={blocked}>
-                <Icon name="refresh" size={18} /> 다시 시도
+                <Icon name="refresh" size={18} /> 다시 시도{cost}
               </Button>
-              <QuotaNotice quota={quota} />
+              <CostNotice adk={adk} />
             </div>
           </div>
         )}
@@ -139,14 +142,15 @@ export function AiAnalysis({ flow, onEvidence }: AiAnalysisProps) {
             <div className={styles.footer}>
               <span>숫자는 공식 자료, 문장은 AI가 썼어요. 투자 추천이 아닌 교육용 정보예요.</span>
               <div className={styles.regenerateRow}>
-                <QuotaNotice quota={quota} />
+                <ChargeNotice adk={adk} />
+                <CostNotice adk={adk} />
                 <button
                   type="button"
                   className={styles.regenerate}
                   onClick={generate}
                   disabled={isRegenerating || blocked}
                 >
-                  <Icon name="refresh" size={14} /> 다시 만들기
+                  <Icon name="refresh" size={14} /> 다시 만들기{cost}
                 </button>
               </div>
             </div>

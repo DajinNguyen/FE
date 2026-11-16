@@ -14,6 +14,7 @@ import { marketSummary } from './market';
 import { performanceDetails } from './performance';
 import { companyNews, marketNews } from './news';
 import samsungJson from './samsungElectronics.json';
+import * as wallet from './wallet';
 import { ApiError } from '../../src/api/errors';
 import type { AuthUser } from '../../src/features/auth/AuthContext';
 import type {
@@ -196,6 +197,8 @@ const GENERATION_MS = isTest ? 0 : 15_000;
 interface ReportJob {
   startedAt: number;
   fail: boolean;
+  /** 7 ADK 를 뺀 리포트 이름 (실패하면 되돌려요) */
+  charged: string;
 }
 
 /** 서버의 리포트 저장소 흉내. 새로고침 전까지 기억해요. 삼성전자는 이미 만들어 둔 상태로 시작해요. */
@@ -226,6 +229,7 @@ function settle(stockCode: string) {
   jobs.delete(stockCode);
   const source = companyData[stockCode]?.report;
   if (job.fail || !source) {
+    wallet.refund('report', job.charged);
     failedReports.set(
       stockCode,
       job.fail
@@ -258,13 +262,17 @@ export async function getCompanyReport(stockCode: string): Promise<CompanyReport
 }
 
 /** 새로 만들기 시작해요. (실제로는 DART·뉴스·사업보고서를 읽고 Claude API 호출) */
-export async function generateReport(stockCode: string): Promise<CompanyReport> {
-  findCompany(stockCode);
+export async function generateReport(
+  stockCode: string,
+): Promise<CompanyReport & { balance?: number }> {
+  const company = findCompany(stockCode);
   await wait(200);
-  if (!jobs.has(stockCode)) {
-    jobs.set(stockCode, { startedAt: Date.now(), fail: shouldFail() });
-  }
-  return currentReport(stockCode);
+  if (jobs.has(stockCode)) return currentReport(stockCode);
+  // 만들기는 7 ADK. 서버가 빼고, 실패하면 settle 에서 되돌려요. (부족하면 400)
+  const charged = `AI 리포트 · ${company.name}`;
+  const balance = wallet.spend('report', charged);
+  jobs.set(stockCode, { startedAt: Date.now(), fail: shouldFail(), charged });
+  return { ...currentReport(stockCode), balance };
 }
 
 /* ------------------------------------------------------------------ */
