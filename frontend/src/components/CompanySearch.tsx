@@ -14,6 +14,15 @@ interface CompanySearchProps {
   /** hero: 메인 화면의 큰 검색창 / header: 상단 내비게이션의 작은 검색창 */
   variant: 'hero' | 'header';
   autoFocus?: boolean;
+  /**
+   * 주면 기업 페이지로 이동하는 대신 고른 기업을 알려줘요. (비교하기에서 비교할 기업 고르기)
+   * 이때는 최근 검색을 보여주지도, 기록하지도 않아요.
+   */
+  onSelect?: (company: CompanySummary) => void;
+  /** 검색 결과에서 빼는 종목 (예: 지금 보고 있는 기업) */
+  excludeCode?: string;
+  /** 입력창 안내 문구 */
+  placeholder?: string;
 }
 
 type Option =
@@ -23,7 +32,13 @@ type Option =
  * 기업 검색창 (한글·영어·종목코드). 위·아래 키로 고르고 엔터로 열어요.
  * 입력이 비어 있을 때는 최근 검색을 보여줘요.
  */
-export function CompanySearch({ variant, autoFocus }: CompanySearchProps) {
+export function CompanySearch({
+  variant,
+  autoFocus,
+  onSelect,
+  excludeCode,
+  placeholder,
+}: CompanySearchProps) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -38,14 +53,19 @@ export function CompanySearch({ variant, autoFocus }: CompanySearchProps) {
   const isWaiting = isSearching && (search.isFetching || search.keyword !== trimmed);
 
   const options: Option[] = isSearching
-    ? (search.data ?? []).map((company) => ({ kind: 'result', company }))
-    : recent.items.map((company) => ({ kind: 'recent', company }));
+    ? (search.data ?? [])
+        .filter((company) => company.stock_code !== excludeCode)
+        .map((company) => ({ kind: 'result', company }))
+    : onSelect
+      ? []
+      : recent.items.map((company) => ({ kind: 'recent', company }));
 
   const showPanel = open && (isSearching || options.length > 0);
   const optionId = (index: number) => `${listId}-option-${index}`;
 
   const select = (option: Option) => {
-    openCompany(option.company);
+    if (onSelect && option.kind === 'result') onSelect(option.company);
+    else openCompany(option.company);
     setQuery('');
     setOpen(false);
     setActiveIndex(-1);
@@ -85,7 +105,9 @@ export function CompanySearch({ variant, autoFocus }: CompanySearchProps) {
           type="search"
           role="combobox"
           className={styles.input}
-          placeholder={variant === 'hero' ? '기업 이름이나 종목코드로 검색' : '기업 검색'}
+          placeholder={
+            placeholder ?? (variant === 'hero' ? '기업 이름이나 종목코드로 검색' : '기업 검색')
+          }
           aria-label="기업 검색"
           aria-autocomplete="list"
           aria-expanded={showPanel}

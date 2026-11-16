@@ -25,6 +25,11 @@ export function getCompaniesByCodes(stockCodes: string[]) {
   });
 }
 
+/** 같은 산업의 비슷한 회사 (비교하기 추천 칩, 최대 4개) */
+export function getPeers(stockCode: string) {
+  return request<CompanySummary[]>({ path: `/api/companies/${stockCode}/peers` });
+}
+
 export function getCompany(stockCode: string) {
   return request<CompanyDetail>({
     path: `/api/companies/${stockCode}`,

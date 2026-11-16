@@ -22,6 +22,7 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   ],
   ['GET', /^\/api\/companies\/(\w+)$/, async ([, code]) => server.getCompany(code)],
   ['GET', /^\/api\/companies\/(\w+)\/financials$/, async ([, code]) => server.getFinancials(code)],
+  ['GET', /^\/api\/companies\/(\w+)\/peers$/, async ([, code]) => server.getPeers(code)],
   [
     'GET',
     /^\/api\/companies\/(\w+)\/performance$/,

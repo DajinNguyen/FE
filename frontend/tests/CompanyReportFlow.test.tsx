@@ -19,7 +19,7 @@ afterEach(() => {
 });
 
 describe('기업 화면 탭', () => {
-  it('검색 후 들어오면 개요가 기본이고, 탭은 개요·AI 분석·재무 상세·뉴스 상세·커뮤니티예요', async () => {
+  it('검색 후 들어오면 개요가 기본이고, 탭은 개요·AI 분석·재무 상세·뉴스 상세·커뮤니티·비교하기예요', async () => {
     const user = userEvent.setup();
     renderCompanyPage('005930', '');
 
@@ -30,6 +30,7 @@ describe('기업 화면 탭', () => {
       '재무 상세',
       '뉴스 상세',
       '커뮤니티',
+      '비교하기',
     ]);
     expect(await screen.findByRole('heading', { name: '무슨 사업을 하나요?' })).toBeInTheDocument();
 
