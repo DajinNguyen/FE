@@ -1,4 +1,4 @@
-import { act, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { App } from '../src/App';
@@ -93,6 +93,24 @@ describe('로그아웃 시 계정 데이터 초기화', () => {
 
     act(() => result.current.auth.devLogin!());
     await waitFor(() => expect(result.current.wallet.balance).toBe(50));
+  });
+
+  it('챗봇 대화 기록도 로그아웃하면 비워요', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<App />, { route: '/', user: DEV_USER });
+    await screen.findByRole('button', { name: '내 앰똥깡 50 ADK' });
+    await user.click(screen.getByRole('button', { name: 'AI에게 물어보기' }));
+    const dialog = screen.getByRole('dialog', { name: 'AI에게 물어보기' });
+    await user.type(within(dialog).getByLabelText('질문 입력'), '로그아웃 전 질문');
+    await user.click(within(dialog).getByRole('button', { name: '보내기 · 5 ADK' }));
+    await within(dialog).findByText(/지금 화면을 기준으로/);
+    await user.click(within(dialog).getByRole('button', { name: '시트 닫기' }));
+
+    await user.click(screen.getByRole('button', { name: '로그아웃' }));
+    await user.click(await screen.findByRole('button', { name: '개발용 로그인' }));
+    await user.click(await screen.findByRole('button', { name: 'AI에게 물어보기' }));
+    const again = screen.getByRole('dialog', { name: 'AI에게 물어보기' });
+    expect(within(again).queryByText('로그아웃 전 질문')).not.toBeInTheDocument();
   });
 
   it('다른 계정으로 로그인하면 이전 계정의 학습 기록·관심 기업이 보이지 않아요', async () => {

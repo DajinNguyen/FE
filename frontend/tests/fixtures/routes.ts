@@ -5,6 +5,7 @@
 import { ApiError } from '../../src/api/errors';
 import * as me from './me';
 import * as wallet from './wallet';
+import * as chat from './chat';
 import * as server from './mockServer';
 import type { HeatPeriod, PostCategory, PostSort, PricePeriod } from '../../src/types';
 
@@ -100,6 +101,7 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   ['GET', /^\/api\/me\/term-progress$/, async () => me.getTermProgress()],
   ['PUT', /^\/api\/me\/term-progress$/, async (_, __, body) => me.putTermProgress(body)],
   ['GET', /^\/api\/me\/wallet$/, async () => wallet.getWallet()],
+  ['POST', /^\/api\/chat$/, async (_, __, body) => chat.chat(body)],
   ['POST', /^\/api\/me\/puzzle-completions$/, async (_, __, body) => wallet.completePuzzle(body)],
 ];
 

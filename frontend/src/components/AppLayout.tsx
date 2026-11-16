@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
+import { ChatWidget } from '../features/chat/ChatWidget';
 import { useUserDataResetCount } from '../hooks/userData';
 import { AppHeader } from './AppHeader';
 import styles from './AppLayout.module.css';
@@ -19,6 +20,7 @@ export function AppLayout() {
       <main key={`${pathname}:${resetCount}`} className={styles.main}>
         <Outlet />
       </main>
+      <ChatWidget />
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <p className={styles.footerBrand}>다진 · 어려운 재무 정보를 쉬운 말로</p>

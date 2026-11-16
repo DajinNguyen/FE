@@ -149,3 +149,36 @@
     padding: var(--sp-6);
   }
 }
+
+/* 챗봇: 휴대폰 전체 화면, 넓은 화면 오른쪽 패널 */
+.chat .sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-height: none;
+  border-radius: 0;
+}
+
+.chat .body {
+  flex: 1;
+  min-height: 0;
+}
+
+.chat .handle {
+  display: none;
+}
+
+@media (min-width: 720px) {
+  .chat {
+    align-items: stretch;
+    justify-content: flex-end;
+    padding: 0;
+  }
+
+  .chat .sheet {
+    max-width: 420px;
+    padding: var(--sp-6);
+    border-radius: 0;
+    animation: slideLeft 280ms var(--ease);
+  }
+}

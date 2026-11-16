@@ -12,8 +12,9 @@ interface SheetProps {
   /**
    * 'side': 넓은 화면에서 오른쪽 패널로 열어요 (모바일은 똑같이 아래에서)
    * 'popover': 넓은 화면에서 헤더 오른쪽 아래에 작게 열어요 (헤더 배지용)
+   * 'chat': 휴대폰은 전체 화면, 넓은 화면은 오른쪽 패널 (챗봇)
    */
-  placement?: 'center' | 'side' | 'popover';
+  placement?: 'center' | 'side' | 'popover' | 'chat';
 }
 
 /**
