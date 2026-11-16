@@ -1,0 +1,152 @@
+/* 비교 막대: PC 는 [왼쪽 막대 ←] 지표 [→ 오른쪽 막대], 휴대폰은 지표마다 두 막대 위아래 */
+.wrap {
+  --label-room: 96px;
+  --label-gap: 7px;
+}
+
+.legend {
+  display: none;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr);
+  grid-template-areas: 'left label right';
+  align-items: center;
+  min-height: 44px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* dd 를 없는 것처럼 두고 왼쪽·오른쪽 칸을 바로 격자에 놓아요 */
+.pair {
+  display: contents;
+}
+
+.label {
+  grid-area: label;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-align: center;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: var(--label-gap);
+  min-width: 0;
+  height: 28px;
+}
+
+/* 왼쪽 회사: 가운데에서 왼쪽으로 뻗고, 라벨은 막대 끝의 왼쪽 */
+.left {
+  grid-area: left;
+  flex-direction: row-reverse;
+}
+
+.right {
+  grid-area: right;
+}
+
+.bar {
+  flex-shrink: 0;
+  width: calc((100% - var(--label-room)) * var(--ratio));
+  min-width: 1px;
+  height: 16px;
+}
+
+.barLeft {
+  background: var(--brand);
+}
+
+.barRight {
+  background: var(--chart-muted);
+}
+
+/* 음수(적자·감소): 같은 색 테두리만 */
+.negative {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px currentcolor;
+}
+
+.left .negative {
+  color: var(--brand);
+}
+
+.right .negative {
+  color: var(--chart-muted);
+}
+
+.value {
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 두 값 중 큰 쪽만 굵게 (색으로 승패를 나타내지 않아요) */
+.strong {
+  font-weight: var(--fw-semibold);
+}
+
+.loss {
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+}
+
+.none {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 767px) {
+  .legend {
+    display: flex;
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'label'
+      'left'
+      'right';
+    gap: var(--sp-1);
+    padding: var(--sp-2) 0;
+  }
+
+  .label {
+    text-align: left;
+  }
+
+  /* 휴대폰에서는 두 막대 모두 왼쪽에서 오른쪽으로 */
+  .left {
+    flex-direction: row;
+  }
+}

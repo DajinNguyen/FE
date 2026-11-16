@@ -20,6 +20,11 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
       return server.searchCompanies(q.get('query') ?? '', Number(q.get('limit') ?? 20));
     },
   ],
+  [
+    'GET',
+    /^\/api\/companies\/compare$/,
+    async (_, q) => server.getCompanyCompare(q.get('left') ?? '', q.get('right') ?? ''),
+  ],
   ['GET', /^\/api\/companies\/(\w+)$/, async ([, code]) => server.getCompany(code)],
   ['GET', /^\/api\/companies\/(\w+)\/financials$/, async ([, code]) => server.getFinancials(code)],
   ['GET', /^\/api\/companies\/(\w+)\/peers$/, async ([, code]) => server.getPeers(code)],

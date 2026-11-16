@@ -1,6 +1,7 @@
 import { request } from './client';
 import { ApiError } from './errors';
 import type {
+  CompanyCompare,
   CompanyDetail,
   CompanyReport,
   CompanySummary,
@@ -22,6 +23,13 @@ export function searchCompanies(query: string) {
 export function getCompaniesByCodes(stockCodes: string[]) {
   return request<CompanySummary[]>({
     path: `/api/companies?stock_codes=${stockCodes.join(',')}`,
+  });
+}
+
+/** 두 회사 비교 (왼쪽 = 비교할 기업, 오른쪽 = 지금 보는 기업) */
+export function getCompanyCompare(left: string, right: string) {
+  return request<CompanyCompare>({
+    path: `/api/companies/compare?left=${encodeURIComponent(left)}&right=${encodeURIComponent(right)}`,
   });
 }
 

@@ -1,11 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCompaniesByCodes, getCompany, getPeers } from '../api/companies';
+import { getCompaniesByCodes, getCompany, getCompanyCompare, getPeers } from '../api/companies';
 
 export function useCompaniesByCodes(stockCodes: string[]) {
   return useQuery({
     queryKey: ['companies', 'by-codes', stockCodes],
     queryFn: () => getCompaniesByCodes(stockCodes),
     enabled: stockCodes.length > 0,
+  });
+}
+
+/** 두 회사 비교 */
+export function useCompanyCompare(left: string | null, right: string) {
+  return useQuery({
+    queryKey: ['companies', 'compare', left, right],
+    queryFn: () => getCompanyCompare(left!, right),
+    enabled: left !== null,
+    staleTime: 5 * 60_000,
   });
 }
 

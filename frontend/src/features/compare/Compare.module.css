@@ -108,6 +108,54 @@
   background: var(--surface);
 }
 
+/* 비교 결과 */
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.basis {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.basis strong {
+  margin-left: var(--sp-1);
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+}
+
+.mismatch {
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--caution-weak);
+  color: var(--caution);
+  font-size: var(--fs-sm);
+}
+
+.goLeft {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+
+.empty {
+  padding: var(--sp-6) 0;
+  color: var(--text-3);
+  text-align: center;
+}
+
+.resultSkeleton {
+  height: 260px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
 /* 휴대폰: 고르는 중이면 검색을 한 줄 전체로 */
 @media (max-width: 767px) {
   .picking {
