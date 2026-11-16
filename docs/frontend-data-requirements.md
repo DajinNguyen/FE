@@ -216,6 +216,8 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 
 ## 4. 이용 제한 (지금은 프론트에서 흉내)
 
+> 2026-11-16: 하루 횟수 방식은 **앰똥깡(ADK)** 으로 바뀌어요 → **16장**. 아래는 예전 내용이에요.
+
 - 정책 값: `src/config/usagePolicy.ts` (임시값, PM 확정 필요) — 지금은 비로그인·로그인 모두 하루 무제한. 같은 기업 다시 만들기 간격 제한은 없앴어요 (2026-11-02)
 - 지금은 기기(localStorage)에 횟수를 기록해요. 저장 로직은 `src/hooks/useReportQuota.ts` 한 곳에 모았어요.
 - 서버로 옮길 때 제안 (합의 필요):
@@ -736,6 +738,8 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 
 ## 14. 낱말퀴즈 보상 `GET /api/me/usage-credits`, `POST /api/me/puzzle-completions` (2026-11-13 추가, 백엔드 필요)
 
+> 2026-11-16: "리포트 1회 추가" 보상은 **20 ADK** 로 바뀌어요 → **16장**. `usage-credits` 는 프론트가 더 이상 쓰지 않아요.
+
 낱말퀴즈 3개를 [정답 보기] 없이 끝까지 풀면 AI 리포트 만들기 1회 추가. 타입: `frontend/src/types/learning.ts` (`UsageCredits`, `PuzzleCompletion`)
 규칙(임시값): `frontend/src/config/usagePolicy.ts` 의 `PUZZLE_REWARD`, 계산: `frontend/src/features/crossword/puzzleReward.ts`
 
@@ -797,3 +801,49 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 - 서버 API 가 생기면 그 데이터도 "로그아웃 시 기기 키 삭제"로 바꿀 수 있어요. 특히 관심 기업은 기기를 바꾸면 사라지니 API 를 요청해요.
   - `GET /api/me/watchlist` → `{ "stock_codes": ["005930"] }`, `PUT /api/me/watchlist` (같은 형식, 전체 저장)
 - `POST /api/auth/logout` 이 실패해도 프론트는 화면을 로그아웃 상태로 바꾸고 계정 데이터를 비워요.
+
+## 16. 앰똥깡(ADK) 지갑 (2026-11-16 추가, 백엔드 필요)
+
+다진 안에서만 쓰는 포인트예요. 화면 이름 "앰똥깡", 단위 "ADK". 실제 돈이 아니며 구매·환전할 수 없어요.
+규칙: `frontend/src/config/currency.ts`, 타입: `frontend/src/types/wallet.ts`. **지급·차감 판단은 서버가 해 주세요.** (프론트 계산은 화면 표시용)
+
+| 규칙 | 값 |
+|---|---|
+| AI 리포트 만들기·다시 만들기 | 7 ADK (확정) |
+| AI 챗봇 질문 1번 | 5 ADK (확정, 답변을 받은 뒤에만 차감) |
+| 낱말퀴즈 3개 완료마다 | +20 ADK (확정). 정답 보기를 쓴 퀴즈는 세지 않아요. 같은 퀴즈는 하루 한 번만 세요 |
+| 하루 퀴즈 보상 최대 | 2회 = 40 ADK (**임시값, 확정 필요**) |
+| 가입 선물 | 50 ADK (**임시값, 확정 필요**), 서버가 가입할 때 지급 |
+| 이미 만들어진 리포트 보기 | 무료 |
+| 비로그인 | 리포트 만들기·챗봇·잔액·퀴즈 보상 모두 사용 불가 (퀴즈 풀기와 리포트 보기는 돼요) |
+
+### 16-1. `GET /api/me/wallet` (로그인 필요)
+
+```json
+{
+  "balance": 1240,
+  "puzzle_progress": { "done": 2, "required": 3 },
+  "reward_count_today": 1,
+  "reward_daily_limit": 2,
+  "history": [
+    { "id": "h1", "type": "earn", "amount": 20, "reason": "낱말퀴즈 보상", "created_at": "2026-11-16T05:02:00Z" },
+    { "id": "h2", "type": "spend", "amount": 7, "reason": "AI 리포트 · 삼성전자", "created_at": "2026-11-16T04:40:00Z" }
+  ]
+}
+```
+- `history` 는 최신 순, 최근 10개면 돼요. `amount` 는 양수, `reason` 은 화면에 그대로 보여요.
+- 날짜가 바뀌면 `reward_count_today` 만 0 으로 (진행도 `done` 은 남겨요).
+
+### 16-2. `POST /api/me/puzzle-completions` (로그인 필요, 응답 형식 변경)
+
+요청 `{ "puzzle_id": "basics-easy", "used_reveal": false }` → 응답
+```json
+{ "puzzle_progress": { "done": 0, "required": 3 }, "rewarded": true, "balance": 1260, "reward_count_today": 2, "reward_daily_limit": 2 }
+```
+- 0/3 → 1/3 → 2/3 → 3/3 이 되면 20 ADK 를 주고 0/3 으로 다시 시작해요. 하루 한도를 넘으면 세지 않아요.
+- 퍼즐을 열지 않고 보낸 완료는 빼는 기존 규칙(BE#42)은 그대로 써 주세요.
+
+### 16-3. 리포트·챗봇 차감 (팀 결정)
+- **리포트**: `POST /api/companies/{code}/report` 를 받으면 서버가 7 ADK 를 빼고, 만들기에 실패하면 서버가 되돌려 주세요. 응답에 `balance` 를 넣어 주세요. 잔액이 부족하면 `400 INSUFFICIENT_BALANCE`.
+- **챗봇**: `POST /api/chat` 답변을 만든 뒤에만 5 ADK 를 빼고 응답에 `balance` 를 넣어 주세요. (→ 챗봇 장)
+- `POST /api/me/wallet/spend { reason: "report" | "chat", target_id } → { balance }` 는 다른 곳에서 차감이 필요할 때를 위해 만들어 두면 좋아요. 지금 프론트는 쓰지 않아요. (먼저 빼고 실패하면 돌려받을 방법이 없어서)
