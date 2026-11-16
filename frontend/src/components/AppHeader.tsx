@@ -1,5 +1,6 @@
 import { Link, NavLink, useLocation } from 'react-router';
 import { LoginButton } from '../features/auth/LoginButton';
+import { WalletBadge } from '../features/wallet/WalletBadge';
 import { useTheme } from '../hooks/useTheme';
 import { CompanySearch } from './CompanySearch';
 import { Icon } from './Icon';
@@ -61,6 +62,7 @@ export function AppHeader() {
           >
             <Icon name={themeIcon[mode]} size={20} />
           </button>
+          <WalletBadge />
           <LoginButton />
         </div>
       </div>

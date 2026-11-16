@@ -1,0 +1,154 @@
+/* 헤더 앰똥깡 배지: 진한 헤더 위에서는 헤더용 밝은 글자·면 (AppHeader 의 .actions 변수) */
+.badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--sp-1);
+  height: 34px;
+  padding: 0 var(--sp-3);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.badge:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+/* 리포트 한 번(7 ADK)보다 적으면 연한 경고 색 */
+.low {
+  background: var(--caution-weak);
+  color: var(--caution);
+}
+
+.balance {
+  color: var(--text-1);
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.stats {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+}
+
+.stats div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.stats dd {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--surface-strong);
+}
+
+.dots .on {
+  background: var(--brand);
+}
+
+.subTitle {
+  margin-bottom: var(--sp-1);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.uses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-4);
+  font-size: var(--fs-sm);
+}
+
+.uses strong {
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--fs-sm);
+}
+
+.history li {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) auto;
+  gap: var(--sp-2);
+  align-items: baseline;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.earn,
+.spend {
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 획득·사용은 주가 상승·하락 색(빨강·파랑)과 헷갈리지 않게 브랜드색·기본색으로 */
+.earn {
+  color: var(--brand);
+}
+
+.spend {
+  color: var(--text-1);
+}
+
+.reason {
+  overflow: hidden;
+  color: var(--text-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.when {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+}
+
+.empty,
+.notice {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.skeleton {
+  height: 260px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+@media (max-width: 479px) {
+  .badge {
+    padding: 0 var(--sp-2);
+  }
+}
