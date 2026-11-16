@@ -119,6 +119,38 @@
   font-weight: var(--fw-medium);
 }
 
+.rewardLogin {
+  margin-top: var(--sp-1);
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: underline;
+}
+
+/* 앰똥깡이 실제 돈이 아니라는 안내 */
+.adkNotice {
+  display: block;
+  margin-top: var(--sp-1);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+/* 퍼즐 위 보상 안내 줄 */
+.rewardNote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-3);
+  margin-bottom: var(--sp-3);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.rewardNote strong {
+  color: var(--brand);
+  font-weight: var(--fw-semibold);
+}
+
 .finished strong {
   margin-right: var(--sp-1);
   color: var(--good);

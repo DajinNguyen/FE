@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useCrosswordPuzzle, useCrosswordPuzzles } from '../../hooks/useCrosswords';
 import { userScope } from '../../hooks/userData';
 import { CrosswordGame } from './CrosswordGame';
+import { PuzzleRewardNote } from './PuzzleRewardNote';
 import styles from './Crossword.module.css';
 
 const difficultyLabel = { easy: '쉬움', normal: '보통' } as const;
@@ -56,6 +57,7 @@ export function CrosswordPanel({ puzzleId, onSelect }: CrosswordPanelProps) {
           </button>
         ))}
       </div>
+      <PuzzleRewardNote />
       {detail.isError ? (
         <ErrorState
           title="퍼즐을 불러오지 못했어요"

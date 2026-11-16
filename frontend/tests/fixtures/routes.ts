@@ -94,8 +94,7 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   ['GET', /^\/api\/me\/term-progress$/, async () => me.getTermProgress()],
   ['PUT', /^\/api\/me\/term-progress$/, async (_, __, body) => me.putTermProgress(body)],
   ['GET', /^\/api\/me\/wallet$/, async () => wallet.getWallet()],
-  ['GET', /^\/api\/me\/usage-credits$/, async () => me.getUsageCredits()],
-  ['POST', /^\/api\/me\/puzzle-completions$/, async (_, __, body) => me.postPuzzleCompletion(body)],
+  ['POST', /^\/api\/me\/puzzle-completions$/, async (_, __, body) => wallet.completePuzzle(body)],
 ];
 
 /** 이 조건에 맞는 요청은 서버 에러(503)로 응답해요. 테스트에서 실패 화면을 확인할 때 써요. */

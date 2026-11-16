@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '../../components/Button';
-import { hasDailyLimit } from '../../config/usagePolicy';
-import { useUsageCredits, type PuzzleRewardResult } from '../../hooks/useUsageCredits';
+import { ADK_NOTICE } from '../../config/currency';
+import { useRequireLogin } from '../../hooks/useRequireLogin';
+import { useWallet } from '../../hooks/useWallet';
 import type { CrosswordPuzzle } from '../../types';
 import { ClueList } from './ClueList';
 import { CrosswordGrid } from './CrosswordGrid';
 import { formatClock } from './formatClock';
+import { puzzleRewardText, type PuzzleRewardView } from './puzzleRewardText';
 import { useCrossword } from './useCrossword';
 import styles from './Crossword.module.css';
 
@@ -19,11 +21,11 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
   const { model, state, dispatch, word, finished } = game;
   const inputRef = useRef<HTMLInputElement>(null);
   const hintLevel = state.hintLevels[word.index] ?? 0;
-  const { onPuzzleComplete, progress, puzzlesPerReward, rewardsToday, dailyMax } =
-    useUsageCredits();
-  const [reward, setReward] = useState<PuzzleRewardResult | null>(null);
+  const { isLoggedIn, completePuzzle } = useWallet();
+  const requireLogin = useRequireLogin();
+  const [reward, setReward] = useState<PuzzleRewardView | null>(null);
 
-  // 퍼즐 3개를 정답 보기 없이 풀면 리포트 만들기 1회 보상. 같은 퍼즐은 하루 한 번만 세요.
+  // 퍼즐 3개를 정답 보기 없이 풀 때마다 20 ADK (로그인 사용자만, 판단은 서버).
   // 이미 끝난 판을 다시 열었을 때는 세지 않아요. (이번에 다 푼 순간에만)
   const finishedAtOpen = useRef(finished);
   const usedReveal = state.revealed || state.revealedKeys.length > 0;
@@ -36,23 +38,24 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
     }
     if (finishedAtOpen.current || reported.current) return;
     reported.current = true;
-    setReward(onPuzzleComplete(puzzle.id, { revealed: usedReveal }));
-  }, [finished, usedReveal, puzzle.id, onPuzzleComplete]);
+    // 비로그인은 퀴즈만 풀 수 있고 진행도·보상은 없어요.
+    if (!isLoggedIn) {
+      setReward({ kind: 'guest' });
+      return;
+    }
+    // 정답 보기를 쓴 퀴즈도 서버에 알리고(개수에는 안 들어가요) 안내만 바꿔요.
+    void completePuzzle(puzzle.id, usedReveal).then((result) =>
+      setReward(
+        usedReveal
+          ? { kind: 'revealed' }
+          : result
+            ? { kind: 'result', result }
+            : { kind: 'failed' },
+      ),
+    );
+  }, [finished, usedReveal, puzzle.id, isLoggedIn, completePuzzle]);
 
-  // 하루 만들기 횟수 제한이 있을 때만 보상 진행도를 보여줘요. (지금은 임시로 무제한)
-  const rewardText = !hasDailyLimit()
-    ? null
-    : reward === 'granted'
-      ? `AI 리포트 1회가 추가됐어요 (오늘 보상 ${rewardsToday}/${dailyMax})`
-      : reward === 'progress'
-        ? `AI 리포트까지 퀴즈 ${progress}/${puzzlesPerReward}`
-        : reward === 'revealed'
-          ? '정답 보기를 사용한 퀴즈는 보상 개수에 포함되지 않아요'
-          : reward === 'guest'
-            ? `AI 리포트까지 퀴즈 ${progress}/${puzzlesPerReward} · 로그인하면 보상을 받을 수 있어요`
-            : reward === 'daily-max'
-              ? '오늘 받을 수 있는 보상을 모두 받았어요'
-              : null;
+  const rewardText = reward && puzzleRewardText(reward);
 
   return (
     <div className={styles.game}>
@@ -117,6 +120,18 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
               ? '초록은 내가 맞힌 칸, 파랑은 정답으로 채운 칸이에요.'
               : `${formatClock(game.elapsedMs)} 걸렸고 힌트는 ${state.hintsUsed}번 썼어요.`}
             {rewardText && <span className={styles.reward}>{rewardText}</span>}
+            {reward?.kind === 'guest' && (
+              <button
+                type="button"
+                className={styles.rewardLogin}
+                onClick={() => requireLogin(undefined, 'adk')}
+              >
+                로그인하기
+              </button>
+            )}
+            {reward && reward.kind !== 'guest' && (
+              <span className={styles.adkNotice}>{ADK_NOTICE}</span>
+            )}
           </p>
         ) : (
           <p className={styles.currentClue}>

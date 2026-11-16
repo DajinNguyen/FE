@@ -117,7 +117,7 @@ export const serverWallet = {
     walletOf(userId).balance = balance;
   },
   setProgress: (userId: string, done: number, rewardCount = 0) => {
-    Object.assign(walletOf(userId), { done, rewardCount });
+    Object.assign(walletOf(userId), { done, rewardCount, countedToday: [] });
   },
 };
 
