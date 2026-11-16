@@ -15,6 +15,7 @@ import {
   GUEST_SCOPE,
   moveLegacyPending,
   onBeforeLogout,
+  scopedKey,
   userScope,
 } from './userData';
 import { useToast } from './useToast';
@@ -41,6 +42,29 @@ interface SyncedRecordConfig<T> {
   /** 두 기록 합치기 (처음 로그인할 때 기기 기록 + 서버 기록) */
   merge: (server: T, local: T) => T;
   isEmpty: (data: T) => boolean;
+  /**
+   * 아직 못 보낸 기록(pending)을 서버 기록 위에 얹는 방법. 없으면 merge 를 써요.
+   * 목록처럼 "빼기"가 있는 기록은 합치면 뺀 항목이 되살아나서, 마지막 기록을 그대로 쓰게 해요.
+   */
+  rebase?: (server: T, unsent: T) => T;
+  /**
+   * 서버 API 가 생기기 전 계정 키(`dajin:{사용자 id}:이름`)에 기기 기록이 있었으면,
+   * 처음 로그인했을 때 서버 기록과 합쳐 올리고 그 키를 지워요.
+   */
+  adoptAccountKey?: boolean;
+}
+
+/** 서버 API 가 생기기 전의 계정 기기 기록을 꺼내고 키를 지워요. */
+function takeAccountKey<T>(scope: string, name: string): T | null {
+  try {
+    const key = scopedKey(scope, name);
+    const raw = window.localStorage.getItem(key);
+    if (raw === null) return null;
+    window.localStorage.removeItem(key);
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
 }
 
 interface SyncedRecordValue<T> {
@@ -51,7 +75,7 @@ interface SyncedRecordValue<T> {
 }
 
 /**
- * 로그인 여부에 따라 저장 위치가 바뀌는 기록 (학습 기록, 낱말퀴즈 보상).
+ * 로그인 여부에 따라 저장 위치가 바뀌는 기록 (학습 기록, 관심 기업).
  * - 비로그인: 기기(localStorage)
  * - 로그인: 서버. 다른 기기에서도 이어서 볼 수 있어요.
  * - 처음 로그인하면 기기 기록을 서버 기록과 합쳐 올리고, 기기 기록은 지워요.
@@ -59,6 +83,7 @@ interface SyncedRecordValue<T> {
  * - 로그아웃하면 못 보낸 기록을 한 번 보내 보고, 이 계정의 기기 키는 지워요. (resetUserData)
  */
 export function createSyncedRecord<T>(config: SyncedRecordConfig<T>) {
+  const rebase = config.rebase ?? config.merge;
   if (config.legacyName)
     moveLegacyPending(`dajin:${config.legacyName}:pending`, `${config.name}:pending`);
   /** 비로그인 기록 (guest 범위만 써요) */
@@ -112,7 +137,7 @@ export function createSyncedRecord<T>(config: SyncedRecordConfig<T>) {
         if (newer === item) {
           pendingStore.set(null);
         } else if (newer !== null) {
-          pendingStore.set(config.merge(saved, newer));
+          pendingStore.set(rebase(saved, newer));
           clearTimeout(timer.current);
           timer.current = setTimeout(saveNow, SYNC_TIMING.debounce);
         }
@@ -161,7 +186,12 @@ export function createSyncedRecord<T>(config: SyncedRecordConfig<T>) {
       let changed = false;
       const unsent = pendingStore.get();
       if (unsent !== null) {
-        next = config.merge(next, unsent);
+        next = rebase(next, unsent);
+        changed = true;
+      }
+      const device = config.adoptAccountKey ? takeAccountKey<T>(userKey, config.name) : null;
+      if (device !== null && !config.isEmpty(device)) {
+        next = config.merge(next, device);
         changed = true;
       }
       const local = guestStore.get();

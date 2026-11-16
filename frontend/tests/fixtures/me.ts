@@ -1,14 +1,15 @@
 /**
- * 로그인 사용자 기록 목 서버 (메모리 저장): 학습 기록. (앰똥깡 지갑은 wallet.ts)
+ * 로그인 사용자 기록 목 서버 (메모리 저장): 학습 기록, 관심 기업. (앰똥깡 지갑은 wallet.ts)
  * 지금 요청한 사람은 session.ts 의 사용자예요. 없으면 401.
  */
 import { ApiError } from '../../src/api/errors';
-import type { TermProgress } from '../../src/types';
+import type { TermProgress, Watchlist } from '../../src/types';
 import { getSessionUser } from './session';
 
 const emptyProgress = (): TermProgress => ({ terms: {}, set_progress: [], study_dates: [] });
 
 let termProgress = new Map<string, TermProgress>();
+let watchlists = new Map<string, string[]>();
 
 function viewer() {
   const user = getSessionUser();
@@ -31,6 +32,26 @@ export const serverTermProgress = {
   set: (userId: string, progress: TermProgress) => termProgress.set(userId, progress),
 };
 
+/** 백엔드 규칙: 보낸 순서 그대로, 같은 회사는 한 번만, 최대 200개 (넘으면 422) */
+export async function getWatchlist(): Promise<Watchlist> {
+  return { stock_codes: watchlists.get(viewer()) ?? [] };
+}
+
+export async function putWatchlist(body: Watchlist): Promise<Watchlist> {
+  const user = viewer();
+  const codes = [...new Set(body.stock_codes)];
+  if (codes.length > 200) throw new ApiError('관심 기업은 200개까지예요', 422, 'VALIDATION_ERROR');
+  watchlists.set(user, codes);
+  return { stock_codes: codes };
+}
+
+/** 테스트에서 서버에 이미 있는 관심 기업을 넣거나 확인할 때 */
+export const serverWatchlist = {
+  get: (userId: string) => watchlists.get(userId),
+  set: (userId: string, codes: string[]) => watchlists.set(userId, codes),
+};
+
 export function resetMeStore() {
   termProgress = new Map();
+  watchlists = new Map();
 }

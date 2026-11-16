@@ -1,6 +1,6 @@
 import { Icon } from '../../components/Icon';
 import { useToast } from '../../hooks/useToast';
-import { useWatchlist } from '../../hooks/useWatchlist';
+import { useWatchlist, WATCHLIST_FULL_TOAST } from '../../hooks/useWatchlist';
 import styles from './WatchlistHeart.module.css';
 
 export function WatchlistHeart({
@@ -15,8 +15,10 @@ export function WatchlistHeart({
   const watched = isWatched(stockCode);
 
   const handleClick = () => {
-    const added = toggle(stockCode);
-    showToast(added ? `${companyName}을(를) 관심 기업에 담았어요` : '관심 기업에서 뺐어요');
+    const result = toggle(stockCode);
+    if (result === 'full') showToast(WATCHLIST_FULL_TOAST);
+    else if (result === 'added') showToast(`${companyName}을(를) 관심 기업에 담았어요`);
+    else showToast('관심 기업에서 뺐어요');
   };
 
   return (

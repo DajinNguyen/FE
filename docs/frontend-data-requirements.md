@@ -792,14 +792,17 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | 데이터 | 서버 | 기기 키 | 로그아웃 |
 |---|---|---|---|
 | 용어 학습 기록 | `GET·PUT /api/me/term-progress` | `dajin:{id}:term-progress:pending` (못 보낸 기록) | 한 번 보내 보고 키 삭제, 다시 로그인하면 서버에서 불러와요 |
-| 관심 기업 | **없음** | `dajin:{id}:watchlist` | 키는 남기고 화면에서만 비워요 |
+| 관심 기업 | `GET·PUT /api/me/watchlist` (BE#50) | `dajin:{id}:watchlist:pending` (못 보낸 목록) | 한 번 보내 보고 키 삭제, 다시 로그인하면 서버에서 불러와요 |
 | 용어 게임 기록 | 없음 | `dajin:{id}:term-game` | 〃 |
 | 낱말퀴즈 풀던 판 | 없음 | `dajin:{id}:crossword` | 〃 |
 | 최근 검색 | 없음 | `dajin:{id}:recent-searches` | 〃 |
 
 - 비로그인 기록은 `dajin:guest:…` 에만 두고, 로그인하면 계정으로 합친 뒤 guest 키를 지워요.
-- 서버 API 가 생기면 그 데이터도 "로그아웃 시 기기 키 삭제"로 바꿀 수 있어요. 특히 관심 기업은 기기를 바꾸면 사라지니 API 를 요청해요.
-  - `GET /api/me/watchlist` → `{ "stock_codes": ["005930"] }`, `PUT /api/me/watchlist` (같은 형식, 전체 저장)
+- 서버 API 가 생기면 그 데이터도 "로그아웃 시 기기 키 삭제"로 바꿀 수 있어요.
+- 관심 기업 (2026-11-16 연동): `GET /api/me/watchlist` → `{ "stock_codes": ["005930"] }`, `PUT /api/me/watchlist` (같은 형식, 전체 저장, 저장한 값을 돌려받음)
+  - 하트를 누르면 화면은 바로 바뀌고 잠시 뒤 전체 목록을 PUT 해요. 실패하면 다시 시도하고, 뺀 회사가 되살아나지 않게 마지막 목록을 그대로 보내요.
+  - 처음 로그인하면 서버 목록 뒤에 비로그인 목록(`dajin:guest:watchlist`)과 API 전 계정 기기 목록(`dajin:{id}:watchlist`)을 붙여 올리고 두 키를 지워요.
+  - 최대 200개: 프론트도 200개가 차면 더 담지 않고 안내해요.
 - `POST /api/auth/logout` 이 실패해도 프론트는 화면을 로그아웃 상태로 바꾸고 계정 데이터를 비워요.
 
 ## 16. 앰똥깡(ADK) 지갑 (2026-11-16 추가, 백엔드 필요)

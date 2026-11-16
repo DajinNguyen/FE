@@ -6,8 +6,8 @@ import { DEV_USER, type AuthUser } from '../src/features/auth/AuthContext';
 import { SYNC_TIMING } from '../src/hooks/syncedRecord';
 import { useAuth } from '../src/hooks/useAuth';
 import { useWallet } from '../src/hooks/useWallet';
-import { useWatchlist } from '../src/hooks/useWatchlist';
-import { serverTermProgress } from './fixtures/me';
+import { migrateWatchlistKeys, useWatchlist } from '../src/hooks/useWatchlist';
+import { serverTermProgress, serverWatchlist } from './fixtures/me';
 import { setSessionUser } from './fixtures/session';
 import { providersWrapper, renderWithProviders } from './testUtils';
 
@@ -65,20 +65,25 @@ describe('로그아웃 시 계정 데이터 초기화', () => {
     ).toBeInTheDocument();
   });
 
-  it('관심 기업: 로그아웃하면 화면에서 비우고, 같은 계정으로 다시 로그인하면 돌아와요', async () => {
+  it('관심 기업: 로그아웃하면 화면·기기에서 비우고, 다시 로그인하면 서버에서 불러와요', async () => {
     const { result } = renderHook(() => ({ auth: useAuth(), watchlist: useWatchlist() }), {
       wrapper: providersWrapper(DEV_USER),
     });
+    await waitFor(() => expect(result.current.watchlist.storage).toBe('server'));
     act(() => {
       result.current.watchlist.toggle('005930');
     });
     expect(result.current.watchlist.stockCodes).toEqual(['005930']);
+    await waitFor(() => expect(serverWatchlist.get(DEV_USER.id!)).toEqual(['005930']));
 
     await act(() => result.current.auth.logout());
     expect(result.current.watchlist.stockCodes).toEqual([]);
+    expect(
+      Object.keys(window.localStorage).filter((k) => k.startsWith('dajin:dev-user:watchlist')),
+    ).toEqual([]);
 
     act(() => result.current.auth.devLogin!());
-    expect(result.current.watchlist.stockCodes).toEqual(['005930']);
+    await waitFor(() => expect(result.current.watchlist.stockCodes).toEqual(['005930']));
   });
 
   it('ADK 잔액·내역도 로그아웃하면 비우고, 다시 로그인하면 서버에서 새로 불러와요', async () => {
@@ -143,24 +148,26 @@ describe('로그아웃 시 계정 데이터 초기화', () => {
     await waitFor(() => expect(record()).toHaveTextContent('외운 용어0개'));
   });
 
-  it('비로그인 기록은 guest 키에만 두고, 로그인하면 계정으로 합친 뒤 guest 키를 지워요', () => {
+  it('비로그인 기록은 guest 키에만 두고, 로그인하면 서버 목록에 합친 뒤 guest 키를 지워요', async () => {
     const guest = renderHook(() => useWatchlist(), { wrapper: providersWrapper(null) });
     act(() => {
       guest.result.current.toggle('035420');
     });
-    expect(JSON.parse(window.localStorage.getItem('dajin:guest:watchlist')!)).toEqual(['035420']);
+    expect(JSON.parse(window.localStorage.getItem('dajin:guest:watchlist')!)).toEqual({
+      stock_codes: ['035420'],
+    });
     guest.unmount();
 
+    serverWatchlist.set(DEV_USER.id!, ['005930']);
     const member = renderHook(() => useWatchlist(), { wrapper: providersWrapper(DEV_USER) });
-    expect(member.result.current.stockCodes).toEqual(['035420']);
+    await waitFor(() => expect(serverWatchlist.get(DEV_USER.id!)).toEqual(['005930', '035420']));
+    expect(member.result.current.stockCodes).toEqual(['005930', '035420']);
     expect(window.localStorage.getItem('dajin:guest:watchlist')).toBeNull();
-    expect(JSON.parse(window.localStorage.getItem('dajin:dev-user:watchlist')!)).toEqual([
-      '035420',
-    ]);
   });
 
   it('예전 키(계정 구분 없음)는 비로그인 기록으로 옮겨요', () => {
     window.localStorage.setItem('dajin:watchlist', JSON.stringify(['005930']));
+    migrateWatchlistKeys();
     const { result } = renderHook(() => useWatchlist(), { wrapper: providersWrapper(null) });
     expect(result.current.stockCodes).toEqual(['005930']);
     expect(window.localStorage.getItem('dajin:watchlist')).toBeNull();
