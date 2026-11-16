@@ -859,3 +859,23 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 ```
 - 같은 산업(industries)에서 시가총액이 비슷한 순으로 **3~4개**, 자기 자신은 빼 주세요. 없으면 빈 배열(칩을 숨겨요).
 - 카드의 기업명·업종·시가총액은 기존 `GET /api/companies/{stock_code}` (`market_cap`) 를 써요.
+
+### 17-2. 두 회사 비교 `GET /api/companies/compare?left={code}&right={code}`
+
+left = 비교할 기업, right = 지금 보는 기업. 타입: `frontend/src/types/compare.ts`
+
+```json
+{
+  "base_period": "2025년 연간",
+  "basis": "연결 기준",
+  "left":  { "stock_code": "000660", "name": "SK하이닉스", "sector": "반도체", "market_cap": 300, "is_financial": false,
+             "revenue": 66.2, "operating_income": 23.5, "operating_margin": 35.5, "revenue_growth": 102.0, "debt_ratio": 47.7,
+             "unit": "조 원", "base_period": "2025년 연간", "basis": "연결 기준" },
+  "right": { "stock_code": "005930", "...": "같은 형식" },
+  "analysis": null
+}
+```
+- 두 회사 **같은 기준**(같은 연도·연결)으로 맞춰 주세요. 회사별 `base_period`·`basis` 가 다르면 화면에서 "두 회사의 기준이 달라요" 안내를 띄워요.
+- 매출·영업이익은 `unit`(조 원) 숫자, 영업이익률·매출 증가율·부채비율은 %. 없으면 `null` → "자료 없음".
+- `is_financial`: 은행·보험·증권이면 true → 부채비율을 비교하지 않아요.
+- 둘 다 숫자가 없거나 404 면 "이 기업의 재무 자료가 아직 없어요".

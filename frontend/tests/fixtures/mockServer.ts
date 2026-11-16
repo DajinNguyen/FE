@@ -15,11 +15,13 @@ import { performanceDetails } from './performance';
 import { companyNews, marketNews } from './news';
 import samsungJson from './samsungElectronics.json';
 import * as wallet from './wallet';
+import { buildCompare } from './compare';
 import { ApiError } from '../../src/api/errors';
 import type { AuthUser } from '../../src/features/auth/AuthContext';
 import type {
   CompanyDetail,
   CompanyReport,
+  CompanyCompare,
   CompanySummary,
   CrosswordPuzzle,
   CrosswordSummary,
@@ -118,6 +120,11 @@ export async function getCompany(stockCode: string): Promise<CompanyDetail> {
     timeline: [],
     timeline_source: '',
   };
+}
+
+export async function getCompanyCompare(left: string, right: string): Promise<CompanyCompare> {
+  await wait(120);
+  return buildCompare(findCompany(left), findCompany(right));
 }
 
 /** 같은 산업의 비슷한 회사: 같은 업종 묶음(기타는 같은 업종 이름) 최대 4개 */
