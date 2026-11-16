@@ -9,7 +9,7 @@
   font-weight: var(--fw-semibold);
 }
 
-/* 왼쪽 비교할 기업, 오른쪽 지금 보는 기업 */
+/* 왼쪽 지금 보는 기업, 오른쪽 비교할 기업 */
 .pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -134,7 +134,7 @@
   font-size: var(--fs-sm);
 }
 
-.goLeft {
+.goOther {
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
@@ -193,6 +193,145 @@
   font-weight: var(--fw-semibold);
 }
 
+/* 두 회사 색: 왼쪽(지금 보는 기업)은 브랜드색, 오른쪽(비교할 기업)은 주황 — 회사 구분용이에요 */
+.sideLeft {
+  --side: var(--brand);
+  --side-weak: var(--brand-weak);
+}
+
+.sideRight {
+  --side: var(--caution);
+  --side-weak: var(--caution-weak);
+}
+
+.sideLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.sideLegend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+
+.sideDot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--side);
+}
+
+.highlights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.highlight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+}
+
+.hlHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.hlTitle {
+  color: var(--text-1);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+}
+
+.hlSub {
+  margin-left: var(--sp-1);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+}
+
+.verdict {
+  padding: 2px var(--sp-3);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.verdictLeft {
+  background: var(--brand-weak);
+  color: var(--brand);
+}
+
+.verdictRight {
+  background: var(--caution-weak);
+  color: var(--caution);
+}
+
+.hlValues {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+
+.hlCell {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+}
+
+.hlName {
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hlValue {
+  color: var(--text-2);
+  font-size: var(--fs-base);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--fw-medium);
+}
+
+/* 큰 쪽: 숫자를 더 크고 굵게, 회사 색으로 */
+.win {
+  background: var(--side-weak);
+}
+
+.win .hlName {
+  color: var(--side);
+  font-weight: var(--fw-semibold);
+}
+
+.win .hlValue {
+  color: var(--side);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  line-height: 1.2;
+}
+
 .points {
   display: flex;
   flex-direction: column;
@@ -203,6 +342,10 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  padding: var(--sp-2) var(--sp-3);
+  border-left: 3px solid var(--brand-muted);
+  border-radius: var(--radius-xs);
+  background: var(--bg);
   color: var(--text-2);
   font-size: var(--fs-sm);
 }
@@ -243,5 +386,9 @@
 
   .card {
     padding: var(--sp-3);
+  }
+
+  .win .hlValue {
+    font-size: var(--fs-xl);
   }
 }

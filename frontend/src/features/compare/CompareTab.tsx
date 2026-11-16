@@ -78,7 +78,7 @@ function ComparePicker({
   );
 }
 
-/** 기업 상세 "비교하기": 오른쪽 지금 보는 기업, 왼쪽 비교할 기업 */
+/** 기업 상세 "비교하기": 왼쪽 지금 보는 기업, 오른쪽 비교할 기업 */
 export function CompareTab({ stockCode }: { stockCode: string }) {
   const [withCode, setWith] = useCompareWith(stockCode);
   const current = useCompany(stockCode);
@@ -90,6 +90,7 @@ export function CompareTab({ stockCode }: { stockCode: string }) {
         두 회사 비교하기
       </h2>
       <div className={`${styles.pair} ${withCode ? '' : styles.picking}`}>
+        <CompanyCard label="지금 보는 기업" company={current.data} />
         {withCode ? (
           <CompanyCard
             label="비교할 기업"
@@ -103,9 +104,8 @@ export function CompareTab({ stockCode }: { stockCode: string }) {
         ) : (
           <ComparePicker stockCode={stockCode} onPick={setWith} />
         )}
-        <CompanyCard label="지금 보는 기업" company={current.data} />
       </div>
-      {withCode && <CompareResult left={withCode} right={stockCode} />}
+      {withCode && <CompareResult left={stockCode} right={withCode} />}
     </section>
   );
 }

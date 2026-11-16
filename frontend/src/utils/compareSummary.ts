@@ -30,6 +30,17 @@ export const subject = (name: string) => `${name}${hasFinalConsonant(name) ? '�
 
 type Winner = 'left' | 'right' | 'similar' | null;
 
+export interface CompareHighlight {
+  key: 'revenue' | 'operating_margin' | 'revenue_growth';
+  title: string;
+  subtitle: string;
+  winner: 'left' | 'right' | 'similar';
+  /** 짧은 한 줄 결론 (예: "삼성전자가 더 커요") */
+  verdict: string;
+  leftValue: string;
+  rightValue: string;
+}
+
 /** 어느 쪽이 큰지 (차이가 10% 미만이면 similar, 값이 없으면 null) */
 export function compareValues(a: number | null, b: number | null): Winner {
   if (a === null || b === null) return null;
@@ -104,4 +115,64 @@ function headline(size: Winner, margin: Winner, nameOf: (w: 'left' | 'right') =>
   }
   if (size === 'similar' && margin === 'similar') return '두 회사는 규모와 남기는 비율이 비슷해요';
   return '두 회사의 숫자를 나란히 놓아 봤어요';
+}
+
+/**
+ * "한눈에 비교" 카드용 지표별 결과. 두 값이 다 있는 지표만, 큰 쪽(winner)과 화면에 보이는 숫자 그대로 돌려줘요.
+ * 판단·추천 표현 없이 "더 커요/더 많이 남겨요/더 빠르게 늘었어요"만 써요.
+ */
+export function compareHighlights(left: CompareCompany, right: CompareCompany): CompareHighlight[] {
+  const nameOf = (w: 'left' | 'right') => (w === 'left' ? left.name : right.name);
+  const rows: CompareHighlight[] = [];
+
+  const add = (
+    key: CompareHighlight['key'],
+    title: string,
+    subtitle: string,
+    a: number | null,
+    b: number | null,
+    format: (v: number, c: CompareCompany) => string,
+    sentence: (name: string) => string,
+  ) => {
+    const winner = compareValues(a, b);
+    if (!winner || a === null || b === null) return;
+    rows.push({
+      key,
+      title,
+      subtitle,
+      winner,
+      verdict: winner === 'similar' ? '비슷해요' : sentence(nameOf(winner)),
+      leftValue: format(a, left),
+      rightValue: format(b, right),
+    });
+  };
+
+  add(
+    'revenue',
+    '규모',
+    '매출',
+    left.revenue,
+    right.revenue,
+    (v, c) => money(v, c.unit),
+    (n) => `${subject(n)} 더 커요`,
+  );
+  add(
+    'operating_margin',
+    '수익성',
+    '영업이익률',
+    left.operating_margin,
+    right.operating_margin,
+    percent,
+    (n) => `${topic(n)} 더 많이 남겨요`,
+  );
+  add(
+    'revenue_growth',
+    '성장 속도',
+    '매출 증가율',
+    left.revenue_growth,
+    right.revenue_growth,
+    percent,
+    (n) => `${topic(n)} 더 빠르게 늘었어요`,
+  );
+  return rows;
 }

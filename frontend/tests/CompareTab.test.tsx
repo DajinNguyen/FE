@@ -29,11 +29,13 @@ const renderCompare = (query = '?tab=compare') =>
 const panel = () => screen.getByRole('tabpanel', { name: '비교하기' });
 
 describe('비교하기 탭', () => {
-  it('맨 끝 탭이고, 오른쪽에 지금 보는 기업, 왼쪽에 검색과 같은 산업의 비슷한 회사가 있어요', async () => {
+  it('맨 끝 탭이고, 왼쪽에 지금 보는 기업, 오른쪽에 검색과 같은 산업의 비슷한 회사가 있어요', async () => {
     renderCompare();
     expect(screen.getAllByRole('tab').at(-1)).toHaveTextContent('비교하기');
 
     const current = (await within(panel()).findByText('지금 보는 기업')).parentElement!;
+    const picker = (await within(panel()).findByText('비교할 기업')).parentElement!;
+    expect(current.compareDocumentPosition(picker) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(await within(current).findByText('삼성전자')).toBeInTheDocument();
     expect(current).toHaveTextContent(/반도체·전자제품 · 시가총액 .+조 원/);
 
