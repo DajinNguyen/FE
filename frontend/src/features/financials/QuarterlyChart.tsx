@@ -1,24 +1,62 @@
-import { Bar, ComposedChart, LabelList, Line, ResponsiveContainer, XAxis, YAxis } from 'recharts';
-import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
+import type { CSSProperties } from 'react';
 import type { QuarterPerformance } from '../../types';
-import styles from './PerformanceAnalysis.module.css';
+import { barLength, niceTicks } from '../../utils/scaleBar';
+import styles from './QuarterlyChart.module.css';
 
-const labelStyle = { fontSize: 'var(--fs-xs)', fontWeight: 'var(--fw-semibold)' };
+/** 막대 영역 높이 (px, 고정) */
+export const BAR_AREA = 180;
+/** 영업이익률 선 영역 높이 (px, 고정) */
+const LINE_AREA = 56;
+/** 막대 끝 위·아래에 숫자 라벨이 들어가는 자리 (px). 축 범위와 상관없이 따로 둬요. */
+const LABEL_ROOM = 22;
+/** 선 위 % 라벨 자리 (px) */
+const LINE_LABEL_ROOM = 28;
+/** 라벨과 막대 끝 사이 (px) */
+export const LABEL_GAP = 5;
+
+const money = (v: number) => v.toFixed(1);
 
 /**
- * 분기별 흐름: 매출·영업이익 막대 + 영업이익률 선. 모든 값을 그래프 위에 적어요.
- * 막대는 아래쪽, 선은 위쪽에 그려서 숫자가 겹치지 않게 해요. 휴대폰에서는 옆으로 밀어서 봐요.
+ * 분기별 흐름: 위 영업이익률(%) 선, 아래 매출·영업이익 막대. 두 그래프가 분기 칸을 같이 써요.
+ * 막대는 0 기준선에서 시작하고 길이는 scaleBar 비율 그대로예요 (매출·영업이익 같은 축, 적자는 아래로).
+ * 휴대폰에서는 옆으로 밀어서 봐요.
  */
 export function QuarterlyChart({ data, unit }: { data: QuarterPerformance[]; unit: string }) {
-  const reducedMotion = usePrefersReducedMotion();
-  const money = data.flatMap((d) => [d.revenue, d.operating_income]);
-  const moneyMax = Math.max(...money, 0);
-  const moneyMin = Math.min(...money, 0);
+  const values = data.flatMap((d) => [d.revenue, d.operating_income]);
+  const max = Math.max(0, ...values);
+  const min = Math.min(0, ...values);
+  const range = max - min || 1;
+  const above = (BAR_AREA * max) / range;
+  const hasNegative = min < 0;
+  const baseline = LABEL_ROOM + above;
+  const barPanel = LABEL_ROOM + BAR_AREA + (hasNegative ? LABEL_ROOM : 0);
+
   const rates = data.map((d) => d.operating_margin);
-  const rateMax = Math.max(...rates);
-  const rateMin = Math.min(...rates);
-  const rateRange = rateMax - rateMin || 1;
-  const money1 = (v: number) => v.toLocaleString('ko-KR', { maximumFractionDigits: 1 });
+  const rateMin = Math.min(0, ...rates);
+  const rateMax = Math.max(...rates, rateMin + 1);
+  const rateY = (r: number) => LINE_LABEL_ROOM + ((rateMax - r) / (rateMax - rateMin)) * LINE_AREA;
+  const linePanel = LINE_LABEL_ROOM + LINE_AREA;
+  const n = data.length;
+  const columns = { '--columns': n } as CSSProperties;
+
+  const bar = (value: number, kind: 'revenue' | 'income') => {
+    const length = barLength(value, range, BAR_AREA);
+    const up = value >= 0;
+    const position = up
+      ? { bottom: barPanel - baseline, height: length }
+      : { top: baseline, height: length };
+    const label = up
+      ? { bottom: barPanel - baseline + length + LABEL_GAP }
+      : { top: baseline + length + LABEL_GAP };
+    return (
+      <div className={`${styles.barSlot} ${styles[kind]}`}>
+        <div className={styles.bar} data-bar={kind} style={position} />
+        <span className={styles.barLabel} data-label={kind} style={label}>
+          {money(value)}
+        </span>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -32,72 +70,73 @@ export function QuarterlyChart({ data, unit }: { data: QuarterPerformance[]; uni
         <li>
           <span className={`${styles.swatch} ${styles.swatchMargin}`} /> 영업이익률
         </li>
-        <li className={styles.legendUnit}>단위: {unit}, %</li>
+        <li className={styles.legendUnit}>막대 단위: {unit} · 선 단위: %</li>
       </ul>
-      <div className={styles.chartScroll}>
+      <div className={styles.scroll}>
         <div className={styles.chart} aria-hidden="true">
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 24, right: 12, left: 12, bottom: 0 }}>
-              <XAxis
-                dataKey="quarter"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: 'var(--text-3)', style: { fontSize: 'var(--fs-xs)' } }}
-              />
-              {/* 막대는 아래 절반, 선은 위쪽에 오도록 축 범위를 나눠요 */}
-              <YAxis yAxisId="money" hide domain={[moneyMin, moneyMax * 1.9 || 1]} />
-              <YAxis
-                yAxisId="rate"
-                hide
-                domain={[rateMin - rateRange * 2.4, rateMax + rateRange * 0.25]}
-              />
-              <Bar
-                yAxisId="money"
-                dataKey="revenue"
-                fill="var(--chart-muted)"
-                radius={[2, 2, 0, 0]}
-                maxBarSize={28}
-                isAnimationActive={!reducedMotion}
+          {/* 영업이익률 선 + 오른쪽 % 축 */}
+          <div className={styles.panel} style={{ height: linePanel }}>
+            <div className={styles.plot} style={columns}>
+              <svg
+                className={styles.line}
+                viewBox={`0 0 ${n * 100} ${linePanel}`}
+                preserveAspectRatio="none"
               >
-                <LabelList
-                  dataKey="revenue"
-                  position="top"
-                  formatter={(v) => money1(Number(v))}
-                  style={{ ...labelStyle, fill: 'var(--text-2)' }}
+                <polyline
+                  points={rates.map((r, i) => `${i * 100 + 50},${rateY(r)}`).join(' ')}
+                  vectorEffect="non-scaling-stroke"
                 />
-              </Bar>
-              <Bar
-                yAxisId="money"
-                dataKey="operating_income"
-                fill="var(--brand)"
-                radius={[2, 2, 0, 0]}
-                maxBarSize={28}
-                isAnimationActive={!reducedMotion}
-              >
-                <LabelList
-                  dataKey="operating_income"
-                  position="top"
-                  formatter={(v) => money1(Number(v))}
-                  style={{ ...labelStyle, fill: 'var(--brand-strong)' }}
+              </svg>
+              {rates.map((r, i) => (
+                <span
+                  key={data[i].quarter}
+                  className={styles.dot}
+                  style={{ left: `${((i + 0.5) / n) * 100}%`, top: rateY(r) }}
+                >
+                  <span className={styles.dotLabel}>{r.toFixed(1)}%</span>
+                </span>
+              ))}
+            </div>
+            <div className={styles.axis}>
+              <span style={{ top: rateY(rateMax) }}>{rateMax.toFixed(0)}%</span>
+              <span style={{ top: rateY(rateMin) }}>{rateMin.toFixed(0)}%</span>
+            </div>
+          </div>
+
+          {/* 매출·영업이익 막대 + 오른쪽 금액 축 */}
+          <div className={styles.panel} style={{ height: barPanel }}>
+            <div className={styles.plot} style={columns}>
+              {niceTicks(max).map((t) => (
+                <div
+                  key={t}
+                  className={t === 0 ? styles.zero : styles.grid}
+                  style={{ top: baseline - (t / range) * BAR_AREA }}
                 />
-              </Bar>
-              <Line
-                yAxisId="rate"
-                dataKey="operating_margin"
-                stroke="var(--text-2)"
-                strokeWidth={2}
-                dot={{ r: 3, fill: 'var(--text-2)', strokeWidth: 0 }}
-                isAnimationActive={!reducedMotion}
-              >
-                <LabelList
-                  dataKey="operating_margin"
-                  position="top"
-                  formatter={(v) => `${Number(v).toFixed(1)}%`}
-                  style={{ ...labelStyle, fill: 'var(--text-1)' }}
-                />
-              </Line>
-            </ComposedChart>
-          </ResponsiveContainer>
+              ))}
+              {data.map((d) => (
+                <div key={d.quarter} className={styles.column}>
+                  {bar(d.revenue, 'revenue')}
+                  {bar(d.operating_income, 'income')}
+                </div>
+              ))}
+            </div>
+            <div className={styles.axis}>
+              {niceTicks(max).map((t) => (
+                <span key={t} style={{ top: baseline - (t / range) * BAR_AREA }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.panel}>
+            <div className={styles.quarters} style={columns}>
+              {data.map((d) => (
+                <span key={d.quarter}>{d.quarter}</span>
+              ))}
+            </div>
+            <div className={styles.axis} />
+          </div>
         </div>
       </div>
       {/* 화면 읽기 프로그램용: 그래프의 모든 값을 표로 */}
@@ -116,11 +155,11 @@ export function QuarterlyChart({ data, unit }: { data: QuarterPerformance[]; uni
             <tr key={d.quarter}>
               <th scope="row">{d.quarter}</th>
               <td>
-                {money1(d.revenue)}
+                {money(d.revenue)}
                 {unit}
               </td>
               <td>
-                {money1(d.operating_income)}
+                {money(d.operating_income)}
                 {unit}
               </td>
               <td>{d.operating_margin.toFixed(1)}%</td>
