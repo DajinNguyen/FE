@@ -60,19 +60,6 @@ const fakeUsers = (count: number, prefix: string) =>
 
 let posts: StoredPost[] = [];
 let comments: StoredComment[] = [];
-/** 사람별 최근 1분 동안 쓴 시각 (도배 방지) */
-let postTimes = new Map<string, number[]>();
-let commentTimes = new Map<string, number[]>();
-
-const MINUTE = 60_000;
-
-/** 최근 1분 안에 limit 개를 넘게 쓰려고 하면 막아요. */
-function checkRate(times: Map<string, number[]>, userId: string, limit: number, message: string) {
-  const now = Date.now();
-  const recent = (times.get(userId) ?? []).filter((t) => now - t < MINUTE);
-  if (recent.length >= limit) throw new ApiError(message, 429, 'TOO_FREQUENT');
-  times.set(userId, [...recent, now]);
-}
 let seq = 0;
 
 function seed() {
@@ -241,8 +228,6 @@ function seed() {
       20,
     ),
   ];
-  postTimes = new Map();
-  commentTimes = new Map();
   seq = 0;
 }
 seed();
@@ -348,12 +333,6 @@ export async function createPost(stockCode: string, input: PostInput): Promise<P
   await wait(250);
   const user = requireUser();
   const { title, body } = validatePost(input);
-  checkRate(
-    postTimes,
-    user.id,
-    COMMUNITY_LIMITS.postsPerMinute,
-    '글은 1분에 1개만 쓸 수 있어요. 잠시 후 다시 시도해 주세요',
-  );
   seq += 1;
   const stored: StoredPost = {
     id: `new-${Date.now()}-${seq}`,
@@ -415,12 +394,6 @@ export async function createComment(postId: string, input: CommentInput): Promis
   }
   const banned = findBannedWord(text);
   if (banned) throw new ApiError(`${banned}은(는) 쓸 수 없어요`, 400, 'BANNED_WORD');
-  checkRate(
-    commentTimes,
-    user.id,
-    COMMUNITY_LIMITS.commentsPerMinute,
-    '댓글은 1분에 5개까지 쓸 수 있어요. 잠시 후 다시 시도해 주세요',
-  );
   seq += 1;
   const stored: StoredComment = {
     id: `c-new-${Date.now()}-${seq}`,

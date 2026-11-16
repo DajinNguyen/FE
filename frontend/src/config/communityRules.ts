@@ -4,9 +4,6 @@
 export const COMMUNITY_LIMITS = {
   bodyMax: 500,
   commentMax: 500,
-  /** 도배 방지: 같은 사람은 1분에 글 1개·댓글 5개까지 (⚠️ 임시값, 확정 필요) */
-  postsPerMinute: 1,
-  commentsPerMinute: 5,
   /** 신고가 이만큼 쌓이면 숨겨요. (⚠️ 임시값, 확정 필요) */
   hideAfterReports: 3,
 } as const;
