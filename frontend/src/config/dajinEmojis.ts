@@ -1,7 +1,8 @@
 /**
  * 다진 전용 이모지. 이미지는 public/emoji/dajin/ 에 넣고 여기에 등록해요.
  * 크기·형식은 docs/frontend-data-requirements.md 10-3장 참고 (240×240 WebP).
- * 댓글 본문에는 ":dajin-아이디:" 로 들어가요. (예: ":dajin-like:")
+ * 서버에는 댓글 본문 끝에 ":dajin-아이디:" 로 붙여 보내요. (예: ":dajin-like:")
+ * 화면에서는 이 표시 대신 이미지로만 보여줘요.
  */
 export interface DajinEmoji {
   id: string;
@@ -41,10 +42,17 @@ export const emojiToken = (id: string) => `:dajin-${id}:`;
 /** 본문 안의 이모지 표시 */
 export const EMOJI_TOKEN_PATTERN = /:dajin-([a-z0-9-]+):/g;
 
-/** 이모지만 있는 댓글이면 true (크게 보여줘요) */
-export function isEmojiOnly(body: string) {
-  const known = [...body.matchAll(EMOJI_TOKEN_PATTERN)].filter((m) =>
-    DAJIN_EMOJIS.some((e) => e.id === m[1]),
-  );
-  return known.length > 0 && body.replace(EMOJI_TOKEN_PATTERN, '').trim() === '';
+/**
+ * 댓글 본문을 글과 이모지로 나눠요. 이모지는 댓글 하나에 하나만 보여줘요.
+ * (예전 댓글에 여러 개가 있으면 첫 번째만) 모르는 이모지는 글자 그대로 둬요.
+ */
+export function splitBody(body: string): { text: string; emoji: DajinEmoji | null } {
+  let emoji: DajinEmoji | null = null;
+  const text = body.replace(EMOJI_TOKEN_PATTERN, (token, id: string) => {
+    const found = DAJIN_EMOJIS.find((e) => e.id === id);
+    if (!found) return token;
+    emoji ??= found;
+    return '';
+  });
+  return { text: text.trim(), emoji };
 }

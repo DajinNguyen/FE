@@ -184,7 +184,9 @@ describe('이모지·사진·신고', () => {
     ]);
 
     await user.click(within(panel).getByRole('button', { name: '웃겨요' }));
-    expect(screen.getByLabelText('댓글 입력')).toHaveValue(':dajin-laugh:');
+    // 입력창에는 코드가 아니라 고른 이모지 이미지가 보여요. 다시 고르면 하나로 바뀌어요.
+    expect(screen.getByLabelText('댓글 입력')).toHaveValue('');
+    expect(screen.getByRole('img', { name: '고른 이모지: 웃겨요' })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: '등록' }));
 
     const emoji = await within(await commentList()).findByRole('img', { name: '크게 웃는 다진' });

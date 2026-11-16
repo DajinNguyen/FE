@@ -7,6 +7,7 @@ import {
   findBannedWord,
   IMAGE_UPLOAD,
 } from '../../config/communityRules';
+import { emojiToken, type DajinEmoji } from '../../config/dajinEmojis';
 import { useImageUpload } from '../../hooks/useImageUpload';
 import { useRequireLogin } from '../../hooks/useRequireLogin';
 import type { CommentInput } from '../../types';
@@ -29,7 +30,7 @@ interface CommentComposerProps {
   onCancel?: () => void;
 }
 
-/** 댓글·답글 입력창: 글 + 다진 이모지 + 사진 1장 (모두 로그인 필요) */
+/** 댓글·답글 입력창: 글 + 다진 이모지 1개 + 사진 1장 (모두 로그인 필요) */
 export function CommentComposer({
   onSubmit,
   reply,
@@ -48,6 +49,7 @@ export function CommentComposer({
   const [text, setText] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [emoji, setEmoji] = useState<DajinEmoji | null>(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,8 +84,14 @@ export function CommentComposer({
     setFile(picked);
   };
 
+  // 이모지는 글 끝에 표시(":dajin-아이디:")로 붙여 보내요. 그만큼 글자 수를 남겨 둬요.
+  const token = emoji ? emojiToken(emoji.id) : '';
+  const textMax = maxLength - (token ? token.length + 1 : 0);
+
   const send = async () => {
-    const body = text.trim();
+    const written = text.trim().slice(0, textMax);
+    const body = [written, token].filter(Boolean).join('\n');
+    const picked = emoji;
     let imageUrl: string | null = null;
     if (file) {
       imageUrl = await uploadImage(file);
@@ -96,10 +104,14 @@ export function CommentComposer({
       image_url: imageUrl,
     };
     onSubmit(input, {
-      // 실패하면 쓴 글을 입력창에 되돌려요.
-      onError: () => setText(body),
+      // 실패하면 쓴 글과 고른 이모지를 입력창에 되돌려요.
+      onError: () => {
+        setText(written);
+        setEmoji(picked);
+      },
     });
     setText('');
+    setEmoji(null);
     clearFile();
     setEmojiOpen(false);
   };
@@ -107,7 +119,7 @@ export function CommentComposer({
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const body = text.trim();
-    if (!body && !file) return;
+    if (!body && !file && !emoji) return;
     const banned = findBannedWord(body);
     if (banned) {
       setError(`${banned}은(는) 쓸 수 없어요.`);
@@ -131,7 +143,7 @@ export function CommentComposer({
         ref={textRef}
         className={styles.input}
         value={text}
-        maxLength={maxLength}
+        maxLength={textMax}
         rows={2}
         placeholder={replyTo ? `@${replyTo} 님에게 답글` : placeholder}
         onChange={(e) => {
@@ -171,10 +183,26 @@ export function CommentComposer({
         </p>
       )}
 
+      {emoji && (
+        <div className={styles.attachment}>
+          <img src={emoji.src} alt={`고른 이모지: ${emoji.name}`} className={styles.emojiPicked} />
+          <button
+            type="button"
+            className={styles.removeAttachment}
+            onClick={() => setEmoji(null)}
+            aria-label="이모지 빼기"
+          >
+            <X size={16} aria-hidden="true" />
+          </button>
+        </div>
+      )}
+
       {emojiOpen && (
         <EmojiPanel
-          onPick={(token) => {
-            setText((prev) => `${prev}${token}`);
+          onPick={(picked) => {
+            // 이모지는 하나만. 다시 고르면 바뀌어요.
+            setEmoji(picked);
+            setEmojiOpen(false);
             textRef.current?.focus();
           }}
         />
@@ -212,14 +240,14 @@ export function CommentComposer({
         </div>
         <div className={styles.tools}>
           <span className={styles.counter}>
-            {text.length.toLocaleString('ko-KR')}/{maxLength.toLocaleString('ko-KR')}
+            {text.length.toLocaleString('ko-KR')}/{textMax.toLocaleString('ko-KR')}
           </span>
           {onCancel && (
             <Button variant="ghost" onClick={onCancel}>
               취소
             </Button>
           )}
-          <Button type="submit" disabled={(!text.trim() && !file) || uploading}>
+          <Button type="submit" disabled={(!text.trim() && !file && !emoji) || uploading}>
             등록
           </Button>
         </div>
