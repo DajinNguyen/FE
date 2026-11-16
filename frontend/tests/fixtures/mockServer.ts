@@ -120,6 +120,18 @@ export async function getCompany(stockCode: string): Promise<CompanyDetail> {
   };
 }
 
+/** 같은 산업의 비슷한 회사: 같은 업종 묶음(기타는 같은 업종 이름) 최대 4개 */
+export async function getPeers(stockCode: string): Promise<CompanySummary[]> {
+  await wait(100);
+  const me = findCompany(stockCode);
+  return companies
+    .filter((c) => c.stock_code !== stockCode)
+    .filter((c) =>
+      me.sector_group === 'etc' ? c.sector === me.sector : c.sector_group === me.sector_group,
+    )
+    .slice(0, 4);
+}
+
 export async function getFinancials(stockCode: string): Promise<Financials> {
   await wait(250);
   return getData(stockCode).financials;

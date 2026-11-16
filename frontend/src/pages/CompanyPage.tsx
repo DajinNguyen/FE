@@ -9,6 +9,7 @@ import { Icon } from '../components/Icon';
 import { Tabs } from '../components/Tabs';
 import { AnalysisTab } from '../features/analysis/AnalysisTab';
 import { CommunityTab } from '../features/community/CommunityTab';
+import { CompareTab } from '../features/compare/CompareTab';
 import { CompanyHeader } from '../features/company/CompanyHeader';
 import {
   companyTabs,
@@ -132,6 +133,7 @@ export function CompanyPage() {
             {id === 'financials' && <FinancialsTab stockCode={stockCode} />}
             {id === 'news' && <NewsTab stockCode={stockCode} />}
             {id === 'community' && <CommunityTab stockCode={stockCode} />}
+            {id === 'compare' && <CompareTab stockCode={stockCode} />}
           </div>
         ))}
       </div>

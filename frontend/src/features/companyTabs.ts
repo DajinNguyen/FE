@@ -8,6 +8,7 @@ export const companyTabs = [
   { id: 'financials', label: '재무 상세' },
   { id: 'news', label: '뉴스 상세' },
   { id: 'community', label: '커뮤니티' },
+  { id: 'compare', label: '비교하기' },
 ] as const;
 
 /** 위에 "자세한 데이터를 보는 화면이에요" 안내를 붙이는 탭 */

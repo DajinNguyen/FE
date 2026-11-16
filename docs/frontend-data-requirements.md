@@ -847,3 +847,15 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 - **리포트**: `POST /api/companies/{code}/report` 를 받으면 서버가 7 ADK 를 빼고, 만들기에 실패하면 서버가 되돌려 주세요. 응답에 `balance` 를 넣어 주세요. 잔액이 부족하면 `400 INSUFFICIENT_BALANCE`.
 - **챗봇**: `POST /api/chat` 답변을 만든 뒤에만 5 ADK 를 빼고 응답에 `balance` 를 넣어 주세요. (→ 챗봇 장)
 - `POST /api/me/wallet/spend { reason: "report" | "chat", target_id } → { balance }` 는 다른 곳에서 차감이 필요할 때를 위해 만들어 두면 좋아요. 지금 프론트는 쓰지 않아요. (먼저 빼고 실패하면 돌려받을 방법이 없어서)
+
+## 17. 비교하기 탭 (2026-11-16 추가, 백엔드 필요)
+
+기업 상세 맨 끝 탭 "비교하기". 오른쪽은 지금 보는 기업, 왼쪽은 비교할 기업이에요. 주소: `/companies/{code}?tab=compare&with={비교할 code}`
+
+### 17-1. 같은 산업의 비슷한 회사 `GET /api/companies/{stock_code}/peers`
+
+```json
+[ { "stock_code": "000660", "name": "SK하이닉스", "sector": "반도체", "...": "CompanySummary 와 같은 형식" } ]
+```
+- 같은 산업(industries)에서 시가총액이 비슷한 순으로 **3~4개**, 자기 자신은 빼 주세요. 없으면 빈 배열(칩을 숨겨요).
+- 카드의 기업명·업종·시가총액은 기존 `GET /api/companies/{stock_code}` (`market_cap`) 를 써요.
