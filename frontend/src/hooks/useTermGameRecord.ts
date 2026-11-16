@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { createPersistentStore, usePersistentStore } from './persistentStore';
+import { createScopedStore, useScopedStore } from './userData';
 
 export interface TermGameRecord {
   /** 한 판(10문제) 최고 점수 */
@@ -19,13 +19,25 @@ const emptyRecord: TermGameRecord = {
 };
 
 /**
- * 용어 게임 기록. 지금은 localStorage에 저장해요.
- * 로그인 연결 후에는 이 훅 안에서 서버 저장으로 바꾸면 돼요.
+ * 용어 게임 기록. 서버 API 가 없어서 기기(localStorage)에 계정별로 저장해요.
+ * 로그아웃하면 화면에서 비우고, 같은 계정으로 다시 로그인하면 돌아와요.
  */
-const recordStore = createPersistentStore<TermGameRecord>('dajin:term-game', emptyRecord);
+const recordStores = createScopedStore<TermGameRecord>({
+  name: 'term-game',
+  fallback: emptyRecord,
+  legacyKey: 'dajin:term-game',
+  mergeGuest: (account, guest) => ({
+    best_score: Math.max(account.best_score, guest.best_score),
+    best_streak: Math.max(account.best_streak, guest.best_streak),
+    plays: account.plays + guest.plays,
+    wrong_term_ids: [...new Set([...account.wrong_term_ids, ...guest.wrong_term_ids])],
+  }),
+  isEmpty: (record) => record.plays === 0,
+  clearOnLogout: false,
+});
 
 export function useTermGameRecord() {
-  const record = usePersistentStore(recordStore);
+  const [record, recordStore] = useScopedStore(recordStores);
 
   /** 한 판이 끝나면 점수와 틀린·맞힌 용어를 반영해요. */
   const saveRound = useCallback(
@@ -42,10 +54,10 @@ export function useTermGameRecord() {
         };
       });
     },
-    [],
+    [recordStore],
   );
 
-  const reset = useCallback(() => recordStore.set(emptyRecord), []);
+  const reset = useCallback(() => recordStore.set(emptyRecord), [recordStore]);
 
   return { record, saveRound, reset };
 }

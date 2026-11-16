@@ -10,7 +10,8 @@ import { failRequests } from './fixtures/fetchStub';
 import { serverTermProgress } from './fixtures/me';
 import { renderWithProviders } from './testUtils';
 
-const GUEST_KEY = 'dajin:term-progress-v2';
+const GUEST_KEY = 'dajin:guest:term-progress';
+const PENDING_KEY = 'dajin:dev-user:term-progress:pending';
 const original = { ...SYNC_TIMING };
 beforeEach(() => Object.assign(SYNC_TIMING, { debounce: 0, retryDelays: [30] }));
 afterEach(() => Object.assign(SYNC_TIMING, original));
@@ -94,7 +95,7 @@ describe('로그인 사용자별 학습 기록 저장', () => {
     expect(merged.terms.listing.status).toBe('learning');
     expect(merged.study_dates).toEqual(['2026-11-01', '2026-11-10']);
     expect(merged.set_progress).toEqual([{ set_id: 'basic', mastered: 2, studied: 3 }]);
-    expect(JSON.parse(window.localStorage.getItem(GUEST_KEY)!).terms).toEqual({});
+    expect(window.localStorage.getItem(GUEST_KEY)).toBeNull();
   });
 
   it('저장에 실패하면 기기에 임시로 두고 토스트를 띄운 뒤 다시 시도해요', async () => {
@@ -106,14 +107,14 @@ describe('로그인 사용자별 학습 기록 저장', () => {
     await knowFirstCard();
 
     expect(await screen.findByText(SAVE_FAILED_TOAST)).toBeInTheDocument();
-    const pending = JSON.parse(window.localStorage.getItem(`${GUEST_KEY}:pending`)!);
-    expect(pending.data.terms.stock.status).toBe('mastered');
+    const pending = JSON.parse(window.localStorage.getItem(PENDING_KEY)!);
+    expect(pending.terms.stock.status).toBe('mastered');
 
     failRequests(null);
     await waitFor(() =>
       expect(serverTermProgress.get(DEV_USER.id!)?.terms.stock.status).toBe('mastered'),
     );
-    expect(window.localStorage.getItem(`${GUEST_KEY}:pending`)).toBe('null');
+    expect(window.localStorage.getItem(PENDING_KEY)).toBe('null');
   });
 
   it('연속 학습일은 오늘(오늘 안 했으면 어제)부터 이어진 날을 세요', () => {

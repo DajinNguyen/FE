@@ -122,7 +122,7 @@ describe('용어 문제 화면', () => {
     expect(screen.getByText(/10문제 중/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '다시 하기' })).toBeInTheDocument();
 
-    const saved = JSON.parse(window.localStorage.getItem('dajin:term-game') ?? '{}');
+    const saved = JSON.parse(window.localStorage.getItem('dajin:guest:term-game') ?? '{}');
     expect(saved.plays).toBe(1);
   });
 

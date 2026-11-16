@@ -780,3 +780,20 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | `counted_today` | 오늘 개수에 넣은 퀴즈 id |
 | `completions` | 최근 완료 기록 (최근 50개). 요청에 온 `completed_at` 을 그대로 돌려주세요 (프론트가 보낸 기록인지 확인할 때 써요) |
 
+
+## 15. 로그아웃·계정별 데이터 (2026-11-16 추가)
+
+로그아웃하면 프론트가 `resetUserData()` 로 계정 데이터를 비워요. 다른 계정으로 로그인하면 이전 계정 기록은 보이지 않아요.
+
+| 데이터 | 서버 | 기기 키 | 로그아웃 |
+|---|---|---|---|
+| 용어 학습 기록 | `GET·PUT /api/me/term-progress` | `dajin:{id}:term-progress:pending` (못 보낸 기록) | 한 번 보내 보고 키 삭제, 다시 로그인하면 서버에서 불러와요 |
+| 관심 기업 | **없음** | `dajin:{id}:watchlist` | 키는 남기고 화면에서만 비워요 |
+| 용어 게임 기록 | 없음 | `dajin:{id}:term-game` | 〃 |
+| 낱말퀴즈 풀던 판 | 없음 | `dajin:{id}:crossword` | 〃 |
+| 최근 검색 | 없음 | `dajin:{id}:recent-searches` | 〃 |
+
+- 비로그인 기록은 `dajin:guest:…` 에만 두고, 로그인하면 계정으로 합친 뒤 guest 키를 지워요.
+- 서버 API 가 생기면 그 데이터도 "로그아웃 시 기기 키 삭제"로 바꿀 수 있어요. 특히 관심 기업은 기기를 바꾸면 사라지니 API 를 요청해요.
+  - `GET /api/me/watchlist` → `{ "stock_codes": ["005930"] }`, `PUT /api/me/watchlist` (같은 형식, 전체 저장)
+- `POST /api/auth/logout` 이 실패해도 프론트는 화면을 로그아웃 상태로 바꾸고 계정 데이터를 비워요.

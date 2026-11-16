@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
+import { useUserDataResetCount } from '../hooks/userData';
 import { AppHeader } from './AppHeader';
 import styles from './AppLayout.module.css';
 
 export function AppLayout() {
   const { pathname } = useLocation();
+  // 로그아웃하면 페이지를 다시 그려서 화면 안에 남은 정답·진행 상태도 비워요.
+  const resetCount = useUserDataResetCount();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -13,7 +16,7 @@ export function AppLayout() {
   return (
     <div className={styles.app}>
       <AppHeader />
-      <main key={pathname} className={styles.main}>
+      <main key={`${pathname}:${resetCount}`} className={styles.main}>
         <Outlet />
       </main>
       <footer className={styles.footer}>

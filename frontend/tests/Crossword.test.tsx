@@ -112,7 +112,7 @@ describe('가로세로 낱말퀴즈', () => {
     expect(cell(/^가로 7번, 4번째 칸/)).toHaveAttribute('data-mark', 'correct');
     expect(screen.queryByText(/최고 기록/)).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: '정답 보기' })).toBeDisabled();
-    const saved = JSON.parse(window.localStorage.getItem('dajin:crossword') ?? '{}');
+    const saved = JSON.parse(window.localStorage.getItem('dajin:guest:crossword') ?? '{}');
     expect(saved['basics-easy']).not.toHaveProperty('best_ms');
   });
 

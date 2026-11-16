@@ -81,7 +81,8 @@ function migrateOldRecord() {
 migrateOldRecord();
 
 const termProgressRecord = createSyncedRecord<TermProgress>({
-  name: 'term-progress-v2',
+  name: 'term-progress',
+  legacyName: 'term-progress-v2',
   empty: emptyProgress,
   load: getTermProgress,
   save: putTermProgress,
