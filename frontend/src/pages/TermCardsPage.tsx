@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router';
 import { Button } from '../components/Button';
 import { ErrorState } from '../components/ErrorState';
 import { SegmentedControl } from '../components/SegmentedControl';
+import { useChatContext } from '../features/chat/chatContextStore';
 import { CrosswordPanel } from '../features/crossword/CrosswordPanel';
 import {
   termCategories,
@@ -45,6 +46,7 @@ export function TermCardsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const modeParam = searchParams.get('mode');
   const mode: PageMode = isPageMode(modeParam) ? modeParam : DEFAULT_MODE;
+  useChatContext({ page: 'learn' });
   const [category, setCategory] = useState<TermCategoryFilter>('all');
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);

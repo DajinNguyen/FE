@@ -895,3 +895,22 @@ left = 비교할 기업, right = 지금 보는 기업. 타입: `frontend/src/typ
 - `points` 2~3개 (규모·수익성·성장 속도), `reason` 은 사업 구성 차이 1~2문장 (없으면 null → "왜 다른가요?" 숨김).
 - **판단·추천 표현 금지**: "더 좋은 회사", "사세요", 앞으로 오를·내릴 것 같다는 예측. 숫자는 비교 응답 값 그대로.
 - AI 분석에 ADK 를 쓸지는 정해지지 않았어요. 지금은 차감 없이 보여줘요. (**확정 필요**)
+
+## 18. AI 챗봇 (2026-11-16 추가, 백엔드 필요)
+
+### 18-1. 지금 보고 있는 화면 `context`
+
+질문을 보낼 때 프론트가 지금 화면 정보를 함께 보내요. 타입: `frontend/src/types/chat.ts` (`ChatContext`)
+
+| 화면 | context |
+|---|---|
+| 메인 | `{ "page": "main" }` |
+| 기업 상세 (개요·재무 상세·뉴스 상세·커뮤니티) | `{ "page": "company", "tab": "financials", "stock_code": "005930", "company_name": "삼성전자" }` |
+| AI 분석 (리포트가 있을 때) | `{ "page": "report", "stock_code": "005930", "report_id": "2026-11-16T05:00:00Z", "company_name": "삼성전자" }` |
+| 비교하기 | `{ "page": "compare", "left_code": "000660", "right_code": "005930", "left_name": "SK하이닉스", "right_name": "삼성전자" }` |
+| 산업 | `{ "page": "industry", "industry_id": "semiconductor", "industry_name": "반도체" }` |
+| 용어 학습 | `{ "page": "learn" }` (`term_id` 는 선택) |
+| 그 밖의 화면 | `{ "page": "other" }` |
+
+- 리포트에는 아직 id 칸이 없어서 `report_id` 에 `generated_at` 을 보내요. 리포트 id 칸이 생기면 그 값으로 바꿀게요.
+- 서버는 context 의 화면 데이터(기업·재무·리포트·비교 숫자)를 근거로 답해 주세요.

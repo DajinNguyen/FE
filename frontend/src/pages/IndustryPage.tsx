@@ -14,6 +14,7 @@ import {
   HEAT_WEIGHTS,
 } from '../config/industryHeat';
 import { industryColorStyle, industryIcon } from '../config/industryIcons';
+import { useChatContext } from '../features/chat/chatContextStore';
 import { changeDirection, signedPercent } from '../features/industry/industryText';
 import { NewsList } from '../features/news/NewsList';
 import { NewsSentimentCriteriaSheet } from '../features/news/NewsSentimentCriteriaSheet';
@@ -84,6 +85,7 @@ export function IndustryPage() {
   const { industryId = '' } = useParams();
   const { data: detail, isPending, isError, error, refetch } = useIndustry(industryId);
   const news = useIndustryNews(industryId);
+  useChatContext({ page: 'industry', industry_id: industryId, industry_name: detail?.name });
   const [companyCount, setCompanyCount] = useState(COMPANY_PAGE);
   const [newsCriteriaOpen, setNewsCriteriaOpen] = useState(false);
 

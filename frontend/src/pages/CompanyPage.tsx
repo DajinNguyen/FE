@@ -10,6 +10,7 @@ import { Tabs } from '../components/Tabs';
 import { AnalysisTab } from '../features/analysis/AnalysisTab';
 import { CommunityTab } from '../features/community/CommunityTab';
 import { CompareTab } from '../features/compare/CompareTab';
+import { useChatContext } from '../features/chat/chatContextStore';
 import { CompanyHeader } from '../features/company/CompanyHeader';
 import {
   companyTabs,
@@ -22,7 +23,8 @@ import {
 import { FinancialsTab } from '../features/financials/FinancialsTab';
 import { NewsTab } from '../features/news/NewsTab';
 import { OverviewTab } from '../features/overview/OverviewTab';
-import { useCompany } from '../hooks/useCompanies';
+import { useCompaniesByCodes, useCompany } from '../hooks/useCompanies';
+import type { ChatContext } from '../types';
 import { useCompanyReport } from '../hooks/useCompanyReport';
 import styles from './CompanyPage.module.css';
 
@@ -35,6 +37,36 @@ export function CompanyPage() {
 
   const { data: company, isError, error, refetch } = useCompany(stockCode);
   const report = useCompanyReport(stockCode);
+
+  // 챗봇에 지금 보고 있는 화면을 알려요: 비교하기(두 회사) / AI 분석(리포트) / 그 밖의 탭
+  const compareWith = tabParam === 'compare' ? searchParams.get('with') : null;
+  const { data: compared } = useCompaniesByCodes(
+    compareWith && compareWith !== stockCode ? [compareWith] : [],
+  );
+  const companyName = company?.name ?? stockCode;
+  const chatContext: ChatContext =
+    compareWith && compareWith !== stockCode
+      ? {
+          page: 'compare',
+          left_code: compareWith,
+          right_code: stockCode,
+          left_name: compared?.[0]?.name,
+          right_name: company?.name,
+        }
+      : tab === 'analysis' && report.report
+        ? {
+            page: 'report',
+            stock_code: stockCode,
+            report_id: report.report.generated_at,
+            company_name: companyName,
+          }
+        : {
+            page: 'company',
+            tab,
+            stock_code: stockCode,
+            company_name: companyName,
+          };
+  useChatContext(chatContext);
 
   const tabsAnchorRef = useRef<HTMLDivElement>(null);
   const [scrollTarget, setScrollTarget] = useState<{ id?: string; seq: number } | null>(null);

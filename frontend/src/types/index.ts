@@ -12,5 +12,6 @@ export type * from './crossword';
 export type * from './industry';
 export type * from './market';
 export type * from './community';
+export type * from './chat';
 export type * from './wallet';
 export type * from './compare';
