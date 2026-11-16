@@ -483,20 +483,20 @@ AI 분석 탭에서 포인트를 누르면 열리는 상세 시트에 써요.
 | 본문 글자 수 | 1~500자 | `400 INVALID_LENGTH` |
 | 댓글 글자 수 | 1~500자 | `400 INVALID_LENGTH` |
 | 금지어 | 욕설, "리딩방", 오픈채팅·텔레그램 링크, "수익 보장"·"종목 추천" 류 (띄어쓰기 무시) | `400 BANNED_WORD` |
-| 도배 방지 (임시값) | 같은 사람은 1분에 글 1개·댓글 5개 | `429 TOO_FREQUENT` |
 | 신고 | 같은 사람은 같은 대상을 한 번만 | `409 ALREADY_REPORTED` |
 | 신고 숨김 | 서로 다른 사람의 신고가 **3건** 쌓이면 자동 숨김 (`is_hidden: true`) | — |
 | 수정·삭제 | 작성자 본인만 | `403 NOT_OWNER` |
 | 로그인 필요 | 쓰기·수정·삭제·댓글·좋아요·신고 | `401 LOGIN_REQUIRED` |
 | 없는 글 | — | `404 POST_NOT_FOUND` |
 
+- 2026-11-16: 작성 시간 제한(1분에 글 1개·댓글 5개, `429 TOO_FREQUENT`)은 클라이언트 요청으로 없앴어요. **백엔드 `app/services/community_service.py` 의 `POSTS_PER_MINUTE`·`COMMENTS_PER_MINUTE` 검사도 제거해 주세요.** (기업 댓글·답글 모두 시간 제한 없음)
 - 금지어 목록 시작점: `frontend/src/config/communityRules.ts` 의 `bannedRules`. 최종 목록은 PM과 정해 주세요.
 - 글을 지우면 그 글의 댓글도 함께 지워 주세요.
 
 ### 8-4. 에러 응답 형식
 
 ```json
-{ "error": { "code": "TOO_FREQUENT", "message": "글은 1분에 1개만 쓸 수 있어요. 잠시 후 다시 시도해 주세요" } }
+{ "error": { "code": "LOGIN_REQUIRED", "message": "로그인이 필요해요" } }
 ```
 
 `message` 는 화면에 그대로 보여줄 수 있는 쉬운 문장으로 주세요. (글쓰기 화면의 안내, 토스트에 나와요)

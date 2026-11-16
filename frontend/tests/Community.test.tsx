@@ -86,6 +86,38 @@ describe('기업 커뮤니티: 바로 쓰는 댓글', () => {
   });
 });
 
+describe('작성 시간 제한 없음', () => {
+  it('기업 댓글을 연달아 써도 막히지 않아요 (예전: 1분에 1개)', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<CommunityTab stockCode="000660" />);
+    await screen.findByText('아직 댓글이 없어요. 첫 댓글을 남겨 보세요.');
+    for (const text of ['첫 번째 댓글', '두 번째 댓글', '세 번째 댓글']) {
+      await user.type(screen.getByLabelText('댓글 입력'), text);
+      await user.click(screen.getByRole('button', { name: '등록' }));
+      if (text === '첫 번째 댓글') await login(user);
+      expect(await commentItem(text)).toBeInTheDocument();
+    }
+    expect(screen.queryByText(/1분에/)).not.toBeInTheDocument();
+  });
+
+  it('답글도 연달아 6개를 써도 막히지 않아요 (예전: 1분에 5개)', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<CommunityTab stockCode="005930" />);
+    const parent = () => commentItem('메모리를 여러 층 쌓은 거라고 들었는데');
+    await user.click(within(await parent()).getAllByRole('button', { name: '답글' })[0]);
+    await login(user);
+    for (let i = 1; i <= 6; i += 1) {
+      if (i > 1)
+        await user.click(within(await parent()).getAllByRole('button', { name: '답글' })[0]);
+      const input = await within(await parent()).findByLabelText('답글 입력');
+      await user.type(input, `연달아 쓴 답글 ${i}`);
+      await user.click(within(input.closest('form')!).getByRole('button', { name: '등록' }));
+      await within(await parent()).findByText(`연달아 쓴 답글 ${i}`, { exact: false });
+    }
+    expect(screen.queryByText(/1분에/)).not.toBeInTheDocument();
+  });
+});
+
 describe('댓글의 답글', () => {
   it('답글은 접혀 있다가 "답글 N개 보기"로 펼치고, 답글의 답글은 "@닉네임"으로 보여요', async () => {
     const user = userEvent.setup();
