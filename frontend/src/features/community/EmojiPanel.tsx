@@ -18,7 +18,7 @@ export function EmojiPanel({ onPick }: { onPick: (token: string) => void }) {
                 aria-label={emoji.name}
                 title={emoji.name}
               >
-                <img src={emoji.src} alt="" className={styles.emojiInline} />
+                <img src={emoji.src} alt="" className={styles.emojiPick} />
               </button>
             </li>
           ))}
