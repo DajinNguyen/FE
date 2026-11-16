@@ -5,6 +5,7 @@ import { DataAsOf } from '../components/DataAsOf';
 import { ErrorState } from '../components/ErrorState';
 import { Icon } from '../components/Icon';
 import { HOME_TRADING_LIMIT } from '../config/home';
+import { useChatContext } from '../features/chat/chatContextStore';
 import { CompanyListRow } from '../features/home/CompanyListRow';
 import { TermGameBanner } from '../features/home/TermGameBanner';
 import { HotIndustries } from '../features/industry/HotIndustries';
@@ -24,6 +25,7 @@ import styles from './HomePage.module.css';
 export function HomePage() {
   const { data, isPending, isError, error, refetch } = useHomeDashboard();
   const openCompany = useOpenCompany();
+  useChatContext({ page: 'main' });
 
   return (
     <div className={styles.page}>

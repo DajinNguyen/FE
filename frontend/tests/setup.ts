@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeEach } from 'vitest';
+import { resetChatContext } from '../src/features/chat/chatContextStore';
 import { resetPersistentStores } from '../src/hooks/persistentStore';
 import { resetCommunityStore } from './fixtures/community';
 import { failRequests, installFetchStub } from './fixtures/fetchStub';
@@ -17,6 +18,7 @@ afterEach(() => {
   cleanup();
   window.localStorage.clear();
   resetPersistentStores();
+  resetChatContext();
   resetCommunityStore();
   resetMeStore();
   resetWalletStore();
