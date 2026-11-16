@@ -5,6 +5,7 @@ import { App } from '../src/App';
 import { DEV_USER, type AuthUser } from '../src/features/auth/AuthContext';
 import { SYNC_TIMING } from '../src/hooks/syncedRecord';
 import { useAuth } from '../src/hooks/useAuth';
+import { useWallet } from '../src/hooks/useWallet';
 import { useWatchlist } from '../src/hooks/useWatchlist';
 import { serverTermProgress } from './fixtures/me';
 import { setSessionUser } from './fixtures/session';
@@ -78,6 +79,20 @@ describe('로그아웃 시 계정 데이터 초기화', () => {
 
     act(() => result.current.auth.devLogin!());
     expect(result.current.watchlist.stockCodes).toEqual(['005930']);
+  });
+
+  it('ADK 잔액·내역도 로그아웃하면 비우고, 다시 로그인하면 서버에서 새로 불러와요', async () => {
+    const { result } = renderHook(() => ({ auth: useAuth(), wallet: useWallet() }), {
+      wrapper: providersWrapper(DEV_USER),
+    });
+    await waitFor(() => expect(result.current.wallet.balance).toBe(50));
+
+    await act(() => result.current.auth.logout());
+    expect(result.current.wallet.wallet).toBeUndefined();
+    expect(result.current.wallet.balance).toBeNull();
+
+    act(() => result.current.auth.devLogin!());
+    await waitFor(() => expect(result.current.wallet.balance).toBe(50));
   });
 
   it('다른 계정으로 로그인하면 이전 계정의 학습 기록·관심 기업이 보이지 않아요', async () => {
