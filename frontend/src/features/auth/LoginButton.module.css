@@ -11,7 +11,9 @@
   font-weight: var(--fw-medium);
 }
 
+/* 진한 헤더 위라서 헤더용 밝은 글자색 (본문 글자색을 물려받지 않게) */
 .user {
+  color: var(--on-deep);
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
 }
