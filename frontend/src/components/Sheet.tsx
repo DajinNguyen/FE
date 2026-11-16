@@ -9,8 +9,11 @@ interface SheetProps {
   children: ReactNode;
   /** 제목 위 작은 글자 */
   eyebrow?: string;
-  /** 'side': 넓은 화면에서 오른쪽 패널로 열어요 (모바일은 똑같이 아래에서) */
-  placement?: 'center' | 'side';
+  /**
+   * 'side': 넓은 화면에서 오른쪽 패널로 열어요 (모바일은 똑같이 아래에서)
+   * 'popover': 넓은 화면에서 헤더 오른쪽 아래에 작게 열어요 (헤더 배지용)
+   */
+  placement?: 'center' | 'side' | 'popover';
 }
 
 /**
@@ -44,7 +47,7 @@ export function Sheet({
   if (!open) return null;
 
   return createPortal(
-    <div className={`${styles.root} ${placement === 'side' ? styles.side : ''}`}>
+    <div className={`${styles.root} ${placement !== 'center' ? styles[placement] : ''}`}>
       <div className={styles.backdrop} onClick={onClose} aria-hidden="true" />
       <div className={styles.sheet} role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <div className={styles.handle} aria-hidden="true" />

@@ -65,3 +65,14 @@
     display: none;
   }
 }
+
+/* 헤더에 앰똥깡 배지가 함께 있어서 이름은 한 줄로, 아주 좁은 화면에서는 배지만 보여요 */
+.user {
+  white-space: nowrap;
+}
+
+@media (max-width: 479px) {
+  .user {
+    display: none;
+  }
+}

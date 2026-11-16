@@ -131,3 +131,21 @@
     transform: translateX(100%);
   }
 }
+
+/* 헤더 오른쪽 아래 팝오버 (앰똥깡 배지) */
+@media (min-width: 720px) {
+  .popover {
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: calc(var(--header-h) + var(--sp-2)) var(--page-gutter) var(--sp-6);
+  }
+
+  .popover .backdrop {
+    background: transparent;
+  }
+
+  .popover .sheet {
+    max-width: 380px;
+    padding: var(--sp-6);
+  }
+}
