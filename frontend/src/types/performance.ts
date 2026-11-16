@@ -9,6 +9,8 @@ export interface PerformanceDetail {
   announced_at: string;
   /** 금액 단위. 예: "조 원" */
   unit: string;
+  /** 개요 "AI 한 줄 요약" 문장 (예측·투자 권유 금지). 없으면 null */
+  ai_summary: string | null;
   /** 실적 요약. 영업이익률은 % */
   summary: { revenue: number; operating_income: number; operating_margin: number } | null;
   /** 작년 같은 분기 대비 변화율 (%) */

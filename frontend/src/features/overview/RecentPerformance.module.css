@@ -104,8 +104,9 @@
   }
 }
 
+/* 불러오는 중: 실제 요약(숫자·요약·사업별 막대)과 비슷한 높이 */
 .skeleton {
-  height: 160px;
+  height: 400px;
   border-radius: var(--radius-sm);
   background: var(--surface);
 }
@@ -125,4 +126,11 @@
 .more:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* 아주 좁은 화면에서는 핵심 숫자 2개를 세로로 */
+@media (max-width: 359px) {
+  .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
