@@ -76,3 +76,20 @@ export function useWallet() {
     completePuzzle,
   };
 }
+
+/** 예전 횟수 방식(리포트 하루 N회·낱말퀴즈 → 리포트 1회)이 남긴 기기 키를 지워요. */
+function removeOldUsageKeys() {
+  try {
+    for (const key of Object.keys(window.localStorage)) {
+      if (
+        /^dajin:(report-usage|puzzle-rewards)/.test(key) ||
+        /^dajin:[^:]+:puzzle-rewards/.test(key)
+      ) {
+        window.localStorage.removeItem(key);
+      }
+    }
+  } catch {
+    // 지우지 못해도 쓰지 않는 키라 괜찮아요.
+  }
+}
+removeOldUsageKeys();
