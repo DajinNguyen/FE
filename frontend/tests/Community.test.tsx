@@ -128,14 +128,35 @@ describe('댓글의 답글', () => {
 });
 
 describe('이모지·사진·신고', () => {
-  it('이모지: 비로그인이면 로그인 시트, 로그인하면 패널이 열리고 이모지가 없으면 준비 중 안내', async () => {
+  it('이모지: 비로그인이면 로그인 시트, 로그인하면 다진 이모지 10개 패널이 열리고 고르면 그림으로 올라가요', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<CommunityTab stockCode="005930" />);
+    renderWithProviders(<CommunityTab stockCode="000660" />);
     await user.click(screen.getByRole('button', { name: '이모지' }));
     await login(user);
-    expect(await screen.findByRole('group', { name: '다진 이모지' })).toHaveTextContent(
-      '다진 이모지를 준비하고 있어요',
-    );
+    const panel = await screen.findByRole('group', { name: '다진 이모지' });
+    expect(
+      within(panel)
+        .getAllByRole('button')
+        .map((b) => b.getAttribute('aria-label')),
+    ).toEqual([
+      '웃겨요',
+      '슬퍼요',
+      '씨익',
+      '억울해요',
+      '뿌듯해요',
+      '못마땅해요',
+      '피곤해요',
+      '굽신굽신',
+      '흥얼흥얼',
+      '정색',
+    ]);
+
+    await user.click(within(panel).getByRole('button', { name: '웃겨요' }));
+    expect(screen.getByLabelText('댓글 입력')).toHaveValue(':dajin-laugh:');
+    await user.click(screen.getByRole('button', { name: '등록' }));
+
+    const emoji = await within(await commentList()).findByRole('img', { name: '크게 웃는 다진' });
+    expect(emoji).toHaveAttribute('src', '/emoji/dajin/laugh.webp');
   });
 
   it('사진: 기본으로 켜져 있고 jpg·png·webp 5MB 이하만 받아요 (업로드 서버를 끄면 "준비 중")', async () => {

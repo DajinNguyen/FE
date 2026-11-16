@@ -121,9 +121,9 @@
 /* 이모지 */
 .emojiInline {
   display: inline-block;
-  width: 1.4em;
-  height: 1.4em;
-  vertical-align: -0.3em;
+  width: 2.6em;
+  height: 2.6em;
+  vertical-align: middle;
 }
 
 .emojiOnly {
@@ -131,8 +131,8 @@
 }
 
 .emojiLarge {
-  width: 64px;
-  height: 64px;
+  width: 120px;
+  height: 120px;
 }
 
 .emojiPanel {
@@ -149,17 +149,21 @@
 
 .emojiGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
   gap: var(--sp-1);
 }
 
 .emojiButton {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 76px;
+  height: 76px;
   border-radius: var(--radius-sm);
-  font-size: 1.4em;
+}
+
+.emojiPick {
+  width: 64px;
+  height: 64px;
 }
 
 .emojiButton:hover {
