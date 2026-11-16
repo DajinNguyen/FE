@@ -33,7 +33,8 @@ function keepUnsent(server: UsageCredits, local: UsageCredits): UsageCredits {
 }
 
 const creditsRecord = createSyncedRecord<UsageCredits>({
-  name: 'puzzle-rewards-v2',
+  name: 'puzzle-rewards',
+  legacyName: 'puzzle-rewards-v2',
   empty: emptyCredits,
   load: getUsageCredits,
   save: sendCompletions,

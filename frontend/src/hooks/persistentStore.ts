@@ -7,6 +7,8 @@ import { useSyncExternalStore } from 'react';
 export interface PersistentStore<T> {
   get: () => T;
   set: (next: T | ((prev: T) => T)) => void;
+  /** 기기에서 지우고 처음 값으로 돌아가요. */
+  remove: () => void;
   subscribe: (listener: () => void) => () => void;
 }
 
@@ -35,6 +37,8 @@ export function createPersistentStore<T>(key: string, fallback: T): PersistentSt
     return cache;
   };
 
+  const notify = () => listeners.forEach((listener) => listener());
+
   return {
     get,
     set(next) {
@@ -44,7 +48,16 @@ export function createPersistentStore<T>(key: string, fallback: T): PersistentSt
       } catch {
         // 사생활 보호 모드 등에서 저장이 막혀도 화면은 계속 동작해요.
       }
-      listeners.forEach((listener) => listener());
+      notify();
+    },
+    remove() {
+      cache = fallback;
+      try {
+        window.localStorage.removeItem(key);
+      } catch {
+        // 저장소를 못 쓰는 환경이면 메모리 값만 비워요.
+      }
+      notify();
     },
     subscribe(listener) {
       listeners.add(listener);

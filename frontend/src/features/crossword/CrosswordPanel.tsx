@@ -1,6 +1,8 @@
 import { EmptyState } from '../../components/EmptyState';
 import { ErrorState } from '../../components/ErrorState';
+import { useAuth } from '../../hooks/useAuth';
 import { useCrosswordPuzzle, useCrosswordPuzzles } from '../../hooks/useCrosswords';
+import { userScope } from '../../hooks/userData';
 import { CrosswordGame } from './CrosswordGame';
 import styles from './Crossword.module.css';
 
@@ -19,6 +21,8 @@ export function CrosswordPanel({ puzzleId, onSelect }: CrosswordPanelProps) {
   const selectedId = puzzles?.some((p) => p.id === puzzleId) ? puzzleId! : puzzles?.[0]?.id;
   const detail = useCrosswordPuzzle(selectedId ?? '');
   const puzzle = detail.data;
+  // 계정이 바뀌면(로그인·로그아웃) 그 계정이 풀던 판으로 다시 시작해요.
+  const scope = userScope(useAuth().user);
 
   if (list.isError) {
     return (
@@ -59,7 +63,7 @@ export function CrosswordPanel({ puzzleId, onSelect }: CrosswordPanelProps) {
           onRetry={() => detail.refetch()}
         />
       ) : puzzle && puzzle.id === selectedId ? (
-        <CrosswordGame key={puzzle.id} puzzle={puzzle} />
+        <CrosswordGame key={`${puzzle.id}:${scope}`} puzzle={puzzle} />
       ) : (
         <div className={styles.loading} aria-hidden="true" />
       )}
