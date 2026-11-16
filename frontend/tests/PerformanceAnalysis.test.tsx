@@ -26,7 +26,7 @@ describe('최근 사업 성과 상세 분석', () => {
     expect(scrollIntoView.mock.contexts).toContain(section);
   });
 
-  it('실적 요약·비교와 최근 8분기 매출·영업이익·영업이익률을 모두 보여줘요', async () => {
+  it('실적 요약·비교와 최근 8분기 매출·영업이익 막대를 보여줘요 (영업이익률 꺾은선은 없어요)', async () => {
     renderWithProviders(<PerformanceAnalysis stockCode="005930" />);
     await screen.findByText('실적 요약');
     const section = screen.getByRole('region', { name: '최근 사업 성과 분석' });
@@ -37,8 +37,10 @@ describe('최근 사업 성과 상세 분석', () => {
 
     const rows = within(screen.getByRole('table', { name: /분기별/ })).getAllByRole('row');
     expect(rows).toHaveLength(1 + 8);
-    expect(rows[8]).toHaveTextContent('25.4Q93.8조 원20.1조 원21.4%');
-    expect(rows[1]).toHaveTextContent('24.1Q71.9조 원6.6조 원9.2%');
+    expect(rows[8]).toHaveTextContent(/^25\.4Q93\.8조 원20\.1조 원$/);
+    expect(rows[1]).toHaveTextContent(/^24\.1Q71\.9조 원6\.6조 원$/);
+    expect(section.querySelector('polyline')).toBeNull();
+    expect(section).not.toHaveTextContent('선 단위');
   });
 
   it('사업별 영업이익이 없으면 매출만 보여주고, 이유에는 근거 칩(공시·뉴스, 날짜)이 붙어요', async () => {
