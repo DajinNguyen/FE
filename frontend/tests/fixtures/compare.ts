@@ -2,7 +2,12 @@
  * 비교하기 테스트 데이터 (2025년 연간 · 연결 기준, 단위 조 원·%). 앱 코드에서는 쓰지 않아요.
  * 없는 회사는 숫자가 모두 null 이에요.
  */
-import type { CompareCompany, CompanyCompare, CompanySummary } from '../../src/types';
+import type {
+  CompareAnalysis,
+  CompareCompany,
+  CompanyCompare,
+  CompanySummary,
+} from '../../src/types';
 
 type Numbers = Pick<
   CompareCompany,
@@ -98,12 +103,38 @@ export function compareCompany(company: CompanySummary): CompareCompany {
   };
 }
 
+/** 삼성전자 ↔ SK하이닉스 는 AI 분석이 있는 예 (나머지는 규칙 문장) */
+const memoryAnalysis = (left: string, right: string): CompareAnalysis | null => {
+  const pair = [left, right].sort().join(',');
+  if (pair !== '000660,005930') return null;
+  return {
+    headline: '삼성전자는 사업이 여러 갈래로 넓고, SK하이닉스는 메모리 반도체에 집중해요',
+    points: [
+      { title: '규모', description: '삼성전자 매출이 더 커요. 스마트폰·가전까지 함께 팔아서예요.' },
+      {
+        title: '수익성',
+        description: 'SK하이닉스가 같은 매출에서 더 많이 남겼어요. AI용 메모리 판매가 늘었어요.',
+      },
+    ],
+    reason:
+      '삼성전자는 반도체·스마트폰·가전을 함께 하고, SK하이닉스는 메모리 반도체 한 가지에 집중해요.',
+    sources: [
+      { title: '삼성전자 2025 사업보고서', url: 'https://dart.fss.or.kr/', date: '2026-03-12' },
+      {
+        title: 'SK하이닉스 2025 사업보고서',
+        url: 'https://dart.fss.or.kr/?sk',
+        date: '2026-03-14',
+      },
+    ],
+  };
+};
+
 export function buildCompare(left: CompanySummary, right: CompanySummary): CompanyCompare {
   return {
     base_period: '2025년 연간',
     basis: '연결 기준',
     left: compareCompany(left),
     right: compareCompany(right),
-    analysis: null,
+    analysis: memoryAnalysis(left.stock_code, right.stock_code),
   };
 }
