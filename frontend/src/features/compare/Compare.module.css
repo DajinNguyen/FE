@@ -156,6 +156,85 @@
   background: var(--surface);
 }
 
+/* 한눈에 비교 */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+  padding: var(--sp-4);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.summaryHead {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.summaryTitle {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.summaryKind {
+  padding: 2px var(--sp-2);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+}
+
+.headline {
+  color: var(--text-1);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
+.points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.points li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.points strong {
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+}
+
+.reason {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.reasonTitle {
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+}
+
+.evidence {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.sources a {
+  color: var(--text-2);
+  text-decoration: underline;
+}
+
 /* 휴대폰: 고르는 중이면 검색을 한 줄 전체로 */
 @media (max-width: 767px) {
   .picking {

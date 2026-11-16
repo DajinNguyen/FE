@@ -6,6 +6,7 @@ import { useCompanyCompare } from '../../hooks/useCompanies';
 import type { CompareCompany } from '../../types';
 import { CompareBars } from './CompareBars';
 import { hasNoNumbers } from './compareMetrics';
+import { CompareSummary } from './CompareSummary';
 import styles from './Compare.module.css';
 
 const basisOf = (c: CompareCompany, fallback: { period: string; basis: string }) =>
@@ -42,6 +43,7 @@ export function CompareResult({ left, right }: { left: string; right: string }) 
         </p>
       )}
       <CompareBars left={data.left} right={data.right} />
+      <CompareSummary data={data} />
       <Link to={`/companies/${data.left.stock_code}`} className={styles.goLeft}>
         {data.left.name} 페이지로 <Icon name="chevronRight" size={16} />
       </Link>
