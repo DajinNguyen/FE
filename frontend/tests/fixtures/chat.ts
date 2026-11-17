@@ -22,7 +22,24 @@ export async function chat(body: ChatRequest): Promise<ChatResponse> {
   const answer = `${where} 쉽게 설명할게요. 영업이익률은 100원어치를 팔아 남긴 돈의 비율이에요.`;
   const balance = wallet.spend('chat', '챗봇 질문');
   conversations += body.conversation_id ? 0 : 1;
-  return { answer, conversation_id: body.conversation_id ?? `c${conversations}`, balance };
+  // 실제 서버처럼 답변에 언론사 이름이 나온 기사만 출처로 줘요. (기업 화면 질문만, 나머지는 빈 배열)
+  const sources =
+    body.context.page === 'company'
+      ? [
+          {
+            title: `${body.context.company_name} 3분기 영업이익 늘어`,
+            press: '다진일보',
+            date: '2026-11-11',
+            url: 'https://news.example.com/articles/1',
+          },
+        ]
+      : [];
+  return {
+    answer,
+    sources,
+    conversation_id: body.conversation_id ?? `c${conversations}`,
+    balance,
+  };
 }
 
 export function resetChatStore() {

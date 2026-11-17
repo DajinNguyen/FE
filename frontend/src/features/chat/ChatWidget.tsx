@@ -12,6 +12,7 @@ import { onUserDataReset } from '../../hooks/userData';
 import { useWallet } from '../../hooks/useWallet';
 import type { ChatMessage } from '../../types';
 import { chatContextLabel } from './chatContextLabel';
+import { ChatSources } from './ChatSources';
 import { useCurrentChatContext } from './chatContextStore';
 import styles from './Chat.module.css';
 
@@ -74,7 +75,7 @@ export function ChatWidget() {
       setMessages((prev) => prev.map((m) => (m.id === answerId ? { ...m, ...patch } : m)));
     try {
       const res = await sendChatMessage({ message, context, conversation_id: conversationId });
-      update({ text: res.answer, status: 'done' });
+      update({ text: res.answer, status: 'done', sources: res.sources ?? [] });
       setConversationId(res.conversation_id);
       wallet.applyBalance(res.balance);
     } catch (error) {
@@ -165,6 +166,7 @@ export function ChatWidget() {
                       <p className={styles.answerText}>
                         <TermText text={m.text} />
                       </p>
+                      <ChatSources sources={m.sources} />
                       <p className={styles.disclaimer}>투자 추천이 아닌 교육용 설명이에요</p>
                     </>
                   )}
