@@ -1,6 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { getMe, googleLoginUrl, logout as logoutRequest, updateProfile } from '../../api/auth';
+import {
+  deleteAccount as deleteAccountRequest,
+  getMe,
+  googleLoginUrl,
+  logout as logoutRequest,
+  submitConsent,
+  updateProfile,
+} from '../../api/auth';
 import { adoptGuestData, resetUserData, runBeforeLogout, userScope } from '../../hooks/userData';
 import { AuthContext, DEV_USER, type AuthContextValue, type AuthUser } from './AuthContext';
 
@@ -61,6 +68,17 @@ export function AuthProvider({
           setUser(null);
           resetUserData(queryClient, scope);
         }
+      },
+      agreeToTerms: async (consent) => {
+        const me = await submitConsent(consent);
+        setUser((prev) => (prev ? { ...prev, ...me } : me));
+        await queryClient.invalidateQueries();
+      },
+      deleteAccount: async () => {
+        await deleteAccountRequest();
+        // 서버에서 기록이 모두 지워졌으니, 보내지 못한 기록을 올리려 하지 않고 바로 비워요.
+        setUser(null);
+        resetUserData(queryClient, scope);
       },
       updateNickname: async (nickname) => {
         const me = await updateProfile(nickname);

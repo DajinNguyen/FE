@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router';
+import { Link, Outlet, useLocation } from 'react-router';
+import { ConsentGate } from '../features/auth/ConsentGate';
 import { ChatWidget } from '../features/chat/ChatWidget';
 import { useUserDataResetCount } from '../hooks/userData';
 import { AppHeader } from './AppHeader';
@@ -21,12 +22,17 @@ export function AppLayout() {
         <Outlet />
       </main>
       <ChatWidget />
+      <ConsentGate />
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <p className={styles.footerBrand}>다진 · 어려운 재무 정보를 쉬운 말로</p>
           <p>
             다진의 정보는 기업을 이해하도록 돕는 교육용 정보이며 투자 추천이 아니에요. 데이터 출처:
             금융감독원 DART · 한국거래소 · 회사 실적 발표
+          </p>
+          <p className={styles.footerLinks}>
+            <Link to="/legal/terms">이용약관</Link>
+            <Link to="/legal/privacy">개인정보 처리방침</Link>
           </p>
         </div>
       </footer>

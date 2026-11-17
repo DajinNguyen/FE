@@ -10,6 +10,8 @@ export interface AuthUser {
   nickname?: string;
   /** 가입일 (YYYY-MM-DD) */
   joined_at?: string;
+  /** true 면 약관 동의 화면을 먼저 보여줘요 (서버가 다른 기능을 막아요) */
+  consent_required?: boolean;
 }
 
 export interface AuthContextValue {
@@ -20,6 +22,10 @@ export interface AuthContextValue {
   /** Google 로그인 화면으로 이동해요 (페이지를 벗어나요, 값을 돌려주지 않아요). */
   loginWithGoogle: () => void;
   logout: () => Promise<void>;
+  /** 이용약관·개인정보 처리방침 동의와 만 14세 이상 확인을 저장해요. */
+  agreeToTerms: (consent: { terms: boolean; privacy: boolean; age_14: boolean }) => Promise<void>;
+  /** 회원 탈퇴. 계정과 기록이 모두 지워지고 로그아웃돼요. */
+  deleteAccount: () => Promise<void>;
   /** 닉네임을 바꿔요. 비우면 자동 닉네임으로 돌아가요. 규칙에 안 맞거나 겹치면 ApiError 로 실패해요. */
   updateNickname: (nickname: string | null) => Promise<void>;
   /**
