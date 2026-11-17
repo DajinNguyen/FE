@@ -1,31 +1,9 @@
 import { useState } from 'react';
 import { Sheet } from '../../components/Sheet';
-import { DAJIN_EMOJIS, EMOJI_TOKEN_PATTERN, isEmojiOnly } from '../../config/dajinEmojis';
+import { splitBody } from '../../config/dajinEmojis';
 import styles from './Comment.module.css';
 
-/** ":dajin-like:" 같은 표시를 이미지로 바꿔요. 모르는 이모지는 글자 그대로 둬요. */
-function renderBody(body: string, emojiOnly: boolean) {
-  const parts: React.ReactNode[] = [];
-  let last = 0;
-  for (const match of body.matchAll(EMOJI_TOKEN_PATTERN)) {
-    const emoji = DAJIN_EMOJIS.find((e) => e.id === match[1]);
-    if (!emoji) continue;
-    parts.push(body.slice(last, match.index));
-    parts.push(
-      <img
-        key={match.index}
-        src={emoji.src}
-        alt={emoji.alt}
-        className={emojiOnly ? styles.emojiLarge : styles.emojiInline}
-      />,
-    );
-    last = (match.index ?? 0) + match[0].length;
-  }
-  parts.push(body.slice(last));
-  return parts;
-}
-
-/** 댓글 본문: "@닉네임" + 글(이모지 포함) + 작은 사진 (누르면 크게) */
+/** 댓글 본문: "@닉네임" + 글, 그 아래 다진 이모지 하나, 작은 사진 (누르면 크게) */
 export function CommentBody({
   body,
   replyTo,
@@ -36,15 +14,16 @@ export function CommentBody({
   imageUrl?: string | null;
 }) {
   const [zoom, setZoom] = useState(false);
-  const emojiOnly = isEmojiOnly(body);
+  const { text, emoji } = splitBody(body);
   return (
     <>
-      {(body || replyTo) && (
-        <p className={`${styles.body} ${emojiOnly ? styles.emojiOnly : ''}`}>
+      {(text || replyTo) && (
+        <p className={styles.body}>
           {replyTo && <span className={styles.mention}>@{replyTo} </span>}
-          {renderBody(body, emojiOnly)}
+          {text}
         </p>
       )}
+      {emoji && <img src={emoji.src} alt={emoji.alt} className={styles.emoji} />}
       {imageUrl && (
         <>
           <button

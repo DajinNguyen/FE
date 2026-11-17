@@ -118,19 +118,15 @@
   border-left: 2px solid var(--brand-muted);
 }
 
-/* 이모지 */
-.emojiInline {
-  display: inline-block;
-  width: 2.6em;
-  height: 2.6em;
-  vertical-align: middle;
+/* 이모지: 글 아래에 하나, 항상 같은 크기 */
+.emoji {
+  display: block;
+  width: 120px;
+  height: 120px;
 }
 
-.emojiOnly {
-  line-height: 1;
-}
-
-.emojiLarge {
+.emojiPicked {
+  display: block;
   width: 120px;
   height: 120px;
 }

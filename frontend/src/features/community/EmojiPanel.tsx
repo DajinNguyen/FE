@@ -1,8 +1,8 @@
-import { DAJIN_EMOJIS, emojiToken } from '../../config/dajinEmojis';
+import { DAJIN_EMOJIS, type DajinEmoji } from '../../config/dajinEmojis';
 import styles from './Comment.module.css';
 
 /** 다진 이모지 고르기 패널. 이미지가 아직 없으면 준비 중 안내를 보여줘요. */
-export function EmojiPanel({ onPick }: { onPick: (token: string) => void }) {
+export function EmojiPanel({ onPick }: { onPick: (emoji: DajinEmoji) => void }) {
   return (
     <div className={styles.emojiPanel} role="group" aria-label="다진 이모지">
       {DAJIN_EMOJIS.length === 0 ? (
@@ -14,7 +14,7 @@ export function EmojiPanel({ onPick }: { onPick: (token: string) => void }) {
               <button
                 type="button"
                 className={styles.emojiButton}
-                onClick={() => onPick(emojiToken(emoji.id))}
+                onClick={() => onPick(emoji)}
                 aria-label={emoji.name}
                 title={emoji.name}
               >
