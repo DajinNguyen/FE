@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { CompanyPage } from '../src/pages/CompanyPage';
 import type { CompareCompany } from '../src/types';
-import { compareSummary, compareValues } from '../src/utils/compareSummary';
+import { compareHighlights, compareSummary, compareValues } from '../src/utils/compareSummary';
 import { renderWithProviders } from './testUtils';
 
 const company = (name: string, patch: Partial<CompareCompany>): CompareCompany => ({
@@ -84,24 +84,71 @@ describe('한눈에 비교 규칙 문장 (compareSummary)', () => {
   });
 });
 
-const renderCompare = (right: string, left: string) =>
+/** left = 지금 보는 기업(주소), right = 비교할 기업(with) */
+const renderCompare = (left: string, right: string) =>
   renderWithProviders(
     <Routes>
       <Route path="/companies/:stockCode" element={<CompanyPage />} />
     </Routes>,
-    { route: `/companies/${right}?tab=compare&with=${left}` },
+    { route: `/companies/${left}?tab=compare&with=${right}` },
   );
+
+describe('한눈에 비교 카드 데이터 (compareHighlights)', () => {
+  it('두 값이 다 있는 지표만, 큰 쪽과 화면 값 그대로 돌려줘요', () => {
+    const h = compareHighlights(
+      company('삼성전자', { revenue: 300.9, operating_margin: 10.9, revenue_growth: null }),
+      company('SK하이닉스', { revenue: 66.2, operating_margin: 35.5, revenue_growth: 102 }),
+    );
+    expect(h.map((x) => x.key)).toEqual(['revenue', 'operating_margin']);
+    expect(h[0]).toMatchObject({
+      winner: 'left',
+      verdict: '삼성전자가 더 커요',
+      leftValue: '300.9조 원',
+      rightValue: '66.2조 원',
+    });
+    expect(h[1]).toMatchObject({
+      winner: 'right',
+      verdict: 'SK하이닉스는 더 많이 남겨요',
+      leftValue: '10.9%',
+      rightValue: '35.5%',
+    });
+  });
+
+  it('비슷하면 winner 가 similar, 판단·추천 표현은 없어요', () => {
+    const h = compareHighlights(
+      company('가', { revenue: 10.7, operating_margin: 18.5, revenue_growth: 11 }),
+      company('나', { revenue: 10.0, operating_margin: 5, revenue_growth: 10.5 }),
+    );
+    expect(h[0]).toMatchObject({ winner: 'similar', verdict: '비슷해요' });
+    expect(h.map((x) => x.verdict).join(' ')).not.toMatch(BANNED);
+  });
+});
 
 describe('한눈에 비교 화면', () => {
   it('AI 분석이 없으면 숫자 규칙 문장과 근거(기준·출처)를 보여주고, "왜 다른가요?"는 숨겨요', async () => {
     renderCompare('035420', '035720');
     const summary = await screen.findByRole('region', { name: '한눈에 비교' });
     expect(within(summary).getByText('숫자로 정리')).toBeInTheDocument();
-    expect(summary).toHaveTextContent('NAVER가 같은 매출에서 더 많이 남겨요');
+    expect(summary).toHaveTextContent('NAVER는 규모가 크고 같은 매출에서 남기는 돈도 많아요');
     expect(within(summary).queryByText('왜 다른가요?')).not.toBeInTheDocument();
-    expect(summary).toHaveTextContent('근거: 2025년 연간 · 연결 기준 재무 숫자 (카카오, NAVER)');
+    expect(summary).toHaveTextContent('근거: 2025년 연간 · 연결 기준 재무 숫자 (NAVER, 카카오)');
     expect(summary).toHaveTextContent('출처: 금융감독원 DART 공시');
     expect(summary).toHaveTextContent('투자 추천이 아닌');
+  });
+
+  it('지표별 카드에서 큰 쪽 숫자에만 강조(data-win)를 줘요', async () => {
+    renderCompare('035420', '035720');
+    const summary = await screen.findByRole('region', { name: '한눈에 비교' });
+    const card = (key: string) => summary.querySelector(`[data-metric="${key}"]`) as HTMLElement;
+
+    const revenue = card('revenue');
+    expect(within(revenue).getByText('NAVER가 더 커요')).toHaveAttribute('data-winner', 'left');
+    expect(revenue.querySelector('[data-side="left"]')).toHaveAttribute('data-win', 'true');
+    expect(revenue.querySelector('[data-side="left"]')).toHaveTextContent('10.7조 원');
+    expect(revenue.querySelector('[data-side="right"]')).not.toHaveAttribute('data-win');
+    expect(revenue.querySelector('[data-side="right"]')).toHaveTextContent('7.9조 원');
+    expect(card('operating_margin')).toHaveTextContent('NAVER는 더 많이 남겨요');
+    expect(card('revenue_growth')).toHaveTextContent('NAVER는 더 빠르게 늘었어요');
   });
 
   it('API 에 AI 분석이 있으면 그것을 보여주고 "왜 다른가요?"와 출처 링크가 나와요', async () => {

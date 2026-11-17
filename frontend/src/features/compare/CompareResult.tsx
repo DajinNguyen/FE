@@ -12,7 +12,7 @@ import styles from './Compare.module.css';
 const basisOf = (c: CompareCompany, fallback: { period: string; basis: string }) =>
   `${c.base_period ?? fallback.period} · ${c.basis ?? fallback.basis}`;
 
-/** 비교 결과: 기준 → 지표 막대 → [왼쪽 기업 페이지로] (left = 비교할 기업, right = 지금 보는 기업) */
+/** 비교 결과: 기준 → 지표 막대 → [비교할 기업 페이지로] (left = 지금 보는 기업, right = 비교할 기업) */
 export function CompareResult({ left, right }: { left: string; right: string }) {
   const { data, isPending, isError, error, refetch } = useCompanyCompare(left, right);
 
@@ -44,8 +44,8 @@ export function CompareResult({ left, right }: { left: string; right: string }) 
       )}
       <CompareBars left={data.left} right={data.right} />
       <CompareSummary data={data} />
-      <Link to={`/companies/${data.left.stock_code}`} className={styles.goLeft}>
-        {data.left.name} 페이지로 <Icon name="chevronRight" size={16} />
+      <Link to={`/companies/${data.right.stock_code}`} className={styles.goOther}>
+        {data.right.name} 페이지로 <Icon name="chevronRight" size={16} />
       </Link>
     </div>
   );
