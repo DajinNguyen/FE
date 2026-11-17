@@ -55,3 +55,28 @@ export function resetMeStore() {
   termProgress = new Map();
   watchlists = new Map();
 }
+
+/** PATCH /api/auth/me: 닉네임 바꾸기. 서버와 같은 규칙으로 검사하고, 이미 쓰는 닉네임은 409. */
+const nicknames = new Map<string, string>();
+export const takenNicknames = new Set<string>();
+
+export const resetNicknames = () => {
+  nicknames.clear();
+  takenNicknames.clear();
+};
+
+export async function updateProfile(body: { nickname: string | null }) {
+  const id = viewer();
+  const nickname = (body.nickname ?? '').trim();
+  if (nickname && takenNicknames.has(nickname.toLowerCase())) {
+    throw new ApiError('이미 다른 사람이 쓰고 있는 닉네임이에요.', 409, 'NICKNAME_TAKEN');
+  }
+  nicknames.set(id, nickname || '자동닉네임1');
+  return {
+    id,
+    email: `${id}@dajin.local`,
+    name: '실명',
+    nickname: nicknames.get(id)!,
+    joined_at: '2026-11-01',
+  };
+}

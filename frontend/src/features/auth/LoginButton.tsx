@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { useAuth } from '../../hooks/useAuth';
 import { displayName } from './AuthContext';
 import styles from './LoginButton.module.css';
@@ -9,7 +10,9 @@ export function LoginButton() {
   if (isLoggedIn && user) {
     return (
       <span className={styles.signedIn}>
-        <span className={styles.user}>{displayName(user)}님</span>
+        <Link to="/mypage" className={styles.user} aria-label="마이페이지">
+          {displayName(user)}님
+        </Link>
         <button type="button" className={styles.devButton} onClick={() => void logout()}>
           로그아웃
         </button>

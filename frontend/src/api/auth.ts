@@ -29,3 +29,11 @@ export function googleLoginUrl(): string {
   const next = encodeURIComponent(window.location.href);
   return `${apiConfig.baseUrl}/api/auth/google?next=${next}`;
 }
+
+/**
+ * 닉네임 바꾸기 (마이페이지). 비우면 자동 닉네임으로 돌아가요.
+ * 400 INVALID_PARAM(길이·글자 규칙), 409 NICKNAME_TAKEN(이미 쓰는 닉네임)
+ */
+export function updateProfile(nickname: string | null) {
+  return request<AuthUser>({ path: '/api/auth/me', method: 'PATCH', body: { nickname } });
+}

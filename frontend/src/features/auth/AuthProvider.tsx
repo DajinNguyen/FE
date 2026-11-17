@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { getMe, googleLoginUrl, logout as logoutRequest } from '../../api/auth';
+import { getMe, googleLoginUrl, logout as logoutRequest, updateProfile } from '../../api/auth';
 import { adoptGuestData, resetUserData, runBeforeLogout, userScope } from '../../hooks/userData';
 import { AuthContext, DEV_USER, type AuthContextValue, type AuthUser } from './AuthContext';
 
@@ -61,6 +61,12 @@ export function AuthProvider({
           setUser(null);
           resetUserData(queryClient, scope);
         }
+      },
+      updateNickname: async (nickname) => {
+        const me = await updateProfile(nickname);
+        setUser((prev) => (prev ? { ...prev, ...me } : me));
+        // 커뮤니티 글·댓글에 보이는 이름도 바뀌니까 다시 받아요.
+        await queryClient.invalidateQueries();
       },
       // 화면만 로그인 상태로 바꾸는 버튼이라 서버에 쓰면 401 이 나요.
       // 그래서 기본은 꺼 두고, 개발 서버에서 VITE_DEV_LOGIN=true 일 때(와 테스트)만 보여요.
