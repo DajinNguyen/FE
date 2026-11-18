@@ -32,11 +32,11 @@
 }
 
 .chartBox {
-  min-height: 160px;
+  min-height: 300px;
 }
 
 .placeholder {
-  height: 160px;
+  height: 300px;
   border-radius: var(--radius-sm);
   background: var(--surface-strong);
 }
