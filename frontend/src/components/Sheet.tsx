@@ -15,6 +15,8 @@ interface SheetProps {
    * 'chat': 휴대폰은 전체 화면, 넓은 화면은 오른쪽 패널 (챗봇)
    */
   placement?: 'center' | 'side' | 'popover' | 'chat';
+  /** false 면 ×·바깥 눌러 닫기·Esc 로 닫을 수 없어요 (꼭 답해야 하는 동의 화면용) */
+  dismissible?: boolean;
 }
 
 /**
@@ -28,13 +30,14 @@ export function Sheet({
   children,
   eyebrow,
   placement = 'center',
+  dismissible = true,
 }: SheetProps) {
   const titleId = useId();
 
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape' && dismissible) onClose();
     };
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -43,18 +46,24 @@ export function Sheet({
       document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [open, onClose]);
+  }, [open, onClose, dismissible]);
 
   if (!open) return null;
 
   return createPortal(
     <div className={`${styles.root} ${placement !== 'center' ? styles[placement] : ''}`}>
-      <div className={styles.backdrop} onClick={onClose} aria-hidden="true" />
+      <div
+        className={styles.backdrop}
+        onClick={dismissible ? onClose : undefined}
+        aria-hidden="true"
+      />
       <div className={styles.sheet} role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <div className={styles.handle} aria-hidden="true" />
-        <button type="button" className={styles.close} onClick={onClose} aria-label="시트 닫기">
-          ×
-        </button>
+        {dismissible && (
+          <button type="button" className={styles.close} onClick={onClose} aria-label="시트 닫기">
+            ×
+          </button>
+        )}
         {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
         <h2 id={titleId} className={styles.title}>
           {title}

@@ -80,3 +80,29 @@ export async function updateProfile(body: { nickname: string | null }) {
     joined_at: '2026-11-01',
   };
 }
+
+/** POST /api/auth/consent: 동의 저장. 셋 다 true 가 아니면 400 */
+export async function submitConsent(body: { terms: boolean; privacy: boolean; age_14: boolean }) {
+  const id = viewer();
+  if (!(body.terms && body.privacy && body.age_14)) {
+    throw new ApiError('모두 동의해 주세요.', 400, 'INVALID_PARAM');
+  }
+  return {
+    id,
+    email: `${id}@dajin.local`,
+    name: '실명',
+    nickname: '자동닉네임1',
+    joined_at: '2026-11-01',
+    consent_required: false,
+  };
+}
+
+/** DELETE /api/auth/me: 회원 탈퇴. 서버에 있던 이 사용자의 기록을 지워요. */
+export async function deleteAccount() {
+  const id = viewer();
+  termProgress.delete(id);
+  watchlists.delete(id);
+  nicknames.delete(id);
+  deletedAccounts.push(id);
+}
+export const deletedAccounts: string[] = [];

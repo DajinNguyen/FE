@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '../components/Button';
+import { Sheet } from '../components/Sheet';
 import { EmptyState } from '../components/EmptyState';
 import { ApiError } from '../api/errors';
 import { displayName } from '../features/auth/AuthContext';
@@ -12,11 +13,14 @@ import styles from './MyPage.module.css';
 /** 마이페이지: 내 정보를 보고 닉네임을 바꿔요 */
 export function MyPage() {
   const navigate = useNavigate();
-  const { user, isLoading, loginWithGoogle, updateNickname, logout } = useAuth();
+  const { user, isLoading, loginWithGoogle, updateNickname, logout, deleteAccount } = useAuth();
   const { showToast } = useToast();
   const [draft, setDraft] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   if (isLoading) return <div className={styles.page} aria-hidden="true" />;
   if (!user) {
@@ -49,6 +53,23 @@ export function MyPage() {
       setError(e instanceof ApiError ? e.message : '닉네임을 바꾸지 못했어요. 다시 시도해 주세요.');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function withdraw() {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteAccount();
+      setConfirmingDelete(false);
+      showToast('탈퇴했어요. 그동안 이용해 주셔서 고마워요');
+      navigate('/');
+    } catch (e) {
+      setDeleteError(
+        e instanceof ApiError ? e.message : '탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.',
+      );
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -119,6 +140,47 @@ export function MyPage() {
           </Button>
         </div>
       </section>
+
+      <section className={styles.card} aria-label="회원 탈퇴">
+        <h2 className={styles.cardTitle}>회원 탈퇴</h2>
+        <p className={styles.help}>
+          탈퇴하면 계정과 내가 쓴 글·댓글, 관심 기업, 학습 기록, 챗봇 대화, ADK가 모두 지워지고
+          되돌릴 수 없어요.
+        </p>
+        <div>
+          <Button variant="secondary" onClick={() => setConfirmingDelete(true)}>
+            회원 탈퇴
+          </Button>
+        </div>
+      </section>
+
+      <Sheet
+        open={confirmingDelete}
+        onClose={() => !deleting && setConfirmingDelete(false)}
+        eyebrow="되돌릴 수 없어요"
+        title="정말 탈퇴할까요?"
+      >
+        <p>
+          계정과 내가 쓴 글·댓글·사진, 관심 기업, 학습 기록, 챗봇 대화, 남은 ADK가 바로 삭제돼요.
+          삭제한 뒤에는 복구할 수 없어요.
+        </p>
+        {deleteError && (
+          <p className={styles.error} role="alert">
+            {deleteError}
+          </p>
+        )}
+        <Button size="lg" block disabled={deleting} onClick={() => void withdraw()}>
+          {deleting ? '탈퇴 중…' : '네, 탈퇴할게요'}
+        </Button>
+        <Button
+          block
+          variant="ghost"
+          disabled={deleting}
+          onClick={() => setConfirmingDelete(false)}
+        >
+          취소
+        </Button>
+      </Sheet>
 
       <p className={styles.notice}>
         Google 계정의 이메일과 이름만 받아요. 실명은 다른 사람에게 보이지 않고, 닉네임만 보여요.

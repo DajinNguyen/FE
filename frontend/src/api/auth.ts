@@ -37,3 +37,13 @@ export function googleLoginUrl(): string {
 export function updateProfile(nickname: string | null) {
   return request<AuthUser>({ path: '/api/auth/me', method: 'PATCH', body: { nickname } });
 }
+
+/** 이용약관·개인정보 처리방침 동의와 만 14세 이상 확인. 셋 다 true 여야 해요. */
+export function submitConsent(consent: { terms: boolean; privacy: boolean; age_14: boolean }) {
+  return request<AuthUser>({ path: '/api/auth/consent', method: 'POST', body: consent });
+}
+
+/** 회원 탈퇴: 계정과 내 기록을 모두 지워요. 되돌릴 수 없어요. */
+export function deleteAccount() {
+  return request<void>({ path: '/api/auth/me', method: 'DELETE' });
+}

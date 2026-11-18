@@ -29,3 +29,14 @@
   color: var(--text-2);
   font-weight: var(--fw-semibold);
 }
+
+.footerLinks {
+  display: flex;
+  gap: var(--sp-4);
+  margin-top: var(--sp-3);
+}
+
+.footerLinks a {
+  color: var(--text-2);
+  text-decoration: underline;
+}
