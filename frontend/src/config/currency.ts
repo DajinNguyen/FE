@@ -28,6 +28,15 @@ export const PUZZLE_REWARD = {
 /** 가입 선물 (서버가 가입할 때 지급) ⚠️ 임시값, 확정 필요 */
 export const SIGNUP_BONUS = 50;
 
+/**
+ * 모의투자 금액처럼 소수가 생기는 ADK: 소수 둘째 자리까지 버림 ("38.55 ADK").
+ * 헤더·리포트·챗봇은 formatAdk (정수)를 써요.
+ */
+export const formatAdkDetail = (amount: number) => {
+  const floored = Math.floor(amount * 100 + 1e-9) / 100;
+  return `${floored.toLocaleString('ko-KR', { maximumFractionDigits: 2 })} ${CURRENCY_UNIT}`;
+};
+
 /** "1,240 ADK" (정수, 천 단위 쉼표) */
 export const formatAdk = (amount: number) =>
   `${Math.trunc(amount).toLocaleString('ko-KR')} ${CURRENCY_UNIT}`;

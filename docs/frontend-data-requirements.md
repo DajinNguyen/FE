@@ -937,3 +937,72 @@ left = 비교할 기업, right = 지금 보는 기업. 타입: `frontend/src/typ
 - 답변 속 용어는 프론트가 용어 사전에서 찾아 용어 시트로 열 수 있게 해요. (서버는 그냥 글로 주면 돼요)
 - 스트리밍(답변을 이어서 보내기)은 나중에 붙일 수 있게 프론트 구조만 준비했어요. 지금은 한 번에 받아요.
 - 대화 기록은 프론트가 이 기기에서 세션 동안만 보여주고, 로그아웃하면 지워요.
+
+## 19. 모의투자 (2026-11-18 추가, 백엔드 필요)
+
+D-0 결정 (2026-11-18): **1안 ADK 단일 · 지연 시세 · 초기화 없음 · 1 ADK = 가상 10,000원**.
+규칙: `frontend/src/config/mockInvest.ts`, 타입: `frontend/src/types/mockInvest.ts`. **체결 가격·ADK 차감 판단은 서버가 해 주세요.** (프론트 계산은 예상 금액 표시용)
+
+| 규칙 | 값 |
+|---|---|
+| 쓰는 돈 | 앰똥깡(ADK) 그대로. 가상 현금 = 잔액 × `ADK_TO_WON`(10,000). 사면 ADK 가 빠지고 팔면 돌아와요 |
+| 가격 | 지연 시세. 주문을 받은 때의 지연 시세로 체결해요 (장 마감 뒤에는 그날 종가) |
+| 수량 | 1주 단위, 한 번에 1~10,000주 (`MAX_ORDER_QUANTITY`, **임시값, 확정 필요**) |
+| ADK 소수 | 금액 ÷ 10,000 이라 소수가 생겨요. 소수 넷째 자리(= 1원)까지 저장해 주세요. 헤더 배지는 정수로 버려서 보여줘요 |
+| 초기화 | 없어요 |
+| 순위 | 다른 사용자와의 수익률 순위는 만들지 않아요 |
+| 비로그인 | 사용 불가 (화면에 들어오면 로그인 시트) |
+| 로그아웃 | 프론트가 `['me', 'mock-invest', …]` 쿼리를 지워요 (기기에 저장하지 않아요) |
+
+⚠️ 1안이라 모의투자에서 잃으면 AI 리포트(7 ADK)·챗봇(5 ADK)에 쓸 ADK 도 줄어요. 화면에 안내해요.
+
+### 19-1. `GET /api/me/mock-invest` (로그인 필요)
+
+```json
+{
+  "started": true,
+  "adk_to_won": 10000,
+  "cash_adk": 24.3,
+  "cash": 243000,
+  "evaluation": 257000,
+  "total_asset": 500000,
+  "profit": 0,
+  "profit_rate": 0.0,
+  "today_change": 3520,
+  "price_as_of": "2026-11-18 10:20",
+  "holdings": [
+    { "stock_code": "005930", "name": "삼성전자", "quantity": 2, "avg_price": 128500, "current_price": 128500,
+      "change_rate": 1.4, "evaluation": 257000, "profit": 0, "profit_rate": 0.0 }
+  ]
+}
+```
+- `started`: 한 번이라도 사고판 적이 있으면 true (메인 카드 "시작하기" 구분)
+- `cash_adk` 는 `GET /api/me/wallet` 의 `balance` 와 같은 값이에요. 금액은 모두 원, `profit_rate`·`change_rate` 는 %.
+- `profit_rate`: 보유 종목의 (평가금액 − 산 금액) ÷ 산 금액. 보유 종목이 없으면 null
+- `today_change`: 보유 종목 평가금액의 오늘 변화 (원)
+- `price_as_of`: 지연 시세 기준 시각
+
+### 19-2. `GET /api/me/mock-invest/trades` (로그인 필요)
+
+최신 순, 최대 50개.
+```json
+[ { "id": "t1", "stock_code": "005930", "name": "삼성전자", "side": "buy", "quantity": 2,
+    "price": 128500, "amount": 257000, "amount_adk": 25.7, "created_at": "2026-11-18T01:20:00Z" } ]
+```
+
+### 19-3. `POST /api/me/mock-invest/orders` (로그인 필요)
+
+요청 `{ "stock_code": "005930", "side": "buy" | "sell", "quantity": 2 }`
+
+응답 `{ "trade": { …19-2 항목 }, "balance": 24.3, "portfolio": { …19-1 } }` — `balance` 는 주문 뒤 앰똥깡 잔액이에요.
+
+| 상태 | code | 언제 |
+|---|---|---|
+| 400 | `INVALID_QUANTITY` | 수량이 정수 1~10,000 이 아님 |
+| 400 | `INSUFFICIENT_BALANCE` | 살 금액(ADK)이 잔액보다 많음 |
+| 400 | `INSUFFICIENT_QUANTITY` | 가진 수량보다 많이 팖 |
+| 404 | `COMPANY_NOT_FOUND` | 없는 종목 |
+
+- 지갑 내역(`history`)에 `"모의투자 · 삼성전자 2주 사기"` 처럼 남겨 주세요 (`type` spend/earn).
+- 같은 요청이 두 번 와도 두 번 체결되지 않게 해 주세요 (프론트는 체결 중 버튼을 잠가요).
+- 주문 화면의 예상 금액은 `GET /api/companies/{code}` 의 `current_price` 로 계산해요. 이 값도 지연 시세면 예상과 체결이 거의 같아요.

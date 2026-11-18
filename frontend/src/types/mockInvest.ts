@@ -1,0 +1,82 @@
+/**
+ * 모의투자 (1안 ADK 단일, 지연 시세, 초기화 없음). 금액은 모두 가상 원이에요.
+ * 가상 현금 = 앰똥깡 잔액 × ADK_TO_WON
+ */
+
+/** 보유 종목 하나 */
+export interface MockHolding {
+  stock_code: string;
+  name: string;
+  quantity: number;
+  /** 평균 산 가격 (원) */
+  avg_price: number;
+  /** 지금 가격 (지연 시세, 원) */
+  current_price: number;
+  /** 오늘 등락률 (%) — 오늘 변화 계산용 */
+  change_rate: number;
+  /** 평가금액 = current_price × quantity */
+  evaluation: number;
+  /** 평가손익 = evaluation − avg_price × quantity */
+  profit: number;
+  /** 수익률 (%) */
+  profit_rate: number;
+}
+
+/** GET /api/me/mock-invest */
+export interface MockPortfolio {
+  /** 한 번이라도 사고판 적이 있는지 (메인 카드 "시작 안 함" 구분) */
+  started: boolean;
+  /** 1 ADK = 가상 몇 원 (서버 기준) */
+  adk_to_won: number;
+  /** 가상 현금 = 앰똥깡 잔액 (ADK) */
+  cash_adk: number;
+  /** 가상 현금 (원) */
+  cash: number;
+  /** 평가금액 합 (원) */
+  evaluation: number;
+  /** 총 자산 = cash + evaluation (원) */
+  total_asset: number;
+  /** 평가손익 합 (원) */
+  profit: number;
+  /** 보유 종목 수익률 (%). 보유 종목이 없으면 null */
+  profit_rate: number | null;
+  /** 보유 종목의 오늘 평가금액 변화 (원) */
+  today_change: number;
+  /** 지연 시세 기준 시각 ("2026-11-18 10:20") */
+  price_as_of: string | null;
+  holdings: MockHolding[];
+}
+
+export type MockOrderSide = 'buy' | 'sell';
+
+/** POST /api/me/mock-invest/orders 요청 */
+export interface MockOrderRequest {
+  stock_code: string;
+  side: MockOrderSide;
+  quantity: number;
+}
+
+/** 거래 하나 (GET /api/me/mock-invest/trades, 최신 순) */
+export interface MockTrade {
+  id: string;
+  stock_code: string;
+  name: string;
+  side: MockOrderSide;
+  quantity: number;
+  /** 체결 가격 (지연 시세, 원) */
+  price: number;
+  /** 체결 금액 = price × quantity (원) */
+  amount: number;
+  /** 빠지거나 돌아온 ADK */
+  amount_adk: number;
+  /** ISO 시각 */
+  created_at: string;
+}
+
+/** POST /api/me/mock-invest/orders 응답 */
+export interface MockOrderResult {
+  trade: MockTrade;
+  /** 주문 뒤 앰똥깡 잔액 */
+  balance: number;
+  portfolio: MockPortfolio;
+}

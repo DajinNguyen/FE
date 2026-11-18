@@ -3,6 +3,7 @@ import { AppLayout } from './components/AppLayout';
 import { CompanyPage } from './pages/CompanyPage';
 import { HomePage } from './pages/HomePage';
 import { LegalPage } from './pages/LegalPage';
+import { MockInvestPage } from './pages/MockInvestPage';
 import { MyPage } from './pages/MyPage';
 import { IndustryPage } from './pages/IndustryPage';
 import { TermCardsPage } from './pages/TermCardsPage';
@@ -24,6 +25,7 @@ export function App() {
         <Route path="learn/crossword" element={<Navigate to="/terms" replace />} />
         <Route path="learn/crossword/:puzzleId" element={<CrosswordRedirect />} />
         <Route path="watchlist" element={<WatchlistPage />} />
+        <Route path="mock-invest" element={<MockInvestPage />} />
         <Route path="mypage" element={<MyPage />} />
         <Route path="legal/terms" element={<LegalPage kind="terms" />} />
         <Route path="legal/privacy" element={<LegalPage kind="privacy" />} />

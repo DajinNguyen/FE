@@ -110,6 +110,24 @@ export function refund(reason: keyof typeof ADK_COST, label: string) {
   return w.balance;
 }
 
+const round4 = (n: number) => Math.round(n * 10_000) / 10_000;
+
+/** 모의투자 (1안 ADK 단일): 사면 빼고 팔면 더해요. 모자라면 400 */
+export function settleMockInvest(type: 'earn' | 'spend', adk: number, label: string) {
+  const w = walletOf(viewer());
+  if (type === 'spend' && w.balance + 1e-9 < adk) {
+    throw new ApiError('앰똥깡이 부족해요', 400, 'INSUFFICIENT_BALANCE');
+  }
+  w.balance = round4(type === 'spend' ? w.balance - adk : w.balance + adk);
+  w.history.unshift(entry(type, adk, label));
+  return w.balance;
+}
+
+/** 지금 사용자의 잔액 (모의투자 가상 현금) */
+export function currentBalance() {
+  return walletOf(viewer()).balance;
+}
+
 /** 테스트에서 잔액을 정하거나 확인할 때 */
 export const serverWallet = {
   get: (userId: string) => wallets.get(userId),

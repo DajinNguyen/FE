@@ -1,0 +1,483 @@
+/* 모의투자: 메인 카드 + /mock-invest 화면. 색·크기는 토큰만 써요. */
+
+/* 오르면 빨강, 내리면 파랑 (숫자 글자에만) */
+.rise {
+  color: var(--rise);
+}
+
+.fall {
+  color: var(--fall);
+}
+
+.flat {
+  color: var(--text-1);
+}
+
+/* ───── 메인 카드 ───── */
+.cardSection {
+  display: flex;
+  min-width: 0;
+}
+
+.card {
+  display: flex;
+  width: 100%;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  color: var(--text-1);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease);
+}
+
+.card:hover {
+  border-color: var(--line-strong);
+}
+
+.cardStatic {
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+}
+
+.cardHead {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.cardHead svg {
+  color: var(--brand);
+}
+
+.cardTitle {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.cardBadge {
+  margin-left: auto;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.cardLabel {
+  margin-top: var(--sp-2);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.cardTotal {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.cardStats {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-top: var(--sp-2);
+}
+
+/* 카드는 좁아서 한 줄에 "이름 …… 값" */
+.cardStats > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+/* 브라우저 기본 dd 들여쓰기 없애기 */
+.cardStats dd,
+.assetGrid dd,
+.holdingStats dd {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.cardStats dt,
+.assetGrid dt,
+.holdingStats dt {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+}
+
+.cardStats dd {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.cardMessage {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  line-height: 1.5;
+}
+
+.cardSub {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.cardAction,
+.cardMore {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-top: auto;
+  padding-top: var(--sp-2);
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.cardSkeleton {
+  width: 100%;
+  height: 96px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+/* ───── 화면 ───── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  padding-block: var(--sp-12);
+}
+
+.title {
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  margin-top: var(--sp-1);
+  color: var(--text-3);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sp-6);
+}
+
+.column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+}
+
+.panelTitle {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
+.count {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.totalLabel {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+}
+
+.assetGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+
+.assetGrid dd {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.sub {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+}
+
+.meta {
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+
+.empty {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.skeleton {
+  height: 240px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.notice {
+  max-width: 720px;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+}
+
+/* 보유 종목 */
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.rows > li + li {
+  border-top: 1px solid var(--line);
+}
+
+.holding {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-block: var(--sp-3);
+}
+
+.holdingHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.holdingName {
+  color: var(--text-1);
+  font-weight: var(--fw-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.holdingRate {
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.holdingStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+
+.holdingStats dd {
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.reportLink {
+  align-self: flex-start;
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+/* 거래 내역 */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.table th {
+  padding: var(--sp-2) var(--sp-1);
+  border-bottom: 1px solid var(--line);
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  text-align: left;
+}
+
+.table td {
+  padding: var(--sp-2) var(--sp-1);
+  border-bottom: 1px solid var(--line);
+}
+
+.buyTag,
+.sellTag {
+  font-weight: var(--fw-semibold);
+}
+
+.buyTag {
+  color: var(--rise);
+}
+
+.sellTag {
+  color: var(--fall);
+}
+
+/* 주문 */
+.orderSearch {
+  max-width: 480px;
+}
+
+.orderForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.orderCompany {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.orderName {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.learnNote {
+  padding: var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+
+.learnNote a {
+  color: var(--brand);
+  font-weight: var(--fw-semibold);
+}
+
+.quantityRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.quantityLabel {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.quantityInput {
+  width: 120px;
+  height: 40px;
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-1);
+  font-size: var(--fs-base);
+  font-variant-numeric: tabular-nums;
+}
+
+.estimate {
+  font-size: var(--fs-sm);
+}
+
+.estimate strong {
+  font-size: var(--fs-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.problem {
+  color: var(--caution);
+  font-size: var(--fs-sm);
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.confirmTitle {
+  font-weight: var(--fw-semibold);
+}
+
+.confirmActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+
+.result {
+  padding: var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--good-weak);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+
+@media (max-width: 899px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 479px) {
+  .card,
+  .cardStatic,
+  .panel {
+    padding: var(--sp-4);
+  }
+
+  .assetGrid,
+  .holdingStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .table th:first-child,
+  .table td:first-child {
+    white-space: nowrap;
+  }
+}
