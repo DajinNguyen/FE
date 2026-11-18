@@ -11,6 +11,7 @@ import { TermGameBanner } from '../features/home/TermGameBanner';
 import { HotIndustries } from '../features/industry/HotIndustries';
 import { MarketReasons } from '../features/market/MarketReasons';
 import { MarketToday } from '../features/market/MarketToday';
+import { MockInvestCard } from '../features/mock-invest/MockInvestCard';
 import { useHomeDashboard } from '../hooks/useHomeDashboard';
 import { useOpenCompany } from '../hooks/useOpenCompany';
 import listStyles from '../features/home/CompanyList.module.css';
@@ -18,7 +19,7 @@ import styles from './HomePage.module.css';
 
 /**
  * 메인 화면 (가운데 정렬, 위에서 아래로)
- * 크게: 1. 시장 한마디(+ 지수 칩) 2. 기업 검색(좁은 화면만) 3. 관심이 몰리는 산업 TOP 3
+ * 크게: 1. 시장 한마디(+ 지수 칩) 2. 기업 검색(좁은 화면만) 3. 관심이 몰리는 산업 TOP 3 + 모의투자 카드
  * 보통: 4. 오늘 시장이 왜 움직였나요?
  * 작게: 5. 거래 많은 기업 TOP 3 6. 용어 학습 진입
  */
@@ -37,7 +38,11 @@ export function HomePage() {
         </section>
       </div>
 
-      <HotIndustries />
+      {/* 넓은 화면은 산업 TOP 3 오른쪽, 좁은 화면은 아래에 모의투자 카드 */}
+      <div className={styles.hotRow}>
+        <HotIndustries />
+        <MockInvestCard />
+      </div>
 
       <MarketReasons />
 
