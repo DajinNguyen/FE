@@ -17,3 +17,24 @@
   opacity: 0.7;
   font-size: var(--fs-xs);
 }
+
+.tooltipRows {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--sp-1);
+  font-size: var(--fs-xs);
+}
+
+.tooltipRows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.tooltipRows dt {
+  opacity: 0.7;
+}
+
+.tooltipRows dd {
+  margin: 0;
+}

@@ -7,10 +7,12 @@ import {
   XAxis,
   YAxis,
   type BarShapeProps,
+  type XAxisTickContentProps,
 } from 'recharts';
 import type { PricePoint } from '../types';
 import { formatPrice } from '../utils/format';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { evenDateTicks, priceAxisWidth, priceTicks, ticksAwayFrom } from '../utils/priceChartScale';
 import { getTrend, trendColor } from '../utils/trend';
 import styles from './PriceChart.module.css';
 
@@ -21,20 +23,37 @@ interface PriceChartProps {
 
 type CandleDatum = PricePoint & { range: [number, number] };
 
-const AXIS_WIDTH = 60;
+/** 위 여백·아래 날짜 칸 높이 (px). 그래프 안쪽 높이 = height − 둘의 합 */
+const MARGIN_TOP = 12;
+const X_AXIS_HEIGHT = 30;
 const axisTick = { fill: 'var(--text-4)', style: { fontSize: 'var(--fs-xs)' } };
 
 const formatDate = (date: string) => date.replaceAll('-', '.');
 const formatAxisPrice = (value: number) => value.toLocaleString('ko-KR');
 
-/** 가격 눈금: 범위를 3~4칸으로 나누는 1·2·2.5·5 단위의 딱 떨어지는 값들 */
-function priceTicks(min: number, max: number) {
-  const raw = (max - min) / 4;
-  const magnitude = 10 ** Math.floor(Math.log10(raw || 1));
-  const unit = [1, 2, 2.5, 5, 10].map((m) => m * magnitude).find((u) => u >= raw) ?? raw;
-  const ticks = [];
-  for (let v = Math.ceil(min / unit) * unit; v <= max; v += unit) ticks.push(v);
-  return ticks;
+/** 날짜 눈금: 처음은 왼쪽 정렬, 끝은 오른쪽 정렬이라 그래프 밖으로 잘리지 않아요. */
+function DateTick({
+  x,
+  y,
+  payload,
+  first,
+  last,
+  format,
+}: {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+  first: string;
+  last: string;
+  format: (date: string) => string;
+}) {
+  if (x === undefined || y === undefined || !payload) return null;
+  const anchor = payload.value === first ? 'start' : payload.value === last ? 'end' : 'middle';
+  return (
+    <text x={x} y={y + 12} textAnchor={anchor} fill={axisTick.fill} style={axisTick.style}>
+      {format(payload.value)}
+    </text>
+  );
 }
 
 /** 캔들 하나의 색: 시가보다 종가가 높으면 빨강, 낮으면 파랑, 같으면 회색 */
@@ -72,25 +91,20 @@ function LastPriceLabel({
   viewBox,
   value,
   color,
+  width,
 }: {
   viewBox?: { x: number; y: number; width: number };
   value: number;
   color: string;
+  width: number;
 }) {
   if (!viewBox) return null;
   const right = viewBox.x + viewBox.width;
   return (
     <g>
-      <rect
-        x={right + 2}
-        y={viewBox.y - 9}
-        width={AXIS_WIDTH - 2}
-        height={18}
-        rx={4}
-        fill={color}
-      />
+      <rect x={right + 2} y={viewBox.y - 9} width={width - 2} height={18} rx={4} fill={color} />
       <text
-        x={right + AXIS_WIDTH - 4}
+        x={right + width - 6}
         y={viewBox.y + 4}
         textAnchor="end"
         fill="var(--bg)"
@@ -118,6 +132,20 @@ export function PriceChart({ points, height = 200 }: PriceChartProps) {
   const low = Math.min(...points.map((p) => p.low));
   const high = Math.max(...points.map((p) => p.high));
   const pad = (high - low) * 0.06 || high * 0.01;
+  const domain: [number, number] = [low - pad, high + pad];
+  const axisWidth = priceAxisWidth(high);
+  // 현재가 표시와 겹치는 눈금은 빼요.
+  const yTicks = ticksAwayFrom(
+    priceTicks(domain[0], domain[1]),
+    last,
+    domain,
+    height - MARGIN_TOP - X_AXIS_HEIGHT,
+  );
+  // 날짜는 처음·끝 포함 같은 간격으로 (좁은 화면 4개)
+  const xTicks = evenDateTicks(
+    points.map((p) => p.date),
+    height < 180 ? 4 : 5,
+  );
   // 반년이 넘는 기간은 날짜 대신 "26.03" 처럼 연·월만 보여요.
   const days =
     points.length > 1
@@ -140,22 +168,32 @@ export function PriceChart({ points, height = 200 }: PriceChartProps) {
         <BarChart
           data={data}
           barCategoryGap="30%"
-          margin={{ top: 8, right: 0, bottom: 0, left: 0 }}
+          margin={{ top: MARGIN_TOP, right: 0, bottom: 0, left: 0 }}
         >
           <XAxis
             dataKey="date"
             tickFormatter={formatTick}
             axisLine={false}
             tickLine={false}
-            tick={axisTick}
-            minTickGap={24}
-            interval="preserveStartEnd"
+            tick={(props: XAxisTickContentProps) => (
+              <DateTick
+                x={Number(props.x)}
+                y={Number(props.y)}
+                payload={props.payload as { value: string }}
+                first={xTicks[0]}
+                last={xTicks.at(-1)!}
+                format={formatTick}
+              />
+            )}
+            ticks={xTicks}
+            interval={0}
+            height={X_AXIS_HEIGHT}
           />
           <YAxis
             orientation="right"
-            width={AXIS_WIDTH}
-            domain={[low - pad, high + pad]}
-            ticks={priceTicks(low - pad, high + pad)}
+            width={axisWidth}
+            domain={domain}
+            ticks={yTicks}
             tickFormatter={formatAxisPrice}
             axisLine={false}
             tickLine={false}
@@ -169,7 +207,21 @@ export function PriceChart({ points, height = 200 }: PriceChartProps) {
               return (
                 <div className={styles.tooltip}>
                   <span className={styles.tooltipDate}>{formatDate(point.date)}</span>
-                  <strong>{formatPrice(point.close)}</strong>
+                  <strong>종가 {formatPrice(point.close)}</strong>
+                  <dl className={styles.tooltipRows}>
+                    <div>
+                      <dt>시가</dt>
+                      <dd>{formatPrice(point.open)}</dd>
+                    </div>
+                    <div>
+                      <dt>고가</dt>
+                      <dd>{formatPrice(point.high)}</dd>
+                    </div>
+                    <div>
+                      <dt>저가</dt>
+                      <dd>{formatPrice(point.low)}</dd>
+                    </div>
+                  </dl>
                 </div>
               );
             }}
@@ -180,7 +232,12 @@ export function PriceChart({ points, height = 200 }: PriceChartProps) {
             strokeDasharray="2 3"
             strokeOpacity={0.7}
             label={(props: { viewBox?: { x: number; y: number; width: number } }) => (
-              <LastPriceLabel viewBox={props.viewBox} value={last} color={color} />
+              <LastPriceLabel
+                viewBox={props.viewBox}
+                value={last}
+                color={color}
+                width={axisWidth}
+              />
             )}
           />
           <Bar
