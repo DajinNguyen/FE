@@ -14,6 +14,10 @@ const sheetText: Record<LoginReason, { title: string; body: string }> = {
     title: SIGNUP_GIFT_TEXT,
     body: `AI 리포트 만들기·AI 챗봇·낱말퀴즈 보상은 로그인 후 이용할 수 있어요. 이미 만들어진 리포트는 로그인 없이 볼 수 있어요. ${ADK_NOTICE}.`,
   },
+  mockInvest: {
+    title: '로그인하면 모의투자를 할 수 있어요',
+    body: `${SIGNUP_GIFT_TEXT}. 모의투자는 그 앰똥깡(ADK)으로 하는 연습이에요. ${ADK_NOTICE}.`,
+  },
 };
 
 /**

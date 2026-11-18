@@ -4,8 +4,9 @@ import { createContext, useContext } from 'react';
  * 로그인 시트 안내 종류
  * community: 글쓰기·댓글·좋아요·신고
  * adk      : AI 리포트 만들기·AI 챗봇·앰똥깡 (가입 선물 안내)
+ * mockInvest: 모의투자
  */
-export type LoginReason = 'community' | 'adk';
+export type LoginReason = 'community' | 'adk' | 'mockInvest';
 
 export interface LoginSheetContextValue {
   /**

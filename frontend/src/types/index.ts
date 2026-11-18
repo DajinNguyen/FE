@@ -16,3 +16,4 @@ export type * from './chat';
 export type * from './wallet';
 export type * from './watchlist';
 export type * from './compare';
+export type * from './mockInvest';

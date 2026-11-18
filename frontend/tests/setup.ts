@@ -9,6 +9,7 @@ import { resetMeStore } from './fixtures/me';
 import { resetSessionUser } from './fixtures/session';
 import { resetWalletStore } from './fixtures/wallet';
 import { resetChatStore } from './fixtures/chat';
+import { resetMockInvestStore } from './fixtures/mockInvest';
 
 // 앱은 실제 API 를 불러요. 테스트에서는 fetch 를 가로채 fixtures 데이터로 응답해요.
 beforeEach(() => {
@@ -24,6 +25,7 @@ afterEach(() => {
   resetMeStore();
   resetWalletStore();
   resetChatStore();
+  resetMockInvestStore();
   resetSessionUser();
   failRequests(null);
 });
