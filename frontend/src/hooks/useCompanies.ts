@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getCompaniesByCodes, getCompany, getCompanyCompare, getPeers } from '../api/companies';
+import { pollWhileGenerating } from './generationPolling';
 
 export function useCompaniesByCodes(stockCodes: string[]) {
   return useQuery({
@@ -33,6 +34,8 @@ export function useCompany(stockCode: string) {
     queryKey: ['companies', stockCode, 'detail'],
     queryFn: () => getCompany(stockCode),
     staleTime: 60_000,
+    // 처음 연 회사는 AI가 개요를 만드는 중이에요. 다 될 때까지 다시 물어봐요
+    refetchInterval: (q) => pollWhileGenerating(q.state.data?.overview_status),
     enabled: stockCode !== '',
   });
 }

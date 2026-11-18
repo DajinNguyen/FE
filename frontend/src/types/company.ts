@@ -38,6 +38,13 @@ export interface TimelineItem {
   is_plan: boolean;
 }
 
+/**
+ * AI가 백그라운드에서 채우는 칸의 상태.
+ * generating 이면 보통 1~2분 뒤 채워져요 (그동안 몇 초마다 다시 물어봐요).
+ * failed 는 자료를 찾지 못했거나 AI 오류, none 은 만들 수 없는 경우예요.
+ */
+export type GenerationStatus = 'ready' | 'generating' | 'failed' | 'none';
+
 /** GET /api/companies/{stock_code} 응답 */
 export interface CompanyDetail extends CompanySummary {
   /** 시가총액 (조 원). 아직 자료가 없으면 null */
@@ -50,6 +57,8 @@ export interface CompanyDetail extends CompanySummary {
   business_segments: BusinessSegment[];
   timeline: TimelineItem[];
   timeline_source: string;
+  /** "무슨 사업을 하나요?"·"회사의 방향"을 AI가 채우는 상태 */
+  overview_status?: GenerationStatus;
   /** 현재가·등락률의 기준일 (YYYY-MM-DD, 보통 직전 거래일). 없으면 기준일 표시를 숨겨요. */
   price_as_of: string | null;
 }

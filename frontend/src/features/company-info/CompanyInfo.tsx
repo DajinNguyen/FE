@@ -73,6 +73,11 @@ export function CompanyBusiness({ stockCode }: { stockCode: string }) {
             </li>
           ))}
         </ul>
+      ) : company.overview_status === 'generating' ? (
+        <EmptyState
+          title="AI가 사업보고서를 정리하고 있어요"
+          description="보통 1~2분 걸려요. 이 화면에 있으면 자동으로 채워져요."
+        />
       ) : (
         <EmptyState
           title="자료를 찾지 못했어요"

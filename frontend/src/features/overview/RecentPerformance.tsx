@@ -69,10 +69,16 @@ function Summary({ data, onMore }: { data: PerformanceDetail; onMore: () => void
           />
         </dl>
       )}
-      {data.ai_summary && (
+      {data.ai_summary ? (
         <p className={styles.summary}>
           <span className={styles.aiLabel}>AI 한 줄 요약</span> {data.ai_summary}
         </p>
+      ) : (
+        data.reasons_status === 'generating' && (
+          <p className={styles.summary} role="status">
+            <span className={styles.aiLabel}>AI 한 줄 요약</span> 정리하고 있어요…
+          </p>
+        )
       )}
       {segments.length > 0 && (
         <div className={styles.segments}>

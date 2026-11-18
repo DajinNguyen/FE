@@ -1,3 +1,5 @@
+import type { GenerationStatus } from './company';
+
 /**
  * GET /api/companies/{stock_code}/performance 응답 — 재무 상세 "최근 사업 성과 분석".
  * 블록마다 자료가 없을 수 있어요. 없는 블록은 null(또는 빈 배열)로 보내면 그 블록만 "자료가 없어요"로 보여요.
@@ -24,6 +26,10 @@ export interface PerformanceDetail {
   reasons: PerformanceReason[];
   /** DART 공시 출처 */
   source: { title: string; date: string; url: string } | null;
+  /** "사업별 성과"를 AI가 채우는 상태 */
+  segments_status?: GenerationStatus;
+  /** "왜 이렇게 됐나요?"·ai_summary 를 AI가 채우는 상태 */
+  reasons_status?: GenerationStatus;
 }
 
 export interface PerformanceChange {
