@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import { Button } from '../../components/Button';
 import { ErrorState } from '../../components/ErrorState';
 import { Sheet } from '../../components/Sheet';
-import { ADK_COST, ADK_NOTICE, formatAdk } from '../../config/currency';
+import { ADK_COST, ADK_NOTICE, formatAdk, formatAdkDetail } from '../../config/currency';
 import { useWallet } from '../../hooks/useWallet';
 import { localDate } from '../../utils/date';
 import styles from './Wallet.module.css';
@@ -81,7 +81,7 @@ export function WalletSheet({ open, onClose }: { open: boolean; onClose: () => v
                   <li key={item.id}>
                     <span className={item.type === 'earn' ? styles.earn : styles.spend}>
                       {item.type === 'earn' ? '+' : '−'}
-                      {formatAdk(item.amount)}
+                      {formatAdkDetail(item.amount)}
                     </span>
                     <span className={styles.reason}>{item.reason}</span>
                     <time className={styles.when} dateTime={item.created_at}>

@@ -24,7 +24,18 @@ const sideText = (side: MockOrderSide) => (side === 'buy' ? '사기' : '팔기')
 function orderErrorText(error: unknown) {
   if (error instanceof ApiError) {
     if (error.code === 'INSUFFICIENT_BALANCE') return '가상 현금(앰똥깡)이 부족해서 사지 못했어요';
-    if (error.code === 'INSUFFICIENT_QUANTITY') return '가진 수량보다 많이 팔 수 없어요';
+    if (error.code === 'INSUFFICIENT_QUANTITY') {
+      const held = error.number('held');
+      return held === undefined
+        ? '가진 수량보다 많이 팔 수 없어요'
+        : `가진 수량(${held.toLocaleString('ko-KR')}주)보다 많이 팔 수 없어요`;
+    }
+    if (error.code === 'RATE_LIMITED' || error.status === 429) {
+      const seconds = error.number('retry_after');
+      return seconds === undefined
+        ? '주문이 너무 잦아요. 잠시 후 다시 해 주세요. 앰똥깡은 빠지지 않았어요'
+        : `주문이 너무 잦아요. ${Math.ceil(seconds)}초 뒤에 다시 해 주세요. 앰똥깡은 빠지지 않았어요`;
+    }
   }
   return `주문하지 못했어요. ${errorReason(error)} 앰똥깡은 빠지지 않았어요`;
 }

@@ -33,7 +33,8 @@ describe('모의투자 화면', () => {
     expect(assets).toHaveTextContent('총 자산500,000원');
     expect(assets).toHaveTextContent('가상 현금500,000원50 ADK');
     expect(assets).toHaveTextContent('1 ADK = 가상 10,000원');
-    expect(assets).toHaveTextContent('지연 시세 기준');
+    // 보유 종목이 없으면 서버가 시세 기준 시각을 주지 않아요 (null)
+    expect(assets).not.toHaveTextContent('지연 시세 기준');
     expect(screen.getByRole('region', { name: '보유 종목 0개' })).toHaveTextContent(
       '아직 가진 종목이 없어요',
     );

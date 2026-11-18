@@ -93,7 +93,8 @@ function toPortfolio(account: Account): MockPortfolio {
     profit: Math.round(evaluation - cost),
     profit_rate: holdings.length > 0 ? round2(((evaluation - cost) / cost) * 100) : null,
     today_change: Math.round(todayChange),
-    price_as_of: MOCK_PRICE_AS_OF,
+    // 실제 서버처럼 보유 종목이 없으면 null
+    price_as_of: holdings.length > 0 ? MOCK_PRICE_AS_OF : null,
     holdings,
   };
 }
@@ -106,8 +107,17 @@ export async function getMockTrades(): Promise<MockTrade[]> {
   return accountOf(viewer()).trades.slice(0, 50);
 }
 
+/** 테스트에서 주문 횟수 제한(429)을 흉내 낼 때: 남은 초 */
+let rateLimitedFor: number | null = null;
+export const limitMockOrders = (seconds: number | null) => {
+  rateLimitedFor = seconds;
+};
+
 export async function placeMockOrder(body: MockOrderRequest): Promise<MockOrderResult> {
   const account = accountOf(viewer());
+  if (rateLimitedFor !== null) {
+    throw new ApiError('주문이 너무 잦아요', 429, 'RATE_LIMITED', { retry_after: rateLimitedFor });
+  }
   const quantity = body.quantity;
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_ORDER_QUANTITY) {
     throw new ApiError('수량을 확인해 주세요', 400, 'INVALID_QUANTITY');
@@ -129,7 +139,9 @@ export async function placeMockOrder(body: MockOrderRequest): Promise<MockOrderR
     });
   } else {
     if (!held || held.quantity < quantity) {
-      throw new ApiError('가진 수량보다 많이 팔 수 없어요', 400, 'INSUFFICIENT_QUANTITY');
+      throw new ApiError('가진 수량보다 많이 팔 수 없어요', 400, 'INSUFFICIENT_QUANTITY', {
+        held: held?.quantity ?? 0,
+      });
     }
     balance = settleMockInvest('earn', amountAdk, label);
     if (held.quantity === quantity) account.holdings.delete(body.stock_code);
@@ -161,4 +173,5 @@ export const serverMockInvest = {
 export function resetMockInvestStore() {
   accounts = new Map();
   seq = 0;
+  rateLimitedFor = null;
 }

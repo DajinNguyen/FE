@@ -40,8 +40,14 @@ export function MockAssets({ portfolio }: { portfolio: MockPortfolio }) {
         </div>
       </dl>
       <p className={styles.meta}>
-        1 ADK = 가상 {formatWon(portfolio.adk_to_won)} ·{' '}
-        <DataAsOf value={portfolio.price_as_of} suffix="지연 시세 기준" />
+        1 ADK = 가상 {formatWon(portfolio.adk_to_won)}
+        {/* 보유 종목이 없으면 시세 기준 시각이 없어요 (null) */}
+        {portfolio.price_as_of && (
+          <>
+            {' · '}
+            <DataAsOf value={portfolio.price_as_of} suffix="지연 시세 기준" />
+          </>
+        )}
       </p>
     </section>
   );

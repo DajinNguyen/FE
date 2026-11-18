@@ -32,16 +32,26 @@ export async function request<T>({ path, method = 'GET', body }: RequestOptions)
   if (!response.ok) {
     // 에러 응답은 { error: { code, message } } 형식이에요. (예전 형식 { detail, code } 도 읽어요)
     let body:
-      { error?: { code?: string; message?: string }; detail?: string; code?: string } | undefined;
+      | {
+          error?: { code?: string; message?: string } & Record<string, unknown>;
+          detail?: string;
+          code?: string;
+        }
+      | undefined;
     try {
       body = await response.json();
     } catch {
       body = undefined;
     }
+    // code·message 말고 나머지 칸(retry_after, held …)은 details 로 넘겨요.
+    const details = Object.fromEntries(
+      Object.entries(body?.error ?? {}).filter(([key]) => key !== 'code' && key !== 'message'),
+    );
     throw new ApiError(
       body?.error?.message ?? body?.detail ?? `요청을 처리하지 못했어요 (${response.status})`,
       response.status,
       body?.error?.code ?? body?.code,
+      details,
     );
   }
 
