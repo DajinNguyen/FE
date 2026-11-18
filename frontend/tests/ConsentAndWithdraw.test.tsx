@@ -90,7 +90,11 @@ describe('회원 탈퇴', () => {
 
     await waitFor(() => expect(deletedAccounts).toEqual([DEV_USER.id]));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
-    expect(await screen.findByRole('button', { name: /Google로 로그인/ })).toBeInTheDocument();
+    // 메인에는 모의투자 카드에도 [Google로 로그인]이 있어서 헤더 안에서 찾아요.
+    const header = screen.getByRole('banner');
+    expect(
+      await within(header).findByRole('button', { name: /Google로 로그인/ }),
+    ).toBeInTheDocument();
   });
 
   it('취소하면 아무것도 지우지 않아요', async () => {

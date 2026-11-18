@@ -26,6 +26,20 @@
   }
 }
 
+/* 산업 TOP 3 + 모의투자 카드: 넓은 화면은 나란히, 좁은 화면은 카드가 아래로 */
+.hotRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-6);
+}
+
+@media (min-width: 1024px) {
+  .hotRow {
+    grid-template-columns: minmax(0, 3fr) minmax(260px, 1fr);
+    align-items: stretch;
+  }
+}
+
 /* 작은 요소 두 개를 나란히 (좁은 화면은 세로) */
 .smallRow {
   display: grid;
