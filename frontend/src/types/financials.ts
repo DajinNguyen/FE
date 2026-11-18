@@ -1,4 +1,5 @@
 import type { SampleNumber } from './common';
+import type { GenerationStatus } from './company';
 
 export interface AnnualFinancial {
   fiscal_year: number;
@@ -67,6 +68,8 @@ export interface Financials {
     base_label: string;
     items: SegmentRevenue[];
   };
+  /** "무엇으로 돈을 버나요?"(segments)를 AI가 채우는 상태 */
+  segments_status?: GenerationStatus;
   /** PER·PBR·ROE·부채비율의 기준 (예: "2025년 사업보고서"). 없으면 기준 표시를 숨겨요. */
   indicators_as_of: string | null;
   /** 지표별 비교 기준 (업종 중앙값 등). 없는 지표는 프론트 기본 기준으로 판단해요. */

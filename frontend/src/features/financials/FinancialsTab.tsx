@@ -61,14 +61,21 @@ function FinancialStatements({ stockCode }: { stockCode: string }) {
           title="무엇으로 돈을 버나요?"
           description={`사업별 매출 · ${financials.segments.base_label} · 단위: ${financials.unit}`}
         >
-          <HorizontalBars
-            data={financials.segments.items.map((s) => ({
-              id: s.code,
-              label: s.name,
-              value: s.revenue,
-            }))}
-            formatValue={(v) => formatTrillion(v)}
-          />
+          {financials.segments.items.length === 0 && financials.segments_status === 'generating' ? (
+            <EmptyState
+              title="AI가 사업보고서를 정리하고 있어요"
+              description="보통 1~2분 걸려요. 이 화면에 있으면 자동으로 채워져요."
+            />
+          ) : (
+            <HorizontalBars
+              data={financials.segments.items.map((s) => ({
+                id: s.code,
+                label: s.name,
+                value: s.revenue,
+              }))}
+              formatValue={(v) => formatTrillion(v)}
+            />
+          )}
         </Section>
       </div>
 

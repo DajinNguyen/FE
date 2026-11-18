@@ -14,6 +14,7 @@ export const PERFORMANCE_ANCHOR = 'performance-analysis';
 
 const TITLE = '최근 사업 성과 분석';
 const NO_DATA = '자료가 없어요';
+const GENERATING = 'AI가 정리하고 있어요. 보통 1~2분 걸려요.';
 
 /** "2026-01-29" → "2026년 1월 29일" */
 const fullDate = (date: string) => {
@@ -41,11 +42,28 @@ function ChangeRate({ rate }: { rate: number | null }) {
 }
 
 /** 분석 안의 작은 덩어리 하나. 자료가 없으면 이 덩어리만 "자료가 없어요" */
-function Block({ title, empty, children }: { title: string; empty: boolean; children: ReactNode }) {
+function Block({
+  title,
+  empty,
+  generating = false,
+  children,
+}: {
+  title: string;
+  empty: boolean;
+  /** 비어 있고 AI가 만드는 중이면 "자료가 없어요" 대신 정리 중이라고 알려요 */
+  generating?: boolean;
+  children: ReactNode;
+}) {
   return (
     <div className={styles.block}>
       <h3 className={styles.blockTitle}>{title}</h3>
-      {empty ? <p className={styles.muted}>{NO_DATA}</p> : children}
+      {empty ? (
+        <p className={styles.muted} role="status">
+          {generating ? GENERATING : NO_DATA}
+        </p>
+      ) : (
+        children
+      )}
     </div>
   );
 }
@@ -120,7 +138,11 @@ function Analysis({ data }: { data: PerformanceDetail }) {
         <QuarterlyChart data={quarterly} unit={unit} />
       </Block>
 
-      <Block title="사업별 성과" empty={data.segments.length === 0}>
+      <Block
+        title="사업별 성과"
+        empty={data.segments.length === 0}
+        generating={data.segments_status === 'generating'}
+      >
         <ul className={styles.segments}>
           {data.segments.map((s) => (
             <li key={s.name} className={styles.segment}>
@@ -151,7 +173,11 @@ function Analysis({ data }: { data: PerformanceDetail }) {
         </ul>
       </Block>
 
-      <Block title="왜 이렇게 됐나요?" empty={data.reasons.length === 0}>
+      <Block
+        title="왜 이렇게 됐나요?"
+        empty={data.reasons.length === 0}
+        generating={data.reasons_status === 'generating'}
+      >
         <ol className={styles.reasons}>
           {data.reasons.map((r) => (
             <li key={r.title} className={styles.reason}>
