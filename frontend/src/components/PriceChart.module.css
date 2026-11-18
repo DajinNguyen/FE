@@ -1,40 +1,109 @@
-.chart {
-  width: 100%;
+.root {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--sp-2);
 }
 
-.tooltip {
+/* 위쪽 정보 줄 */
+.info {
   display: flex;
   flex-direction: column;
-  padding: 6px 10px;
-  border-radius: var(--radius-xs);
-  background: var(--text-1);
-  color: var(--bg);
-  font-size: var(--fs-sm);
+  gap: var(--sp-1);
+  min-height: 40px;
+  font-size: var(--fs-xs);
   font-variant-numeric: tabular-nums;
 }
 
-.tooltipDate {
-  opacity: 0.7;
-  font-size: var(--fs-xs);
-}
-
-.tooltipRows {
+.infoRow {
   display: flex;
-  flex-direction: column;
-  margin-top: var(--sp-1);
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--sp-3);
+  row-gap: 2px;
+  color: var(--text-1);
+}
+
+.infoDate {
+  color: var(--text-2);
+  font-weight: var(--fw-semibold);
+}
+
+.infoItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.infoLabel {
+  color: var(--text-3);
+}
+
+.rise {
+  color: var(--rise);
+}
+
+.fall {
+  color: var(--fall);
+}
+
+.flat {
+  color: var(--text-3);
+}
+
+/* 이동평균선 색 표시 (짧은 선) */
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.chart {
+  width: 100%;
+  border-radius: var(--radius-xs);
+  cursor: crosshair;
+  /* 휴대폰: 위아래로는 화면 스크롤, 좌우로는 십자선 */
+  touch-action: pan-y;
+}
+
+.chart:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.svg {
+  display: block;
+  overflow: visible;
+}
+
+.grid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.axisText {
+  fill: var(--text-3);
   font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
 }
 
-.tooltipRows > div {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--sp-3);
+.axisBoxText {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
 }
 
-.tooltipRows dt {
-  opacity: 0.7;
+.markText {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  font-variant-numeric: tabular-nums;
 }
 
-.tooltipRows dd {
-  margin: 0;
+.crosshair {
+  stroke: var(--text-3);
+  stroke-dasharray: 3 3;
+  stroke-width: 1;
+  pointer-events: none;
 }

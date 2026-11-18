@@ -414,6 +414,9 @@ export async function getPriceHistory(
 
   const { count, stepDays, volatility } = pricePeriods[period];
   const random = seededRandom(`${stockCode}-${period}`);
+  // 거래량은 따로 뽑아서 가격 값이 바뀌지 않게 해요.
+  const volumeRandom = seededRandom(`${stockCode}-${period}-volume`);
+  const baseVolume = company.current_price.value >= 100_000 ? 3_000_000 : 8_000_000;
   const tick = company.current_price.value >= 50_000 ? 100 : 50;
 
   const closes = [company.current_price.value];
@@ -445,6 +448,7 @@ export async function getPriceHistory(
         high: Math.round((Math.max(open, close) * (1 + wick())) / tick) * tick,
         low: Math.round((Math.min(open, close) * (1 - wick())) / tick) * tick,
         close,
+        volume: Math.round(baseVolume * (stepDays > 1 ? 5 : 1) * (0.4 + volumeRandom() * 1.2)),
       };
     }),
   };

@@ -55,7 +55,7 @@ export function PriceTrend({ stockCode }: { stockCode: string }) {
           />
         )}
         {data && points.length === 0 && <p className={styles.empty}>주가 자료가 아직 없어요.</p>}
-        {points.length > 0 && <PriceChart points={points} height={160} />}
+        {points.length > 0 && <PriceChart points={points} height={220} />}
       </div>
 
       <SegmentedControl label="기간" options={periodOptions} value={period} onChange={setPeriod} />
