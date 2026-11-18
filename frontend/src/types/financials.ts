@@ -77,12 +77,12 @@ export interface Financials {
   recent_performance: RecentPerformance | null;
   indicators: {
     /** ROE (%) */
-    roe: SampleNumber;
+    roe: SampleNumber | null;
     /** 부채비율 (%) */
-    debt_ratio: SampleNumber;
+    debt_ratio: SampleNumber | null;
     /** PER (배) */
-    per: SampleNumber;
+    per: SampleNumber | null;
     /** PBR (배) */
-    pbr: SampleNumber;
+    pbr: SampleNumber | null;
   };
 }

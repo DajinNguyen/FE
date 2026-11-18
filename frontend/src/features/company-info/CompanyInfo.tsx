@@ -155,7 +155,7 @@ export function CompanyMore({ stockCode }: { stockCode: string }) {
               <dd>{company.corp_code}</dd>
             </div>
           )}
-          {financials && (
+          {financials?.indicators.pbr && (
             <div>
               <dt>
                 <TermText text="PBR" />
