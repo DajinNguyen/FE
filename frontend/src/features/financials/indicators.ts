@@ -175,64 +175,84 @@ export function buildIndicators(financials: Financials): Indicator[] {
     );
   }
 
-  const roe = evaluate(
-    {
-      id: 'roe',
-      label: 'ROE',
-      value: indicators.roe.value,
-      unit: '%',
-      higherIsBetter: true,
-      thresholds: [10, 5],
-      description: `주주가 맡긴 돈 100원으로 1년에 약 ${Math.round(indicators.roe.value)}원을 벌었어요.`,
-      criteria: '10% 이상이면 높은 편, 5% 미만이면 낮은 편',
-    },
-    benchmarks.roe,
-  );
-  result.push(
-    flags?.is_capital_impaired
-      ? excluded(roe, '자본잠식(쌓아둔 자기 돈이 줄어든 상태)이라 ROE로 평가하지 않아요.')
-      : roe,
-  );
+  // 백엔드가 계산하지 못한 지표는 null 이에요. 평가 제외 사유가 있으면 "계산할 수 없어요"로, 없으면 빼요
+  const NOT_CALCULABLE = '계산할 수 없어요';
+  if (indicators.roe || flags?.is_capital_impaired) {
+    const roe = evaluate(
+      {
+        id: 'roe',
+        label: 'ROE',
+        value: indicators.roe?.value ?? 0,
+        unit: '%',
+        higherIsBetter: true,
+        thresholds: [10, 5],
+        description: `주주가 맡긴 돈 100원으로 1년에 약 ${Math.round(indicators.roe?.value ?? 0)}원을 벌었어요.`,
+        criteria: '10% 이상이면 높은 편, 5% 미만이면 낮은 편',
+      },
+      benchmarks.roe,
+    );
+    result.push(
+      flags?.is_capital_impaired
+        ? excluded(
+            roe,
+            '자본잠식(쌓아둔 자기 돈이 줄어든 상태)이라 ROE로 평가하지 않아요.',
+            indicators.roe ? undefined : NOT_CALCULABLE,
+          )
+        : roe,
+    );
+  }
 
-  const debt = evaluate(
-    {
-      id: 'debt_ratio',
-      label: '부채비율',
-      value: indicators.debt_ratio.value,
-      unit: '%',
-      higherIsBetter: false,
-      thresholds: [200, 100],
-      description: `회사 자기 돈 100원당 빚이 약 ${Math.round(indicators.debt_ratio.value)}원 있어요.`,
-      criteria: '100% 아래면 낮은 편(안정적), 200%를 넘으면 높은 편',
-    },
-    benchmarks.debt_ratio,
-  );
-  result.push(
-    flags?.is_financial
-      ? excluded(debt, '금융회사는 고객 돈을 맡아 부채가 많아 보여서 부채비율로 평가하지 않아요.')
-      : flags?.is_capital_impaired
-        ? excluded(debt, '자본잠식(쌓아둔 자기 돈이 줄어든 상태)이라 부채비율로 평가하지 않아요.')
-        : debt,
-  );
+  if (indicators.debt_ratio || flags?.is_financial || flags?.is_capital_impaired) {
+    const debt = evaluate(
+      {
+        id: 'debt_ratio',
+        label: '부채비율',
+        value: indicators.debt_ratio?.value ?? 0,
+        unit: '%',
+        higherIsBetter: false,
+        thresholds: [200, 100],
+        description: `회사 자기 돈 100원당 빚이 약 ${Math.round(indicators.debt_ratio?.value ?? 0)}원 있어요.`,
+        criteria: '100% 아래면 낮은 편(안정적), 200%를 넘으면 높은 편',
+      },
+      benchmarks.debt_ratio,
+    );
+    result.push(
+      flags?.is_financial
+        ? excluded(
+            debt,
+            '금융회사는 고객 돈을 맡아 부채가 많아 보여서 부채비율로 평가하지 않아요.',
+            indicators.debt_ratio ? undefined : NOT_CALCULABLE,
+          )
+        : flags?.is_capital_impaired
+          ? excluded(
+              debt,
+              '자본잠식(쌓아둔 자기 돈이 줄어든 상태)이라 부채비율로 평가하지 않아요.',
+              indicators.debt_ratio ? undefined : NOT_CALCULABLE,
+            )
+          : debt,
+    );
+  }
 
-  const per = evaluate(
-    {
-      id: 'per',
-      label: 'PER',
-      value: indicators.per.value,
-      unit: '배',
-      higherIsBetter: false,
-      thresholds: [30, 15],
-      description: `지금 주가는 1년 이익의 약 ${Math.round(indicators.per.value)}배예요.`,
-      criteria: '업종마다 달라요. 여기서는 15배 아래면 낮은 편, 30배를 넘으면 높은 편으로 봤어요',
-    },
-    benchmarks.per,
-  );
-  result.push(
-    flags?.is_loss
-      ? excluded(per, '적자(손실)라서 PER을 계산할 수 없어요.', '계산할 수 없어요')
-      : per,
-  );
+  if (indicators.per || flags?.is_loss) {
+    const per = evaluate(
+      {
+        id: 'per',
+        label: 'PER',
+        value: indicators.per?.value ?? 0,
+        unit: '배',
+        higherIsBetter: false,
+        thresholds: [30, 15],
+        description: `지금 주가는 1년 이익의 약 ${Math.round(indicators.per?.value ?? 0)}배예요.`,
+        criteria: '업종마다 달라요. 여기서는 15배 아래면 낮은 편, 30배를 넘으면 높은 편으로 봤어요',
+      },
+      benchmarks.per,
+    );
+    result.push(
+      flags?.is_loss
+        ? excluded(per, '적자(손실)라서 PER을 계산할 수 없어요.', NOT_CALCULABLE)
+        : per,
+    );
+  }
 
   return result;
 }

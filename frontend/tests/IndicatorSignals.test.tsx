@@ -130,4 +130,21 @@ describe('지표 예외 처리', () => {
     expect(card('debt_ratio').getByText('평가 제외')).toBeInTheDocument();
     expect(card('per').getByText('보통')).toBeInTheDocument();
   });
+
+  it('백엔드가 계산하지 못한 지표(null)는 빼고, 평가 제외 사유가 있으면 "계산할 수 없어요"로 보여줘요', () => {
+    const missing = {
+      ...baseFinancials,
+      indicators: { roe: null, debt_ratio: { value: 27.1 }, per: null, pbr: null },
+    };
+    expect(buildIndicators(missing).map((i) => i.id)).not.toContain('roe');
+    expect(buildIndicators(missing).map((i) => i.id)).not.toContain('per');
+
+    const loss = {
+      ...missing,
+      flags: { is_financial: false, is_loss: true, is_capital_impaired: false },
+    };
+    const per = buildIndicators(loss).find((i) => i.id === 'per')!;
+    expect(per.display).toBe('계산할 수 없어요');
+    expect(per.levelLabel).toBe('평가 제외');
+  });
 });

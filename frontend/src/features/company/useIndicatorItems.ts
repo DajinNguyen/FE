@@ -24,13 +24,14 @@ export function useIndicatorItems(stockCode: string, { withDebt = false } = {}) 
   }
   if (financials) {
     const { per, pbr, roe, debt_ratio } = financials.indicators;
-    items.push(
-      { label: 'PER', value: per, display: `${per.value}배` },
-      { label: 'PBR', value: pbr, display: `${pbr.value}배` },
-      { label: 'ROE', value: roe, display: `${roe.value}%` },
-    );
-    if (withDebt)
-      items.push({ label: '부채비율', value: debt_ratio, display: `${debt_ratio.value}%` });
+    // 적자(PER)·자본잠식(ROE) 등으로 백엔드가 null 을 보내면 그 항목만 빼요
+    const add = (label: string, value: SampleNumber | null | undefined, suffix: string) => {
+      if (value) items.push({ label, value, display: `${value.value}${suffix}` });
+    };
+    add('PER', per, '배');
+    add('PBR', pbr, '배');
+    add('ROE', roe, '%');
+    if (withDebt) add('부채비율', debt_ratio, '%');
   }
   return { items, asOf: financials?.indicators_as_of ?? null };
 }
