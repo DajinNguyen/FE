@@ -1,12 +1,26 @@
 export class ApiError extends Error {
   readonly status: number;
   readonly code?: string;
+  /** 에러 응답의 나머지 칸 (예: retry_after, held, required, balance) */
+  readonly details: Record<string, unknown>;
 
-  constructor(message: string, status: number, code?: string) {
+  constructor(
+    message: string,
+    status: number,
+    code?: string,
+    details: Record<string, unknown> = {},
+  ) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.code = code;
+    this.details = details;
+  }
+
+  /** details 의 숫자 칸 (없거나 숫자가 아니면 undefined) */
+  number(key: string) {
+    const value = this.details[key];
+    return typeof value === 'number' ? value : undefined;
   }
 }
 

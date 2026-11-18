@@ -67,10 +67,13 @@
   height: 10px;
   border-radius: var(--radius-full);
   background: var(--surface-strong);
+  /* 다크 모드에서도 빈 점이 보이게 테두리 */
+  box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 
 .dots .on {
   background: var(--brand);
+  box-shadow: none;
 }
 
 .subTitle {
@@ -100,7 +103,7 @@
 
 .history li {
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(76px, max-content) minmax(0, 1fr) auto;
   gap: var(--sp-2);
   align-items: baseline;
   padding: var(--sp-2) 0;
@@ -110,6 +113,7 @@
 .earn,
 .spend {
   font-weight: var(--fw-semibold);
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 

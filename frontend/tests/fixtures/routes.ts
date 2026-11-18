@@ -158,7 +158,9 @@ export async function handle(input: RequestInfo | URL, init?: RequestInit): Prom
         : jsonResponse(200, data);
     } catch (error) {
       if (error instanceof ApiError) {
-        return jsonResponse(error.status, { error: { code: error.code, message: error.message } });
+        return jsonResponse(error.status, {
+          error: { ...error.details, code: error.code, message: error.message },
+        });
       }
       throw error;
     }
