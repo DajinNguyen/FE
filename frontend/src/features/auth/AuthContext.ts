@@ -8,6 +8,8 @@ export interface AuthUser {
   name: string;
   /** (요청) 커뮤니티에 보이는 이름. 실명 대신 써요. 없으면 name 을 써요. */
   nickname?: string;
+  /** 가입일 (YYYY-MM-DD) */
+  joined_at?: string;
 }
 
 export interface AuthContextValue {
@@ -18,6 +20,8 @@ export interface AuthContextValue {
   /** Google 로그인 화면으로 이동해요 (페이지를 벗어나요, 값을 돌려주지 않아요). */
   loginWithGoogle: () => void;
   logout: () => Promise<void>;
+  /** 닉네임을 바꿔요. 비우면 자동 닉네임으로 돌아가요. 규칙에 안 맞거나 겹치면 ApiError 로 실패해요. */
+  updateNickname: (nickname: string | null) => Promise<void>;
   /**
    * 개발용 가짜 로그인. 서버 없이 로그인 상태의 화면 흐름만 확인할 때 써요.
    * 화면만 로그인 상태가 되고 서버에는 로그인 쿠키가 없어서, 쓰기 요청은 401 이 나요.

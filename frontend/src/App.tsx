@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useParams } from 'react-router';
 import { AppLayout } from './components/AppLayout';
 import { CompanyPage } from './pages/CompanyPage';
 import { HomePage } from './pages/HomePage';
+import { MyPage } from './pages/MyPage';
 import { IndustryPage } from './pages/IndustryPage';
 import { TermCardsPage } from './pages/TermCardsPage';
 import { TradingRankingPage } from './pages/TradingRankingPage';
@@ -22,6 +23,7 @@ export function App() {
         <Route path="learn/crossword" element={<Navigate to="/terms" replace />} />
         <Route path="learn/crossword/:puzzleId" element={<CrosswordRedirect />} />
         <Route path="watchlist" element={<WatchlistPage />} />
+        <Route path="mypage" element={<MyPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

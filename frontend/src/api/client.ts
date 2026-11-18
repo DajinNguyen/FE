@@ -11,7 +11,7 @@ export const apiConfig = {
 interface RequestOptions {
   /** 실제 API 경로 (예: /api/companies?query=삼성) */
   path: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
 }
 

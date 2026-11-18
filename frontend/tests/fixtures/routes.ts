@@ -97,6 +97,7 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   ['GET', /^\/api\/learn\/crosswords\/([\w-]+)$/, async ([, id]) => server.getCrosswordPuzzle(id)],
   ['GET', /^\/api\/home$/, async () => server.getHomeDashboard()],
   ['GET', /^\/api\/auth\/me$/, async () => server.getMe()],
+  ['PATCH', /^\/api\/auth\/me$/, async (_, __, body) => me.updateProfile(body)],
   ['POST', /^\/api\/auth\/logout$/, async () => server.logout()],
   ['GET', /^\/api\/me\/term-progress$/, async () => me.getTermProgress()],
   ['PUT', /^\/api\/me\/term-progress$/, async (_, __, body) => me.putTermProgress(body)],
