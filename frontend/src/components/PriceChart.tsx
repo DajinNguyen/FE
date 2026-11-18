@@ -26,7 +26,7 @@ type CandleDatum = PricePoint & { range: [number, number] };
 /** 위 여백·아래 날짜 칸 높이 (px). 그래프 안쪽 높이 = height − 둘의 합 */
 const MARGIN_TOP = 12;
 const X_AXIS_HEIGHT = 30;
-const axisTick = { fill: 'var(--text-4)', style: { fontSize: 'var(--fs-xs)' } };
+const axisTick = { fill: 'var(--text-3)', style: { fontSize: 'var(--fs-xs)' } };
 
 const formatDate = (date: string) => date.replaceAll('-', '.');
 const formatAxisPrice = (value: number) => value.toLocaleString('ko-KR');
