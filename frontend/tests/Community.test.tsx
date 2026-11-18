@@ -160,7 +160,7 @@ describe('댓글의 답글', () => {
 });
 
 describe('이모지·사진·신고', () => {
-  it('이모지: 비로그인이면 로그인 시트, 로그인하면 다진 이모지 10개 패널이 열리고 고르면 그림으로 올라가요', async () => {
+  it('이모지: 비로그인이면 로그인 시트, 로그인하면 다진 이모지 13개 패널이 열리고 고르면 그림으로 올라가요', async () => {
     const user = userEvent.setup();
     renderWithProviders(<CommunityTab stockCode="000660" />);
     await user.click(screen.getByRole('button', { name: '이모지' }));
@@ -181,6 +181,9 @@ describe('이모지·사진·신고', () => {
       '굽신굽신',
       '흥얼흥얼',
       '정색',
+      '기절',
+      '웃참',
+      '뜬다',
     ]);
 
     await user.click(within(panel).getByRole('button', { name: '웃겨요' }));

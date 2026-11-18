@@ -35,6 +35,14 @@ export const DAJIN_EMOJIS: DajinEmoji[] = [
     alt: '운전하며 흥얼거리는 다진',
   },
   { id: 'serious', name: '정색', src: '/emoji/dajin/serious.webp', alt: '정색한 다진' },
+  { id: 'faint', name: '기절', src: '/emoji/dajin/faint.webp', alt: '뒤로 넘어가 기절한 다진' },
+  {
+    id: 'hold-laugh',
+    name: '웃참',
+    src: '/emoji/dajin/hold-laugh.webp',
+    alt: '입을 막고 웃음을 참는 다진',
+  },
+  { id: 'run', name: '뜬다', src: '/emoji/dajin/run.webp', alt: '거울 뒤에서 뛰어나오는 다진' },
 ];
 
 export const emojiToken = (id: string) => `:dajin-${id}:`;
