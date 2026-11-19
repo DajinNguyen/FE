@@ -46,7 +46,7 @@ describe('헤더 앰똥깡 배지', () => {
     expect(sheet).toHaveTextContent('AI 챗봇 질문 5 ADK');
     const history = within(sheet).getByRole('region', { name: '최근 내역' });
     expect(within(history).getAllByRole('listitem')[0]).toHaveTextContent('+50 ADK가입 선물오늘');
-    expect(sheet).toHaveTextContent('실제 돈이 아니며 구매·환전할 수 없어요');
+    expect(sheet).toHaveTextContent('실제 돈이 아니며 실제 돈으로 사거나 바꿀 수 없어요');
 
     await user.click(within(sheet).getByRole('button', { name: '낱말퀴즈 풀러 가기' }));
     await waitFor(() =>

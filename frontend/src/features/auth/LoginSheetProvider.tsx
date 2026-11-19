@@ -16,7 +16,7 @@ const sheetText: Record<LoginReason, { title: string; body: string }> = {
   },
   mockInvest: {
     title: '로그인하면 모의투자를 할 수 있어요',
-    body: `${SIGNUP_GIFT_TEXT}. 모의투자는 그 앰똥깡(ADK)으로 하는 연습이에요. ${ADK_NOTICE}.`,
+    body: `${SIGNUP_GIFT_TEXT}. 모의투자는 그 앰똥깡(ADK)을 가상 현금으로 환전해서 하는 연습이에요. ${ADK_NOTICE}.`,
   },
 };
 

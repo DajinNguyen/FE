@@ -42,7 +42,7 @@ export const formatAdk = (amount: number) =>
   `${Math.trunc(amount).toLocaleString('ko-KR')} ${CURRENCY_UNIT}`;
 
 /** ADK 를 보여주는 모든 화면에 붙이는 안내 */
-export const ADK_NOTICE = `${CURRENCY_NAME}은 다진 안에서만 쓰는 포인트예요. 실제 돈이 아니며 구매·환전할 수 없어요`;
+export const ADK_NOTICE = `${CURRENCY_NAME}은 다진 안에서만 쓰는 포인트예요. 실제 돈이 아니며 실제 돈으로 사거나 바꿀 수 없어요`;
 
 /** 잔액이 부족할 때 */
 export const ADK_SHORTAGE_TEXT = `${CURRENCY_NAME}이 부족해요. 낱말퀴즈 ${PUZZLE_REWARD.puzzlesPerReward}개를 풀면 ${formatAdk(PUZZLE_REWARD.amount)}를 받을 수 있어요`;

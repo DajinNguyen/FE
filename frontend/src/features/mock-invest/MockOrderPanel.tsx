@@ -5,8 +5,7 @@ import { Button } from '../../components/Button';
 import { CompanySearch } from '../../components/CompanySearch';
 import { DataAsOf } from '../../components/DataAsOf';
 import { SegmentedControl } from '../../components/SegmentedControl';
-import { formatAdkDetail } from '../../config/currency';
-import { MAX_ORDER_QUANTITY, MOCK_PRICE_BASIS_TEXT, wonToAdk } from '../../config/mockInvest';
+import { MAX_ORDER_QUANTITY, MOCK_PRICE_BASIS_TEXT } from '../../config/mockInvest';
 import { useCompany } from '../../hooks/useCompanies';
 import { useMockOrder } from '../../hooks/useMockInvest';
 import type { CompanySummary, MockOrderSide, MockPortfolio, MockTrade } from '../../types';
@@ -23,7 +22,8 @@ const sideText = (side: MockOrderSide) => (side === 'buy' ? '사기' : '팔기')
 /** 서버가 거절한 이유 */
 function orderErrorText(error: unknown) {
   if (error instanceof ApiError) {
-    if (error.code === 'INSUFFICIENT_BALANCE') return '가상 현금(앰똥깡)이 부족해서 사지 못했어요';
+    if (error.code === 'INSUFFICIENT_CASH' || error.code === 'INSUFFICIENT_BALANCE')
+      return '가상 현금이 부족해서 사지 못했어요. 내 자산에서 앰똥깡을 환전해 주세요';
     if (error.code === 'INSUFFICIENT_QUANTITY') {
       const held = error.number('held');
       return held === undefined
@@ -33,11 +33,11 @@ function orderErrorText(error: unknown) {
     if (error.code === 'RATE_LIMITED' || error.status === 429) {
       const seconds = error.number('retry_after');
       return seconds === undefined
-        ? '주문이 너무 잦아요. 잠시 후 다시 해 주세요. 앰똥깡은 빠지지 않았어요'
-        : `주문이 너무 잦아요. ${Math.ceil(seconds)}초 뒤에 다시 해 주세요. 앰똥깡은 빠지지 않았어요`;
+        ? '주문이 너무 잦아요. 잠시 후 다시 해 주세요. 가상 현금은 그대로예요'
+        : `주문이 너무 잦아요. ${Math.ceil(seconds)}초 뒤에 다시 해 주세요. 가상 현금은 그대로예요`;
     }
   }
-  return `주문하지 못했어요. ${errorReason(error)} 앰똥깡은 빠지지 않았어요`;
+  return `주문하지 못했어요. ${errorReason(error)} 가상 현금은 그대로예요`;
 }
 
 /**
@@ -68,7 +68,7 @@ export function MockOrderPanel({ portfolio }: { portfolio: MockPortfolio }) {
   const problem = !validQuantity
     ? `수량은 1~${MAX_ORDER_QUANTITY.toLocaleString('ko-KR')}주로 입력해 주세요`
     : side === 'buy' && amount !== null && amount > portfolio.cash
-      ? '가상 현금(앰똥깡)이 부족해요'
+      ? '가상 현금이 부족해요. 내 자산에서 앰똥깡을 환전해 주세요'
       : side === 'sell' && quantity > held
         ? held === 0
           ? '가진 주식이 없어서 팔 수 없어요'
@@ -178,12 +178,7 @@ export function MockOrderPanel({ portfolio }: { portfolio: MockPortfolio }) {
           </div>
 
           <p className={styles.estimate}>
-            예상 금액{' '}
-            <strong>
-              {amount !== null
-                ? `${formatWon(amount)} (${formatAdkDetail(wonToAdk(amount))})`
-                : '-'}
-            </strong>
+            예상 금액 <strong>{amount !== null ? formatWon(amount) : '-'}</strong>
           </p>
           {problem && (
             <p className={styles.problem} role="alert">
@@ -198,8 +193,10 @@ export function MockOrderPanel({ portfolio }: { portfolio: MockPortfolio }) {
                 {side === 'buy' ? '살까요' : '팔까요'}?
               </p>
               <p className={styles.meta}>
-                예상 {formatWon(amount)} · {side === 'buy' ? '앰똥깡' : '돌아오는 앰똥깡'}{' '}
-                {formatAdkDetail(wonToAdk(amount))}
+                예상 {formatWon(amount)} · 가상 현금{' '}
+                {side === 'buy'
+                  ? `${formatWon(portfolio.cash)} → ${formatWon(portfolio.cash - amount)}`
+                  : `${formatWon(portfolio.cash)} → ${formatWon(portfolio.cash + amount)}`}
               </p>
               <p className={styles.meta}>{MOCK_PRICE_BASIS_TEXT}</p>
               <div className={styles.confirmActions}>
@@ -227,8 +224,7 @@ export function MockOrderPanel({ portfolio }: { portfolio: MockPortfolio }) {
       {done && (
         <p className={styles.result} role="status">
           체결됐어요 · {done.name} {done.quantity.toLocaleString('ko-KR')}주 {sideText(done.side)} ·
-          1주 {formatWon(done.price)} · {formatWon(done.amount)} ({formatAdkDetail(done.amount_adk)}
-          )
+          1주 {formatWon(done.price)} · {formatWon(done.amount)}
         </p>
       )}
       {order.isError && (
