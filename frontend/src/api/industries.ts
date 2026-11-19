@@ -1,5 +1,10 @@
 import { request } from './client';
-import type { HeatPeriod, IndustryDetail, IndustrySummary } from '../types';
+import type { HeatPeriod, IndustryDetail, IndustryListItem, IndustrySummary } from '../types';
+
+/** 전체 산업(키워드) 목록 */
+export function getIndustries() {
+  return request<IndustryListItem[]>({ path: '/api/industries' });
+}
 
 /** 메인 "지금 관심이 몰리는 산업" (점수 높은 순) */
 export function getHotIndustries(period: HeatPeriod) {

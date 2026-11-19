@@ -82,6 +82,7 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   ['POST', /^\/api\/reports$/, async (_, __, body) => server.reportTarget(body)],
   ['GET', /^\/api\/market\/summary$/, async () => server.getMarketSummary()],
   ['GET', /^\/api\/market\/news$/, async (_, q) => server.getMarketNews(q.get('date') ?? '')],
+  ['GET', /^\/api\/industries$/, async () => server.getIndustries()],
   [
     'GET',
     /^\/api\/industries\/hot$/,

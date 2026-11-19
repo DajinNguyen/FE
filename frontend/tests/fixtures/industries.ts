@@ -153,6 +153,109 @@ export const industryRecords: IndustryRecord[] = [
   },
 ];
 
+/**
+ * 관심도를 집계하지 않는 산업 (백엔드 industries.json 처럼 factors 가 없어요).
+ * 메인 TOP 3 에는 안 나오고, 전체 산업 목록·산업 화면에만 나와요.
+ * 기업은 테스트 기업 목록(companies.json)에 있는 곳만 넣었어요.
+ */
+export type ListOnlyIndustry = Omit<IndustryRecord, 'factors'>;
+
+export const listOnlyIndustries: ListOnlyIndustry[] = [
+  { industry_id: 'display', name: '디스플레이', icon_key: 'display', companies: ['034220'] },
+  { industry_id: 'electronics', name: '전자·부품', icon_key: 'electronics', companies: ['066570'] },
+  { industry_id: 'robot', name: '로봇', icon_key: 'robot', companies: [] },
+  {
+    industry_id: 'machinery',
+    name: '기계·장비',
+    icon_key: 'machinery',
+    companies: ['034020', '241560'],
+  },
+  {
+    industry_id: 'energy',
+    name: '에너지·전력',
+    icon_key: 'energy',
+    companies: ['015760', '298040', '036460'],
+  },
+  {
+    industry_id: 'chemical',
+    name: '화학·소재',
+    icon_key: 'chemical',
+    companies: ['010950', '009830', '011780', '011170'],
+  },
+  {
+    industry_id: 'steel',
+    name: '철강·금속',
+    icon_key: 'steel',
+    companies: ['005490', '010130', '004020'],
+  },
+  {
+    industry_id: 'construction',
+    name: '건설·건자재',
+    icon_key: 'construction',
+    companies: ['028260', '028050', '000720', '021240', '006360'],
+  },
+  { industry_id: 'medical', name: '의료기기·헬스케어', icon_key: 'medical', companies: [] },
+  {
+    industry_id: 'beauty',
+    name: '화장품·뷰티',
+    icon_key: 'beauty',
+    companies: ['090430', '051900', '161890'],
+  },
+  {
+    industry_id: 'food',
+    name: '식품·음료',
+    icon_key: 'food',
+    companies: [
+      '033780',
+      '003230',
+      '271560',
+      '097950',
+      '004370',
+      '007310',
+      '280360',
+      '000080',
+      '005300',
+      '005180',
+      '001680',
+      '136480',
+    ],
+  },
+  {
+    industry_id: 'retail',
+    name: '유통',
+    icon_key: 'retail',
+    companies: ['282330', '023530', '139480', '008770'],
+  },
+  { industry_id: 'fashion', name: '패션·의류', icon_key: 'fashion', companies: [] },
+  { industry_id: 'software', name: '소프트웨어·IT서비스', icon_key: 'software', companies: [] },
+  {
+    industry_id: 'telecom',
+    name: '통신',
+    icon_key: 'telecom',
+    companies: ['017670', '030200', '032640'],
+  },
+  {
+    industry_id: 'entertainment',
+    name: '엔터·미디어',
+    icon_key: 'entertainment',
+    companies: ['352820', '041510', '035900'],
+  },
+  { industry_id: 'travel', name: '여행·레저', icon_key: 'travel', companies: ['035250'] },
+  {
+    industry_id: 'transport',
+    name: '운송·물류',
+    icon_key: 'transport',
+    companies: ['011200', '003490', '000120'],
+  },
+  { industry_id: 'education', name: '교육', icon_key: 'education', companies: [] },
+  {
+    industry_id: 'holding',
+    name: '지주회사',
+    icon_key: 'holding',
+    companies: ['034730', '003550', '267250', '078930', '006260'],
+  },
+];
+
 const round1 = (value: number) => Math.round(value * 10) / 10;
 
 export const heatScore = (factors: Factors) =>

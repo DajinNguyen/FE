@@ -8,7 +8,7 @@
 import companiesJson from './companies.json';
 import crosswordsJson from './crosswords.json';
 import termsJson from './terms.json';
-import { hotIndustries, industryRecords } from './industries';
+import { hotIndustries, industryRecords, listOnlyIndustries } from './industries';
 import { industryDetail, industryNews } from './industryDetails';
 import { marketSummary } from './market';
 import { performanceDetails } from './performance';
@@ -97,7 +97,7 @@ export async function getCompaniesByCodes(codes: string[]): Promise<CompanySumma
 
 /** 이 회사가 속한 산업 */
 const industriesOf = (stockCode: string) =>
-  industryRecords
+  [...industryRecords, ...listOnlyIndustries]
     .filter((record) => record.companies.includes(stockCode))
     .map(({ industry_id, name }) => ({ industry_id, name }));
 
@@ -189,6 +189,18 @@ export async function getMarketNews(date: string): Promise<NewsItem[]> {
 /* ------------------------------------------------------------------ */
 /* 산업                                                                */
 /* ------------------------------------------------------------------ */
+
+export async function getIndustries() {
+  await wait(200);
+  return [...industryRecords, ...listOnlyIndustries].map(
+    ({ industry_id, name, icon_key, companies }) => ({
+      industry_id,
+      name,
+      icon_key,
+      company_count: companies.length,
+    }),
+  );
+}
 
 export async function getHotIndustries(period: HeatPeriod) {
   await wait(200);

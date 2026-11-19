@@ -4,7 +4,7 @@
  */
 import { ApiError } from '../../src/api/errors';
 import type { CompanySummary, IndustryDetail, NewsItem } from '../../src/types';
-import { industryRecords } from './industries';
+import { industryRecords, listOnlyIndustries } from './industries';
 import { lastClose } from './marketClock';
 
 const text: Record<string, { description: string; why: string; topics: string[] }> = {
@@ -212,6 +212,8 @@ const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3_600_000).toI
 /** 산업 예시 기사 5개 (최신순) */
 export function industryNews(industryId: string): NewsItem[] {
   const info = text[industryId];
+  // 관심도를 집계하지 않는 산업은 예시 뉴스가 없어요. (서버도 기사가 없으면 빈 배열)
+  if (!info && listOnlyIndustries.some((r) => r.industry_id === industryId)) return [];
   if (!info) throw new ApiError('산업을 찾지 못했어요', 404, 'INDUSTRY_NOT_FOUND');
   return info.topics.map((topic, i) => ({
     id: `${industryId}-news-${i + 1}`,
@@ -229,9 +231,20 @@ export function industryNews(industryId: string): NewsItem[] {
 }
 
 export function industryDetail(industryId: string, companies: CompanySummary[]): IndustryDetail {
-  const record = industryRecords.find((r) => r.industry_id === industryId);
-  const info = text[industryId];
-  if (!record || !info) throw new ApiError('산업을 찾지 못했어요', 404, 'INDUSTRY_NOT_FOUND');
+  const scored = industryRecords.find((r) => r.industry_id === industryId);
+  const record = scored ?? listOnlyIndustries.find((r) => r.industry_id === industryId);
+  if (!record) throw new ApiError('산업을 찾지 못했어요', 404, 'INDUSTRY_NOT_FOUND');
+  // 관심도를 집계하지 않는 산업은 설명만 간단히, 점수는 0 으로 채워요.
+  const info = text[industryId] ?? {
+    description: `${record.name} 관련 기업을 모았어요.`,
+    why: '아직 관심도를 집계하지 않는 산업이에요.',
+    topics: [],
+  };
+  const factors = scored?.factors['1w'] ?? {
+    price_change_rate: 0,
+    trading_value_change_rate: 0,
+    news_mention_change_rate: 0,
+  };
   const news = industryNews(industryId).slice(0, 2);
   return {
     industry_id: record.industry_id,
@@ -239,7 +252,7 @@ export function industryDetail(industryId: string, companies: CompanySummary[]):
     icon_key: record.icon_key,
     description: info.description,
     why: { text: info.why, news_ids: news.map((n) => n.id) },
-    score_breakdown: { ...record.factors['1w'], period: '1w' },
+    score_breakdown: { ...factors, period: '1w' },
     news,
     companies: record.companies
       .map((code) => companies.find((c) => c.stock_code === code))

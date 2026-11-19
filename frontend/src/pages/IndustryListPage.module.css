@@ -1,0 +1,97 @@
+.page {
+  padding-top: var(--sp-12);
+}
+
+.header {
+  margin-bottom: var(--sp-6);
+}
+
+.title {
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+}
+
+.note {
+  margin-top: var(--sp-1);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+}
+
+.hint {
+  color: var(--text-3);
+}
+
+.loading {
+  height: 480px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--sp-3);
+}
+
+/* 메인 TOP 3 카드와 같은 산업 색 (배경·아이콘) */
+.tile {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-4) var(--sp-2);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  background: var(--industry-bg, var(--surface));
+  color: var(--text-1);
+  text-align: center;
+  transition: border-color var(--dur) var(--ease);
+}
+
+.tile:hover {
+  border-color: var(--industry-fg, var(--brand));
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  margin-bottom: var(--sp-1);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--industry-fg, var(--brand));
+}
+
+.name {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  word-break: keep-all;
+}
+
+.count {
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 719px) {
+  .page {
+    padding-top: var(--sp-6);
+  }
+
+  .title {
+    font-size: var(--fs-2xl);
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--sp-2);
+  }
+}

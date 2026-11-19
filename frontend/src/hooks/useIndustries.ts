@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getHotIndustries, getIndustry } from '../api/industries';
+import { getHotIndustries, getIndustries, getIndustry } from '../api/industries';
 import type { HeatPeriod } from '../types';
 
 export function useHotIndustries(period: HeatPeriod) {
@@ -15,5 +15,14 @@ export function useIndustry(industryId: string) {
     queryKey: ['industries', industryId],
     queryFn: () => getIndustry(industryId),
     staleTime: 5 * 60_000,
+  });
+}
+
+/** 전체 산업 목록 (자주 바뀌지 않아요) */
+export function useIndustryList() {
+  return useQuery({
+    queryKey: ['industries', 'list'],
+    queryFn: getIndustries,
+    staleTime: 30 * 60_000,
   });
 }
