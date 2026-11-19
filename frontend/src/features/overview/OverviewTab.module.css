@@ -50,9 +50,16 @@
   }
 
   .price {
-    position: sticky;
-    top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
     align-self: start;
     padding-top: var(--sp-6);
+  }
+}
+
+/* 주가 흐름 카드가 화면에 다 들어갈 만큼 창이 높을 때만 따라와요.
+   낮은 창에서 따라오면 아래쪽 캔들 단위 버튼이 화면 밖에 걸려 안 보여요. */
+@media (min-width: 1024px) and (min-height: 820px) {
+  .price {
+    position: sticky;
+    top: calc(var(--header-h) + var(--tabs-h) + var(--sp-4));
   }
 }
