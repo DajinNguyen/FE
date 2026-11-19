@@ -68,6 +68,28 @@
   touch-action: pan-y;
 }
 
+/* 그래프 칸: 오른쪽 위 모서리에 버튼을 띄워요 */
+.plot {
+  position: relative;
+}
+
+.action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
+/* 끌어서 지난 기간을 보는 그래프 */
+.pannable {
+  cursor: grab;
+  user-select: none;
+}
+
+.dragging {
+  cursor: grabbing;
+}
+
 .chart:focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;

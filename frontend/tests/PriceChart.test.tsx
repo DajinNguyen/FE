@@ -47,7 +47,7 @@ describe('주가 흐름 그래프 색', () => {
     const before = chart.getAttribute('data-trend');
     expect(['rise', 'fall', 'flat']).toContain(before);
 
-    await user.click(screen.getByRole('radio', { name: '1년' }));
+    await user.click(screen.getByRole('radio', { name: '주' }));
     const after = await screen.findByRole('img', { name: /주가 흐름/ });
     const label = after.getAttribute('aria-label') ?? '';
     const [from, to] = [...label.matchAll(/([\d,]+)원/g)].map((m) =>

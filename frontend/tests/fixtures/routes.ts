@@ -8,7 +8,13 @@ import * as wallet from './wallet';
 import * as chat from './chat';
 import * as mockInvest from './mockInvest';
 import * as server from './mockServer';
-import type { HeatPeriod, PostCategory, PostSort, PricePeriod } from '../../src/types';
+import type {
+  HeatPeriod,
+  PostCategory,
+  PostSort,
+  PriceInterval,
+  PricePeriod,
+} from '../../src/types';
 
 type Handler = (match: RegExpMatchArray, query: URLSearchParams, body: any) => Promise<unknown>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -38,7 +44,12 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   [
     'GET',
     /^\/api\/companies\/(\w+)\/prices$/,
-    async ([, code], q) => server.getPriceHistory(code, (q.get('period') ?? '3m') as PricePeriod),
+    async ([, code], q) =>
+      server.getPriceHistory(
+        code,
+        (q.get('period') ?? '3m') as PricePeriod,
+        (q.get('interval') ?? undefined) as PriceInterval | undefined,
+      ),
   ],
   ['GET', /^\/api\/companies\/(\w+)\/report$/, async ([, code]) => server.getCompanyReport(code)],
   ['POST', /^\/api\/companies\/(\w+)\/report$/, async ([, code]) => server.generateReport(code)],

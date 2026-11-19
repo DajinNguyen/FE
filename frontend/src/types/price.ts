@@ -1,9 +1,16 @@
-export type PricePeriod = '1m' | '3m' | '6m' | '1y';
+/** 그래프 기간 (1d·5d는 마지막 1·5 거래일) */
+export type PricePeriod = '1d' | '5d' | '1m' | '3m' | '6m' | '1y' | '5y' | 'all';
 
-/** 하루(1년 보기는 한 주) 캔들. 단위는 원 */
+/** 캔들 하나의 길이 */
+export type PriceInterval =
+  '1min' | '10min' | '60min' | 'halfday' | 'day' | 'week' | 'month' | 'year';
+
+/** 캔들 하나 (분·일·주·월·년). 단위는 원 */
 export interface PricePoint {
-  /** YYYY-MM-DD */
+  /** YYYY-MM-DD (주·월·년 캔들은 그 기간의 첫날) */
   date: string;
+  /** 분 캔들만 "HH:MM" */
+  time?: string | null;
   /** 시가 */
   open: number;
   /** 고가 */
@@ -20,5 +27,7 @@ export interface PricePoint {
 export interface PriceHistory {
   stock_code: string;
   period: PricePeriod;
+  /** 캔들 길이. 예전 백엔드는 주지 않아요 */
+  interval?: PriceInterval;
   points: PricePoint[];
 }

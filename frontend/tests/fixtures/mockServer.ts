@@ -33,6 +33,7 @@ import type {
   NewsPage,
   PerformanceDetail,
   PriceHistory,
+  PriceInterval,
   PricePeriod,
   SectorGroup,
   Term,
@@ -383,12 +384,39 @@ export async function getHomeDashboard(): Promise<HomeDashboard> {
 /* 주가 (예시)                                                         */
 /* ------------------------------------------------------------------ */
 
-const pricePeriods: Record<PricePeriod, { count: number; stepDays: number; volatility: number }> = {
-  '1m': { count: 22, stepDays: 1, volatility: 0.014 },
-  '3m': { count: 64, stepDays: 1, volatility: 0.014 },
-  '6m': { count: 126, stepDays: 1, volatility: 0.014 },
-  '1y': { count: 52, stepDays: 7, volatility: 0.032 },
+/** 기간별 날 수 (1d·5d 는 거래일 수) */
+const periodDays: Record<PricePeriod, number> = {
+  '1d': 1,
+  '5d': 5,
+  '1m': 30,
+  '3m': 91,
+  '6m': 182,
+  '1y': 365,
+  '5y': 365 * 5,
+  all: 365 * 10,
 };
+const defaultInterval: Record<PricePeriod, PriceInterval> = {
+  '1d': '1min',
+  '5d': '10min',
+  '1m': 'day',
+  '3m': 'day',
+  '6m': 'day',
+  '1y': 'week',
+  '5y': 'week',
+  all: 'month',
+};
+const intervalVolatility: Record<PriceInterval, number> = {
+  '1min': 0.0015,
+  '10min': 0.004,
+  '60min': 0.006,
+  halfday: 0.009,
+  day: 0.014,
+  week: 0.032,
+  month: 0.07,
+  year: 0.2,
+};
+/** 정규장 09:00~15:30 */
+const MINUTES_PER_DAY = 390;
 
 /** 같은 입력이면 항상 같은 값을 내는 난수 (그래프가 새로고침마다 바뀌지 않게) */
 function seededRandom(seedText: string) {
@@ -404,51 +432,116 @@ function seededRandom(seedText: string) {
 
 const toDateString = (date: Date) => date.toISOString().slice(0, 10);
 
+/** 캔들 자리: 날짜(와 분 캔들은 시각). 마지막은 직전 거래일이에요. (실시간 시세가 아니에요) */
+function candleSlots(period: PricePeriod, interval: PriceInterval) {
+  const slots: { date: string; time?: string }[] = [];
+  const cursor = new Date(`${lastTradingDate()}T12:00:00`);
+  const isWeekday = () => cursor.getDay() !== 0 && cursor.getDay() !== 6;
+  if (interval === '1min' || interval === '10min') {
+    const step = interval === '1min' ? 1 : 10;
+    for (let day = 0; day < periodDays[period];) {
+      if (isWeekday()) {
+        const date = toDateString(cursor);
+        for (let m = MINUTES_PER_DAY - step; m >= 0; m -= step) {
+          const hh = String(9 + Math.floor(m / 60)).padStart(2, '0');
+          slots.unshift({ date, time: `${hh}:${String(m % 60).padStart(2, '0')}` });
+        }
+        day += 1;
+      }
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return slots;
+  }
+  if (interval === '60min' || interval === 'halfday') {
+    // 1시간: 09~15시 7칸, 반나절: 09·12시 2칸
+    const times =
+      interval === '60min'
+        ? ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+        : ['09:00', '12:00'];
+    const start = cursor.getTime() - periodDays[period] * 86_400_000;
+    while (cursor.getTime() > start) {
+      if (isWeekday()) {
+        const date = toDateString(cursor);
+        slots.unshift(...times.map((time) => ({ date, time })));
+      }
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return slots;
+  }
+  const end = cursor.getTime();
+  const start = end - periodDays[period] * 86_400_000;
+  while (cursor.getTime() >= start) {
+    if (interval !== 'day' || isWeekday()) slots.unshift({ date: toDateString(cursor) });
+    if (interval === 'day') cursor.setDate(cursor.getDate() - 1);
+    else if (interval === 'week') cursor.setDate(cursor.getDate() - 7);
+    else if (interval === 'month') cursor.setMonth(cursor.getMonth() - 1);
+    else cursor.setFullYear(cursor.getFullYear() - 1);
+  }
+  return slots;
+}
+
 /** 예시 주가 흐름. 마지막 값은 현재가(예시 값)와 같아요. */
 export async function getPriceHistory(
   stockCode: string,
   period: PricePeriod,
+  intervalParam?: PriceInterval,
 ): Promise<PriceHistory> {
   await wait(200);
   const company = findCompany(stockCode);
+  const interval = intervalParam ?? defaultInterval[period];
+  const minute = interval === '1min' || interval === '10min';
+  const hour = interval === '60min' || interval === 'halfday';
+  if (
+    minute !== (period === '1d' || period === '5d') ||
+    (hour && !['1m', '3m', '6m', '1y'].includes(period))
+  ) {
+    throw new ApiError(
+      `period=${period} 에는 interval=${interval} 을 쓸 수 없어요.`,
+      400,
+      'INVALID_PARAM',
+    );
+  }
 
-  const { count, stepDays, volatility } = pricePeriods[period];
-  const random = seededRandom(`${stockCode}-${period}`);
+  const slots = candleSlots(period, interval);
+  const volatility = intervalVolatility[interval];
+  const random = seededRandom(`${stockCode}-${period}-${interval}`);
   // 거래량은 따로 뽑아서 가격 값이 바뀌지 않게 해요.
-  const volumeRandom = seededRandom(`${stockCode}-${period}-volume`);
+  const volumeRandom = seededRandom(`${stockCode}-${period}-${interval}-volume`);
   const baseVolume = company.current_price.value >= 100_000 ? 3_000_000 : 8_000_000;
+  const volumeScale: number = {
+    '1min': 1 / 390,
+    '10min': 1 / 39,
+    '60min': 1 / 7,
+    halfday: 1 / 2,
+    day: 1,
+    week: 5,
+    month: 21,
+    year: 250,
+  }[interval];
   const tick = company.current_price.value >= 50_000 ? 100 : 50;
 
   const closes = [company.current_price.value];
-  for (let i = 1; i < count; i += 1) {
+  for (let i = 1; i < slots.length; i += 1) {
     const change = (random() - 0.47) * 2 * volatility;
-    closes.unshift(Math.round(closes[0] / (1 + change) / tick) * tick);
-  }
-
-  // 마지막 값은 직전 거래일 종가예요. (실시간 시세가 아니에요)
-  const dates: string[] = [];
-  const cursor = new Date(`${lastTradingDate()}T12:00:00`);
-  while (dates.length < count) {
-    const day = cursor.getDay();
-    if (stepDays > 1 || (day !== 0 && day !== 6)) dates.unshift(toDateString(cursor));
-    cursor.setDate(cursor.getDate() - stepDays);
+    closes.unshift(Math.max(tick, Math.round(closes[0] / (1 + change) / tick) * tick));
   }
 
   return {
     stock_code: stockCode,
     period,
-    // 시가는 전날 종가 근처, 고가·저가는 시가·종가 바깥으로 조금씩 벌려요.
+    interval,
+    // 시가는 전 캔들 종가 근처, 고가·저가는 시가·종가 바깥으로 조금씩 벌려요.
     points: closes.map((close, i) => {
       const prev = closes[i - 1] ?? close;
       const open = Math.round((prev * (1 + (random() - 0.5) * volatility)) / tick) * tick;
       const wick = () => random() * volatility * 0.6;
       return {
-        date: dates[i],
+        ...slots[i],
         open,
         high: Math.round((Math.max(open, close) * (1 + wick())) / tick) * tick,
         low: Math.round((Math.min(open, close) * (1 - wick())) / tick) * tick,
         close,
-        volume: Math.round(baseVolume * (stepDays > 1 ? 5 : 1) * (0.4 + volumeRandom() * 1.2)),
+        volume: Math.round(baseVolume * volumeScale * (0.4 + volumeRandom() * 1.2)),
       };
     }),
   };
