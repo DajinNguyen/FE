@@ -19,8 +19,10 @@ import {
   HardHat,
   Landmark,
   Monitor,
+  Palette,
   Plane,
   RadioTower,
+  Recycle,
   Shield,
   Ship,
   Shirt,
@@ -67,6 +69,9 @@ export const INDUSTRY_ICONS: Record<string, LucideIcon> = {
   transport: Truck,
   education: GraduationCap,
   holding: Building2,
+  // 어느 산업에도 없던 기업을 담는 새 산업 (백엔드 분류 요청: 문서 22장)
+  environment: Recycle,
+  lifestyle: Palette,
 };
 
 export const industryIcon = (key: string): LucideIcon => INDUSTRY_ICONS[key] ?? Factory;

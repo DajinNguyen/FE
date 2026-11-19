@@ -254,6 +254,9 @@ export const listOnlyIndustries: ListOnlyIndustry[] = [
     icon_key: 'holding',
     companies: ['034730', '003550', '267250', '078930', '006260'],
   },
+  // 어느 산업에도 없던 기업을 담을 새 산업 (백엔드 분류 요청 중, 테스트 기업 목록에는 해당 기업이 없어요)
+  { industry_id: 'environment', name: '환경·폐기물', icon_key: 'environment', companies: [] },
+  { industry_id: 'lifestyle', name: '생활·취미용품', icon_key: 'lifestyle', companies: [] },
 ];
 
 const round1 = (value: number) => Math.round(value * 10) / 10;

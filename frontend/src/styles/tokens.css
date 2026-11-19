@@ -147,6 +147,10 @@
   --ind-education-fg: #777022;
   --ind-holding-bg: #e4e8f6;
   --ind-holding-fg: #505b86;
+  --ind-environment-bg: #e4f6e0;
+  --ind-environment-fg: #3a7a2e;
+  --ind-lifestyle-bg: #fbe1e6;
+  --ind-lifestyle-fg: #a3354a;
 
   /* 굵기 — 볼드는 페이지 제목·시장 한마디에만. 위계는 굵기보다 크기·색·여백으로 만들어요.
    * bold: 페이지 제목, 시장 한마디, AI 한 줄 결론
@@ -348,6 +352,10 @@
     --ind-education-fg: #dad381;
     --ind-holding-bg: #21232c;
     --ind-holding-fg: #99a1c2;
+    --ind-environment-bg: #1c2e1a;
+    --ind-environment-fg: #9fd890;
+    --ind-lifestyle-bg: #36202a;
+    --ind-lifestyle-fg: #f0a3b4;
     color-scheme: dark;
   }
 }
@@ -481,5 +489,9 @@
   --ind-education-fg: #dad381;
   --ind-holding-bg: #21232c;
   --ind-holding-fg: #99a1c2;
+  --ind-environment-bg: #1c2e1a;
+  --ind-environment-fg: #9fd890;
+  --ind-lifestyle-bg: #36202a;
+  --ind-lifestyle-fg: #f0a3b4;
   color-scheme: dark;
 }
