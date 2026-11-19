@@ -20,7 +20,7 @@ export function CrosswordPanel({ puzzleId, onSelect }: CrosswordPanelProps) {
   const list = useCrosswordPuzzles();
   const puzzles = list.data;
   const selectedId = puzzles?.some((p) => p.id === puzzleId) ? puzzleId! : puzzles?.[0]?.id;
-  const detail = useCrosswordPuzzle(selectedId ?? '');
+  const detail = useCrosswordPuzzle(selectedId);
   const puzzle = detail.data;
   // 계정이 바뀌면(로그인·로그아웃) 그 계정이 풀던 판으로 다시 시작해요.
   const scope = userScope(useAuth().user);
