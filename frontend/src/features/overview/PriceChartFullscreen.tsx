@@ -137,6 +137,7 @@ export function PriceChartFullscreen({
             points={points}
             height={priceHeight}
             interval={shownInterval}
+            previousClose={data?.previous_close}
             windowSize={Math.max(inRange.length, 1)}
           />
         )}
