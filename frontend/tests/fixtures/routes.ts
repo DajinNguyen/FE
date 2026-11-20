@@ -126,6 +126,11 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
     /^\/api\/me\/mock-invest\/orders$/,
     async (_, __, body) => mockInvest.placeMockOrder(body),
   ],
+  [
+    'POST',
+    /^\/api\/me\/mock-invest\/exchange$/,
+    async (_, __, body) => mockInvest.exchangeMockCash(body),
+  ],
   ['POST', /^\/api\/chat$/, async (_, __, body) => chat.chat(body)],
   ['POST', /^\/api\/me\/puzzle-completions$/, async (_, __, body) => wallet.completePuzzle(body)],
 ];

@@ -1,6 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { getMockPortfolio, getMockTrades, postMockOrder } from '../api/mockInvest';
+import {
+  getMockPortfolio,
+  getMockTrades,
+  postMockExchange,
+  postMockOrder,
+} from '../api/mockInvest';
 import type { MockOrderRequest } from '../types';
 import { useAuth } from './useAuth';
 import { userScope } from './userData';
@@ -34,7 +39,7 @@ export function useMockTrades() {
   });
 }
 
-/** 사기·팔기. 성공하면 자산·내역·앰똥깡 잔액을 바로 갱신해요. */
+/** 사기·팔기. 성공하면 자산·내역을 바로 갱신해요. */
 export function useMockOrder() {
   const { user } = useAuth();
   const scope = userScope(user);
@@ -55,6 +60,26 @@ export function useMockOrder() {
     onError: () => {
       // 잔액·가격이 바뀌어 거절됐을 수 있어요. 최신 값으로 다시 불러와요.
       void queryClient.invalidateQueries({ queryKey: keys.portfolio });
+      void wallet.refetch();
+    },
+  });
+}
+
+/** 앰똥깡 → 가상 현금 환전. 성공하면 자산과 앰똥깡 잔액을 바로 갱신해요. */
+export function useMockExchange() {
+  const { user } = useAuth();
+  const key = portfolioKey(userScope(user));
+  const queryClient = useQueryClient();
+  const wallet = useWallet();
+
+  return useMutation({
+    mutationFn: (adk: number) => postMockExchange(adk),
+    onSuccess: (result) => {
+      queryClient.setQueryData(key, result.portfolio);
+      wallet.applyBalance(result.balance);
+    },
+    onError: () => {
+      void queryClient.invalidateQueries({ queryKey: key });
       void wallet.refetch();
     },
   });

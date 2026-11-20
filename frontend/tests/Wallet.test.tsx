@@ -30,7 +30,7 @@ describe('앰똥깡(ADK) 설정', () => {
       '앰똥깡이 부족해요. 낱말퀴즈 3개를 풀면 20 ADK를 받을 수 있어요',
     );
     expect(SIGNUP_GIFT_TEXT).toBe('Google로 로그인하면 가입 선물로 50 ADK를 드려요');
-    expect(ADK_NOTICE).toContain('실제 돈이 아니며 구매·환전할 수 없어요');
+    expect(ADK_NOTICE).toContain('실제 돈이 아니며 실제 돈으로 사거나 바꿀 수 없어요');
   });
 });
 

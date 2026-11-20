@@ -19,6 +19,12 @@ async function chooseCompany(user: User, query: string, name: string) {
   return within(order).findByRole('form', { name: `${name} 주문` });
 }
 
+/** 50 ADK 를 가상 50만 원으로 환전해 둔 상태 (지갑은 0 ADK) */
+function funded() {
+  serverMockInvest.setCash(DEV_USER.id!, 500_000);
+  serverWallet.setBalance(DEV_USER.id!, 0);
+}
+
 describe('모의투자 화면', () => {
   it('비로그인으로 들어오면 로그인 시트를 띄워요', async () => {
     renderWithProviders(<App />, { route: '/mock-invest' });
@@ -27,11 +33,12 @@ describe('모의투자 화면', () => {
     ).toBeInTheDocument();
   });
 
-  it('내 자산: 가상 현금 = 앰똥깡 × 1만 원, 지연 시세 기준', async () => {
+  it('처음에는 가상 현금이 0원이고, 환전하라고 알려요', async () => {
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const assets = await screen.findByRole('region', { name: '내 자산' });
-    expect(assets).toHaveTextContent('총 자산500,000원');
-    expect(assets).toHaveTextContent('가상 현금500,000원50 ADK');
+    expect(assets).toHaveTextContent('총 자산0원');
+    expect(assets).toHaveTextContent('가상 현금0원');
+    expect(assets).toHaveTextContent('앰똥깡을 가상 현금으로 환전하면');
     expect(assets).toHaveTextContent('1 ADK = 가상 10,000원');
     // 보유 종목이 없으면 서버가 시세 기준 시각을 주지 않아요 (null)
     expect(assets).not.toHaveTextContent('지연 시세 기준');
@@ -40,8 +47,48 @@ describe('모의투자 화면', () => {
     );
   });
 
-  it('사기: 예상 금액 → 화면 안 확인 단계 → 체결, 앰똥깡이 빠지고 보유·내역에 보여요', async () => {
+  it('내 자산의 환전하기: 정수 앰똥깡을 확인 단계 뒤에 가상 현금으로 바꿔요', async () => {
     const user = userEvent.setup();
+    renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
+    const assets = await screen.findByRole('region', { name: '내 자산' });
+    await user.click(within(assets).getByRole('button', { name: '환전하기' }));
+    const form = within(assets).getByRole('form', { name: '앰똥깡 환전' });
+    expect(form).toHaveTextContent('가진 앰똥깡 50 ADK');
+
+    const input = within(form).getByLabelText('환전할 앰똥깡');
+    await user.type(input, '1.5');
+    expect(within(form).getByRole('alert')).toHaveTextContent('1 ADK 단위로 입력해 주세요');
+    await user.clear(input);
+    await user.type(input, '51');
+    expect(within(form).getByRole('alert')).toHaveTextContent('가진 앰똥깡(50 ADK)보다 많이');
+    expect(within(form).getByRole('button', { name: '환전 확인' })).toBeDisabled();
+
+    await user.clear(input);
+    await user.type(input, '30');
+    expect(form).toHaveTextContent('받는 가상 현금 300,000원');
+    await user.click(within(form).getByRole('button', { name: '환전 확인' }));
+    const confirm = within(form).getByRole('group', { name: '환전 확인' });
+    expect(confirm).toHaveTextContent('30 ADK를 가상 300,000원으로 환전할까요?');
+    expect(confirm).toHaveTextContent('다시 앰똥깡으로 바꿀 수 없어요');
+    expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(50); // 확인 전에는 보내지 않아요
+
+    await user.click(within(confirm).getByRole('button', { name: '환전 확정' }));
+    expect(await within(form).findByRole('status')).toHaveTextContent(
+      '환전했어요 · 30 ADK → 가상 300,000원',
+    );
+    expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(20);
+    expect(assets).toHaveTextContent('총 자산300,000원');
+    expect(assets).toHaveTextContent('가상 현금300,000원');
+    expect(await screen.findByRole('button', { name: '내 앰똥깡 20 ADK' })).toBeInTheDocument();
+
+    // 전부: 남은 앰똥깡을 모두
+    await user.click(within(form).getByRole('button', { name: '전부' }));
+    expect(input).toHaveValue(20);
+  });
+
+  it('사기: 예상 금액 → 화면 안 확인 단계 → 체결, 가상 현금이 줄고(앰똥깡은 그대로) 보유·내역에 보여요', async () => {
+    const user = userEvent.setup();
+    funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자', '삼성전자');
     expect(form).toHaveTextContent('사기 전에 이 기업의 최근 실적을 확인해 보세요');
@@ -53,20 +100,22 @@ describe('모의투자 화면', () => {
     const quantity = within(form).getByLabelText('수량');
     await user.clear(quantity);
     await user.type(quantity, '2');
-    expect(form).toHaveTextContent('예상 금액 257,000원 (25.7 ADK)');
+    expect(form).toHaveTextContent('예상 금액 257,000원');
 
     await user.click(within(form).getByRole('button', { name: '주문 확인' }));
     const confirm = within(form).getByRole('group', { name: '주문 확인' });
     expect(confirm).toHaveTextContent('삼성전자 2주를 살까요?');
+    expect(confirm).toHaveTextContent('가상 현금 500,000원 → 243,000원');
     // 확인 단계 전에는 서버에 보내지 않아요
     expect(serverMockInvest.trades(DEV_USER.id!)).toHaveLength(0);
 
     await user.click(within(confirm).getByRole('button', { name: '사기 확정' }));
     expect(await screen.findByText(/체결됐어요/)).toHaveTextContent(
-      '체결됐어요 · 삼성전자 2주 사기 · 1주 128,500원 · 257,000원 (25.7 ADK)',
+      '체결됐어요 · 삼성전자 2주 사기 · 1주 128,500원 · 257,000원',
     );
-    expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(24.3);
-    expect(await screen.findByRole('button', { name: '내 앰똥깡 24 ADK' })).toBeInTheDocument();
+    expect(serverMockInvest.cash(DEV_USER.id!)).toBe(243_000);
+    expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(0);
+    expect(screen.getByRole('region', { name: '내 자산' })).toHaveTextContent('가상 현금243,000원');
 
     const holdings = screen.getByRole('region', { name: '보유 종목 1개' });
     expect(within(holdings).getByRole('link', { name: '삼성전자' })).toHaveAttribute(
@@ -82,21 +131,25 @@ describe('모의투자 화면', () => {
 
   it('돌아가기를 누르면 주문하지 않아요', async () => {
     const user = userEvent.setup();
+    funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자', '삼성전자');
     await user.click(within(form).getByRole('button', { name: '주문 확인' }));
     await user.click(within(form).getByRole('button', { name: '돌아가기' }));
     expect(within(form).queryByRole('group', { name: '주문 확인' })).not.toBeInTheDocument();
     expect(serverMockInvest.trades(DEV_USER.id!)).toHaveLength(0);
-    expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(50);
+    expect(serverMockInvest.cash(DEV_USER.id!)).toBe(500_000);
   });
 
   it('가상 현금보다 비싸면 주문 확인을 막고, 가진 것보다 많이 팔 수 없어요', async () => {
     const user = userEvent.setup();
+    funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성바이오로직스', '삼성바이오로직스');
     expect(form).toHaveTextContent('최대 0주');
-    expect(within(form).getByRole('alert')).toHaveTextContent('가상 현금(앰똥깡)이 부족해요');
+    expect(within(form).getByRole('alert')).toHaveTextContent(
+      '가상 현금이 부족해요. 내 자산에서 앰똥깡을 환전해 주세요',
+    );
     expect(within(form).getByRole('button', { name: '주문 확인' })).toBeDisabled();
 
     await user.click(within(form).getByRole('radio', { name: '팔기' }));
@@ -104,14 +157,15 @@ describe('모의투자 화면', () => {
     expect(within(form).getByRole('button', { name: '주문 확인' })).toBeDisabled();
   });
 
-  it('팔기: 판 금액만큼 앰똥깡이 돌아와요', async () => {
+  it('팔기: 판 금액만큼 가상 현금이 늘어요', async () => {
     const user = userEvent.setup();
+    funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자', '삼성전자');
     await user.click(within(form).getByRole('button', { name: '주문 확인' }));
     await user.click(within(form).getByRole('button', { name: '사기 확정' }));
     await screen.findByText(/체결됐어요/);
-    await waitFor(() => expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(37.15));
+    await waitFor(() => expect(serverMockInvest.cash(DEV_USER.id!)).toBe(371_500));
 
     await user.click(within(form).getByRole('radio', { name: '팔기' }));
     expect(form).toHaveTextContent('가진 수량 1주');
@@ -120,7 +174,8 @@ describe('모의투자 화면', () => {
     await waitFor(() =>
       expect(screen.getByText(/체결됐어요/)).toHaveTextContent('삼성전자 1주 팔기'),
     );
-    expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(50);
+    expect(serverMockInvest.cash(DEV_USER.id!)).toBe(500_000);
+    expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(0);
     expect(await screen.findByRole('region', { name: '보유 종목 0개' })).toBeInTheDocument();
   });
 
@@ -134,6 +189,7 @@ describe('모의투자 화면', () => {
 
 describe('로그아웃하면 모의투자 데이터도 비워요', () => {
   it('자산 쿼리를 지우고, 다시 로그인하면 서버에서 새로 불러와요', async () => {
+    funded();
     const { result } = renderHook(() => ({ auth: useAuth(), mock: useMockPortfolio() }), {
       wrapper: providersWrapper(DEV_USER),
     });

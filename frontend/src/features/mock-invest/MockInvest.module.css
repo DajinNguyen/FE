@@ -200,6 +200,23 @@
   font-weight: var(--fw-semibold);
 }
 
+/* 패널 제목 + 오른쪽 버튼 (내 자산의 환전하기) */
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+/* 내 자산 안의 환전 칸 */
+.exchange {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--line);
+}
+
 .count {
   color: var(--text-3);
   font-size: var(--fs-sm);

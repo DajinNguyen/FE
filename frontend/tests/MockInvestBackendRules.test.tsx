@@ -5,7 +5,7 @@ import { App } from '../src/App';
 import { ApiError } from '../src/api/errors';
 import { request } from '../src/api/client';
 import { DEV_USER } from '../src/features/auth/AuthContext';
-import { limitMockOrders } from './fixtures/mockInvest';
+import { limitMockOrders, serverMockInvest } from './fixtures/mockInvest';
 import { setSessionUser } from './fixtures/session';
 import { renderWithProviders } from './testUtils';
 
@@ -23,38 +23,47 @@ async function buy(user: User, form: HTMLElement) {
   await user.click(within(form).getByRole('button', { name: '사기 확정' }));
 }
 
+const funded = () => serverMockInvest.setCash(DEV_USER.id!, 500_000);
+
 describe('모의투자 백엔드 규칙 반영', () => {
-  it('지갑 시트 내역은 소수 ADK 를 그대로 보여줘요 (25.7 ADK)', async () => {
+  it('환전은 지갑 시트 내역에 남고, 사고팔아도 앰똥깡은 그대로예요', async () => {
     const user = userEvent.setup();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
-    const form = await chooseCompany(user, '삼성전자');
-    await user.clear(within(form).getByLabelText('수량'));
-    await user.type(within(form).getByLabelText('수량'), '2');
-    await buy(user, form);
+    const assets = await screen.findByRole('region', { name: '내 자산' });
+    await user.click(within(assets).getByRole('button', { name: '환전하기' }));
+    await user.type(within(assets).getByLabelText('환전할 앰똥깡'), '30');
+    await user.click(within(assets).getByRole('button', { name: '환전 확인' }));
+    await user.click(within(assets).getByRole('button', { name: '환전 확정' }));
+    await within(assets).findByText(/환전했어요/);
+
+    await buy(user, await chooseCompany(user, '삼성전자'));
     await screen.findByText(/체결됐어요/);
 
-    await user.click(await screen.findByRole('button', { name: '내 앰똥깡 24 ADK' }));
+    await user.click(await screen.findByRole('button', { name: '내 앰똥깡 20 ADK' }));
     const sheet = await screen.findByRole('dialog', { name: '내 앰똥깡' });
     expect(
       within(sheet)
-        .getByText(/모의투자 · 삼성전자 2주 사기/)
+        .getByText(/모의투자 · 30 ADK를 가상 300,000원으로 환전/)
         .closest('li'),
-    ).toHaveTextContent('−25.7 ADK');
+    ).toHaveTextContent('−30 ADK');
+    expect(within(sheet).queryByText(/삼성전자 1주 사기/)).not.toBeInTheDocument();
   });
 
   it('주문 횟수 제한(429)은 몇 초 뒤에 다시 하라고 알려요', async () => {
     const user = userEvent.setup();
+    funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자');
     limitMockOrders(12);
     await buy(user, form);
     expect(await screen.findByText(/주문이 너무 잦아요/)).toHaveTextContent(
-      '주문이 너무 잦아요. 12초 뒤에 다시 해 주세요. 앰똥깡은 빠지지 않았어요',
+      '주문이 너무 잦아요. 12초 뒤에 다시 해 주세요. 가상 현금은 그대로예요',
     );
   });
 
   it('보유 종목이 생기면 지연 시세 기준 시각을 보여줘요 (없으면 null 이라 숨겨요)', async () => {
     const user = userEvent.setup();
+    funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const assets = await screen.findByRole('region', { name: '내 자산' });
     expect(assets).not.toHaveTextContent('지연 시세 기준');

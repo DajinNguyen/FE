@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { App } from '../src/App';
 import { DEV_USER } from '../src/features/auth/AuthContext';
+import { serverMockInvest } from './fixtures/mockInvest';
 import { renderWithProviders } from './testUtils';
 
 type User = ReturnType<typeof userEvent.setup>;
@@ -28,15 +29,16 @@ describe('메인 모의투자 카드', () => {
     ).toBeInTheDocument();
   });
 
-  it('로그인 + 시작 안 함: 가입 선물 ADK 로 시작하기 → /mock-invest', async () => {
+  it('로그인 + 시작 안 함: 앰똥깡을 환전해서 시작하기 → /mock-invest', async () => {
     renderWithProviders(<App />, { route: '/', user: DEV_USER });
     const link = await within(card()).findByRole('link', { name: /시작하기/ });
-    expect(link).toHaveTextContent('가입 선물로 받은 ADK로 모의투자를 시작해 보세요');
+    expect(link).toHaveTextContent('앰똥깡을 가상 현금으로 환전해서 모의투자를 시작해 보세요');
     expect(link).toHaveAttribute('href', '/mock-invest');
   });
 
   it('로그인 + 시작함: 총 자산·수익률·보유 종목 수·오늘 변화', async () => {
     const user = userEvent.setup();
+    serverMockInvest.setCash(DEV_USER.id!, 500_000); // 50 ADK 를 환전해 둔 상태
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자', '삼성전자');
     await user.click(within(form).getByRole('button', { name: '주문 확인' }));
@@ -45,7 +47,7 @@ describe('메인 모의투자 카드', () => {
 
     await user.click(screen.getByRole('link', { name: '다진 홈' }));
     const link = await within(card()).findByRole('link', { name: /모의투자 하러 가기/ });
-    // 50 ADK = 500,000원 → 삼성전자 1주(128,500원) 산 뒤에도 총 자산은 500,000원
+    // 환전한 500,000원 → 삼성전자 1주(128,500원) 산 뒤에도 총 자산은 500,000원
     expect(link).toHaveTextContent('총 자산500,000원');
     expect(link).toHaveTextContent('보유 종목1개');
     expect(link).toHaveTextContent('수익률0.00%');

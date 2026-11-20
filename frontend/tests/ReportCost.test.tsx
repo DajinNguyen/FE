@@ -33,7 +33,9 @@ describe('AI 리포트 만들기 = 7 ADK', () => {
       name: 'Google로 로그인하면 가입 선물로 50 ADK를 드려요',
     });
     expect(within(sheet).getByRole('button', { name: 'Google로 로그인' })).toBeInTheDocument();
-    expect(within(sheet).getByText(/실제 돈이 아니며 구매·환전할 수 없어요/)).toBeInTheDocument();
+    expect(
+      within(sheet).getByText(/실제 돈이 아니며 실제 돈으로 사거나 바꿀 수 없어요/),
+    ).toBeInTheDocument();
     expect(screen.getByText('아직 이 기업의 리포트가 없어요')).toBeInTheDocument();
   });
 

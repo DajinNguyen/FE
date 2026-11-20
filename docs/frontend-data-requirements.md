@@ -940,21 +940,24 @@ left = 비교할 기업, right = 지금 보는 기업. 타입: `frontend/src/typ
 
 ## 19. 모의투자 (2026-11-18 추가, 백엔드 필요)
 
-D-0 결정 (2026-11-18): **1안 ADK 단일 · 지연 시세 · 초기화 없음 · 1 ADK = 가상 10,000원**.
-규칙: `frontend/src/config/mockInvest.ts`, 타입: `frontend/src/types/mockInvest.ts`. **체결 가격·ADK 차감 판단은 서버가 해 주세요.** (프론트 계산은 예상 금액 표시용)
+D-0 결정 (2026-11-18): **지연 시세 · 초기화 없음 · 1 ADK = 가상 10,000원**.
+2026-11-19 변경: **앰똥깡을 가상 현금(원)으로 환전해서 그 돈으로 사고팔아요.** (전에는 사고팔 때마다 ADK가 소수로 빠지고 돌아왔어요)
+규칙: `frontend/src/config/mockInvest.ts`, 타입: `frontend/src/types/mockInvest.ts`. **체결 가격·현금·ADK 판단은 서버가 해요.** (프론트 계산은 예상 금액 표시용)
 
 | 규칙 | 값 |
 |---|---|
-| 쓰는 돈 | 앰똥깡(ADK) 그대로. 가상 현금 = 잔액 × `ADK_TO_WON`(10,000). 사면 ADK 가 빠지고 팔면 돌아와요 |
+| 쓰는 돈 | 환전한 가상 현금(원). 가상 현금 = 환전한 돈 + 판 돈 − 산 돈. 사고팔아도 앰똥깡은 그대로예요 |
+| 환전 | 앰똥깡 → 가상 현금만, 정수 ADK, 1 ADK = 10,000원. 되돌릴 수 없어요 (19-5) |
 | 가격 | 지연 시세. 주문을 받은 때의 지연 시세로 체결해요 (장 마감 뒤에는 그날 종가) |
 | 수량 | 1주 단위, 한 번에 1~10,000주 (`MAX_ORDER_QUANTITY`, **임시값, 확정 필요**) |
-| ADK 소수 | 금액 ÷ 10,000 이라 소수가 생겨요. 소수 넷째 자리(= 1원)까지 저장해 주세요. 헤더 배지는 정수로 버려서 보여줘요 |
+| ADK 소수 | 환전은 정수 ADK라 더는 생기지 않아요. 환전 기능 전 거래로 생긴 소수 잔액은 그대로 둬요 |
 | 초기화 | 없어요 |
 | 순위 | 다른 사용자와의 수익률 순위는 만들지 않아요 |
 | 비로그인 | 사용 불가 (화면에 들어오면 로그인 시트) |
 | 로그아웃 | 프론트가 `['me', 'mock-invest', …]` 쿼리를 지워요 (기기에 저장하지 않아요) |
 
-⚠️ 1안이라 모의투자에서 잃으면 AI 리포트(7 ADK)·챗봇(5 ADK)에 쓸 ADK 도 줄어요. 화면에 안내해요.
+⚠️ 환전한 앰똥깡은 AI 리포트(7 ADK)·챗봇(5 ADK)에 쓸 수 없어요. 화면에 안내해요.
+환전 기능 전에 앰똥깡으로 바로 산 주식은 보유 종목에 그대로 남고, 팔면 가상 현금으로 들어와요.
 
 ### 19-1. `GET /api/me/mock-invest` (로그인 필요)
 
@@ -962,10 +965,10 @@ D-0 결정 (2026-11-18): **1안 ADK 단일 · 지연 시세 · 초기화 없음 
 {
   "started": true,
   "adk_to_won": 10000,
-  "cash_adk": 24.3,
-  "cash": 243000,
+  "adk_balance": 20,
+  "cash": 43000,
   "evaluation": 257000,
-  "total_asset": 500000,
+  "total_asset": 300000,
   "profit": 0,
   "profit_rate": 0.0,
   "today_change": 3520,
@@ -976,8 +979,9 @@ D-0 결정 (2026-11-18): **1안 ADK 단일 · 지연 시세 · 초기화 없음 
   ]
 }
 ```
-- `started`: 한 번이라도 사고판 적이 있으면 true (메인 카드 "시작하기" 구분)
-- `cash_adk` 는 `GET /api/me/wallet` 의 `balance` 와 같은 값이에요. 금액은 모두 원, `profit_rate`·`change_rate` 는 %.
+- `started`: 한 번이라도 환전하거나 사고판 적이 있으면 true (메인 카드 "시작하기" 구분)
+- `adk_balance`: 환전할 수 있는 앰똥깡 (`GET /api/me/wallet` 의 `balance` 와 같은 값)
+- `cash`: 가상 현금 (원). `total_asset` = `cash` + `evaluation`. 금액은 모두 원, `profit_rate`·`change_rate` 는 %.
 - `profit_rate`: 보유 종목의 (평가금액 − 산 금액) ÷ 산 금액. 보유 종목이 없으면 null
 - `today_change`: 보유 종목 평가금액의 오늘 변화 (원)
 - `price_as_of`: 지연 시세 기준 시각
@@ -987,23 +991,23 @@ D-0 결정 (2026-11-18): **1안 ADK 단일 · 지연 시세 · 초기화 없음 
 최신 순, 최대 50개.
 ```json
 [ { "id": "t1", "stock_code": "005930", "name": "삼성전자", "side": "buy", "quantity": 2,
-    "price": 128500, "amount": 257000, "amount_adk": 25.7, "created_at": "2026-11-18T01:20:00Z" } ]
+    "price": 128500, "amount": 257000, "amount_adk": 0, "created_at": "2026-11-18T01:20:00Z" } ]
 ```
+- `amount_adk`: 환전 기능 전 거래만 빠지거나 돌아온 ADK, 가상 현금으로 사고팔았으면 0
 
 ### 19-3. `POST /api/me/mock-invest/orders` (로그인 필요)
 
 요청 `{ "stock_code": "005930", "side": "buy" | "sell", "quantity": 2 }`
 
-응답 `{ "trade": { …19-2 항목 }, "balance": 24.3, "portfolio": { …19-1 } }` — `balance` 는 주문 뒤 앰똥깡 잔액이에요.
+응답 `{ "trade": { …19-2 항목 }, "balance": 20, "portfolio": { …19-1 } }` — `balance` 는 앰똥깡 잔액이에요 (주문으로는 바뀌지 않아요).
 
 | 상태 | code | 언제 |
 |---|---|---|
 | 400 | `INVALID_QUANTITY` | 수량이 정수 1~10,000 이 아님 |
-| 400 | `INSUFFICIENT_BALANCE` | 살 금액(ADK)이 잔액보다 많음 |
+| 400 | `INSUFFICIENT_CASH` | 살 금액이 가상 현금보다 많음 (`required`·`cash` 원) |
 | 400 | `INSUFFICIENT_QUANTITY` | 가진 수량보다 많이 팖 |
 | 404 | `COMPANY_NOT_FOUND` | 없는 종목 |
 
-- 지갑 내역(`history`)에 `"모의투자 · 삼성전자 2주 사기"` 처럼 남겨 주세요 (`type` spend/earn).
 - 같은 요청이 두 번 와도 두 번 체결되지 않게 해 주세요 (프론트는 체결 중 버튼을 잠가요).
 - 주문 화면의 예상 금액은 `GET /api/companies/{code}` 의 `current_price` 로 계산해요. 이 값도 지연 시세면 예상과 체결이 거의 같아요.
 
@@ -1026,6 +1030,23 @@ D-0 결정 (2026-11-18): **1안 ADK 단일 · 지연 시세 · 초기화 없음 
 - 보유 종목이 없으면 `price_as_of` 는 null → 화면에서 시세 기준 시각을 숨겨요.
 - `today_change` 는 오늘 산 종목도 하루 전체 등락으로 계산해요 (문서 정의 그대로).
 - 에러 응답의 `error` 안 추가 칸은 프론트 `ApiError.details` 로 읽어요.
+
+
+### 19-5. `POST /api/me/mock-invest/exchange` (로그인 필요, 2026-11-19)
+
+앰똥깡 → 가상 현금 환전. 요청 `{ "adk": 30 }` (정수)
+
+응답 `{ "exchange": { "id": "1", "adk": 30, "won": 300000, "created_at": "…" }, "balance": 20, "portfolio": { …19-1 } }`
+
+| 상태 | code | 언제 |
+|---|---|---|
+| 400 | `INVALID_AMOUNT` | `adk` 가 1 이상의 정수가 아님 |
+| 400 | `INSUFFICIENT_BALANCE` | 가진 앰똥깡보다 많음 |
+| 429 | `RATE_LIMITED` | 1분에 30번 넘게 |
+
+- 지갑 내역(`history`)에 `"모의투자 · 30 ADK를 가상 300,000원으로 환전"` 으로 남아요 (`type` spend).
+- 같은 양을 3초 안에 다시 보내면 한 번만 환전해요.
+- 되돌리기(가상 현금 → 앰똥깡)는 없어요.
 
 ## 20. 주가 그래프 거래량 (2026-11-19 추가, 백엔드 필요)
 

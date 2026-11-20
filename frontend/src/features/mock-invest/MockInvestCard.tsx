@@ -58,7 +58,7 @@ function Summary({ portfolio }: { portfolio: MockPortfolio }) {
 /**
  * 메인 "관심이 몰리는 산업 TOP 3" 오른쪽(좁은 화면은 아래) 모의투자 카드.
  * - 비로그인: 로그인 안내 (누르면 로그인 시트)
- * - 로그인 + 시작 안 함: 가입 선물 ADK 로 시작하기
+ * - 로그인 + 시작 안 함: 앰똥깡을 환전해서 시작하기
  * - 로그인 + 시작함: 총 자산·수익률·보유 종목 수·오늘 변화
  * 카드 전체를 누르면 /mock-invest 로 가요.
  */
@@ -108,7 +108,7 @@ export function MockInvestCard() {
         ) : (
           <>
             <span className={styles.cardMessage}>
-              가입 선물로 받은 ADK로 모의투자를 시작해 보세요
+              앰똥깡을 가상 현금으로 환전해서 모의투자를 시작해 보세요
             </span>
             {balance !== null && <span className={styles.cardSub}>지금 {formatAdk(balance)}</span>}
             <span className={styles.cardAction}>시작하기</span>
