@@ -41,8 +41,8 @@ describe('메인 모의투자 카드', () => {
     serverMockInvest.setCash(DEV_USER.id!, 500_000); // 50 ADK 를 환전해 둔 상태
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자', '삼성전자');
-    await user.click(within(form).getByRole('button', { name: '주문 확인' }));
-    await user.click(within(form).getByRole('button', { name: '사기 확정' }));
+    await user.click(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ }));
+    await user.click(within(form).getByRole('button', { name: '매수 확정' }));
     await screen.findByText(/체결됐어요/);
 
     await user.click(screen.getByRole('link', { name: '다진 홈' }));

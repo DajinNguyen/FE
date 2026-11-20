@@ -173,7 +173,13 @@ export function MockAssets({ portfolio }: { portfolio: MockPortfolio }) {
       </div>
       <p className={styles.total}>
         <span className={styles.totalLabel}>총 자산</span>
-        {formatWon(portfolio.total_asset)}
+        <span className={styles.totalValue}>
+          {formatWon(portfolio.total_asset)}
+          {/* 1 ADK = 가상 adk_to_won 원이라, 총 자산을 앰똥깡으로 바꾸면 이만큼이에요 */}
+          <span className={styles.totalAdk}>
+            = {formatAdkDetail(portfolio.total_asset / portfolio.adk_to_won)}
+          </span>
+        </span>
       </p>
       <dl className={styles.assetGrid}>
         <div>

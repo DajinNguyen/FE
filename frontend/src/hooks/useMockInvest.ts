@@ -39,7 +39,7 @@ export function useMockTrades() {
   });
 }
 
-/** 사기·팔기. 성공하면 자산·내역을 바로 갱신해요. */
+/** 매수·매도. 성공하면 자산·내역을 바로 갱신해요. */
 export function useMockOrder() {
   const { user } = useAuth();
   const scope = userScope(user);

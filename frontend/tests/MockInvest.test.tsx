@@ -77,7 +77,7 @@ describe('모의투자 화면', () => {
       '환전했어요 · 30 ADK → 가상 300,000원',
     );
     expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(20);
-    expect(assets).toHaveTextContent('총 자산300,000원');
+    expect(assets).toHaveTextContent('총 자산300,000원= 30 ADK');
     expect(assets).toHaveTextContent('가상 현금300,000원');
     expect(await screen.findByRole('button', { name: '내 앰똥깡 20 ADK' })).toBeInTheDocument();
 
@@ -86,12 +86,12 @@ describe('모의투자 화면', () => {
     expect(input).toHaveValue(20);
   });
 
-  it('사기: 예상 금액 → 화면 안 확인 단계 → 체결, 가상 현금이 줄고(앰똥깡은 그대로) 보유·내역에 보여요', async () => {
+  it('매수: 예상 금액 → 화면 안 확인 단계 → 체결, 가상 현금이 줄고(앰똥깡은 그대로) 보유·내역에 보여요', async () => {
     const user = userEvent.setup();
     funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자', '삼성전자');
-    expect(form).toHaveTextContent('사기 전에 이 기업의 최근 실적을 확인해 보세요');
+    expect(form).toHaveTextContent('매수하기 전에 이 기업의 최근 실적을 확인해 보세요');
     expect(within(form).getByRole('link', { name: 'AI 리포트 보기' })).toHaveAttribute(
       'href',
       '/companies/005930?tab=analysis',
@@ -100,18 +100,18 @@ describe('모의투자 화면', () => {
     const quantity = within(form).getByLabelText('수량');
     await user.clear(quantity);
     await user.type(quantity, '2');
-    expect(form).toHaveTextContent('예상 금액 257,000원');
+    expect(form).toHaveTextContent('주문금액257,000원');
 
-    await user.click(within(form).getByRole('button', { name: '주문 확인' }));
+    await user.click(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ }));
     const confirm = within(form).getByRole('group', { name: '주문 확인' });
-    expect(confirm).toHaveTextContent('삼성전자 2주를 살까요?');
+    expect(confirm).toHaveTextContent('삼성전자 2주를 매수할까요?');
     expect(confirm).toHaveTextContent('가상 현금 500,000원 → 243,000원');
     // 확인 단계 전에는 서버에 보내지 않아요
     expect(serverMockInvest.trades(DEV_USER.id!)).toHaveLength(0);
 
-    await user.click(within(confirm).getByRole('button', { name: '사기 확정' }));
+    await user.click(within(confirm).getByRole('button', { name: '매수 확정' }));
     expect(await screen.findByText(/체결됐어요/)).toHaveTextContent(
-      '체결됐어요 · 삼성전자 2주 사기 · 1주 128,500원 · 257,000원',
+      '체결됐어요 · 삼성전자 2주 매수 · 1주 128,500원 · 257,000원',
     );
     expect(serverMockInvest.cash(DEV_USER.id!)).toBe(243_000);
     expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(0);
@@ -125,7 +125,7 @@ describe('모의투자 화면', () => {
     expect(holdings).toHaveTextContent('수량2주');
     expect(holdings).toHaveTextContent('평균 가격128,500원');
     const trades = screen.getByRole('region', { name: '거래 내역' });
-    expect(await within(trades).findByRole('cell', { name: '사기' })).toBeInTheDocument();
+    expect(await within(trades).findByRole('cell', { name: '매수' })).toBeInTheDocument();
     expect(within(trades).getByRole('cell', { name: '2주' })).toBeInTheDocument();
   });
 
@@ -134,7 +134,7 @@ describe('모의투자 화면', () => {
     funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자', '삼성전자');
-    await user.click(within(form).getByRole('button', { name: '주문 확인' }));
+    await user.click(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ }));
     await user.click(within(form).getByRole('button', { name: '돌아가기' }));
     expect(within(form).queryByRole('group', { name: '주문 확인' })).not.toBeInTheDocument();
     expect(serverMockInvest.trades(DEV_USER.id!)).toHaveLength(0);
@@ -150,33 +150,83 @@ describe('모의투자 화면', () => {
     expect(within(form).getByRole('alert')).toHaveTextContent(
       '가상 현금이 부족해요. 내 자산에서 앰똥깡을 환전해 주세요',
     );
-    expect(within(form).getByRole('button', { name: '주문 확인' })).toBeDisabled();
+    expect(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ })).toBeDisabled();
 
-    await user.click(within(form).getByRole('radio', { name: '팔기' }));
-    expect(within(form).getByRole('alert')).toHaveTextContent('가진 주식이 없어서 팔 수 없어요');
-    expect(within(form).getByRole('button', { name: '주문 확인' })).toBeDisabled();
+    await user.click(within(form).getByRole('radio', { name: '매도' }));
+    expect(within(form).getByRole('alert')).toHaveTextContent(
+      '가진 주식이 없어서 매도할 수 없어요',
+    );
+    expect(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ })).toBeDisabled();
   });
 
-  it('팔기: 판 금액만큼 가상 현금이 늘어요', async () => {
+  it('매도: 판 금액만큼 가상 현금이 늘어요', async () => {
     const user = userEvent.setup();
     funded();
     renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
     const form = await chooseCompany(user, '삼성전자', '삼성전자');
-    await user.click(within(form).getByRole('button', { name: '주문 확인' }));
-    await user.click(within(form).getByRole('button', { name: '사기 확정' }));
+    await user.click(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ }));
+    await user.click(within(form).getByRole('button', { name: '매수 확정' }));
     await screen.findByText(/체결됐어요/);
     await waitFor(() => expect(serverMockInvest.cash(DEV_USER.id!)).toBe(371_500));
 
-    await user.click(within(form).getByRole('radio', { name: '팔기' }));
+    await user.click(within(form).getByRole('radio', { name: '매도' }));
     expect(form).toHaveTextContent('가진 수량 1주');
-    await user.click(within(form).getByRole('button', { name: '주문 확인' }));
-    await user.click(within(form).getByRole('button', { name: '팔기 확정' }));
+    await user.click(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ }));
+    await user.click(within(form).getByRole('button', { name: '매도 확정' }));
     await waitFor(() =>
-      expect(screen.getByText(/체결됐어요/)).toHaveTextContent('삼성전자 1주 팔기'),
+      expect(screen.getByText(/체결됐어요/)).toHaveTextContent('삼성전자 1주 매도'),
     );
     expect(serverMockInvest.cash(DEV_USER.id!)).toBe(500_000);
     expect(serverWallet.get(DEV_USER.id!)?.balance).toBe(0);
     expect(await screen.findByRole('region', { name: '보유 종목 0개' })).toBeInTheDocument();
+  });
+
+  it('보유 종목의 [매도]·[매수] 버튼으로 검색 없이 그 종목 주문 칸이 바로 열려요', async () => {
+    const user = userEvent.setup();
+    funded();
+    renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
+    const form = await chooseCompany(user, '삼성전자', '삼성전자');
+    await user.click(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ }));
+    await user.click(within(form).getByRole('button', { name: '매수 확정' }));
+    await screen.findByText(/체결됐어요/);
+
+    // 주문 칸을 다른 기업으로 바꿔 둬도, 보유 종목의 [매도]를 누르면 삼성전자 매도로 바뀌어요
+    await user.click(within(form).getByRole('button', { name: '기업 바꾸기' }));
+    const holdings = await screen.findByRole('region', { name: '보유 종목 1개' });
+    await user.click(within(holdings).getByRole('button', { name: '삼성전자 매도' }));
+
+    const sellForm = await screen.findByRole('form', { name: '삼성전자 주문' });
+    expect(within(sellForm).getByRole('radio', { name: '매도' })).toBeChecked();
+    expect(sellForm).toHaveTextContent('가진 수량 1주');
+    await user.click(within(sellForm).getByRole('button', { name: /^(매수|매도) 주문$/ }));
+    await user.click(within(sellForm).getByRole('button', { name: '매도 확정' }));
+    await waitFor(() =>
+      expect(screen.getByText(/체결됐어요/)).toHaveTextContent('삼성전자 1주 매도'),
+    );
+    expect(serverMockInvest.cash(DEV_USER.id!)).toBe(500_000);
+  });
+
+  it('내 자산 비중: 가상 현금과 보유 종목이 총 자산에서 차지하는 비율을 보여줘요', async () => {
+    const user = userEvent.setup();
+    funded();
+    renderWithProviders(<App />, { route: '/mock-invest', user: DEV_USER });
+    const alloc = await screen.findByRole('region', { name: '내 자산 비중' });
+    // 매수 전: 전부 가상 현금
+    expect(within(alloc).getByRole('list')).toHaveTextContent('가상 현금500,000원100%');
+
+    const form = await chooseCompany(user, '삼성전자', '삼성전자');
+    await user.click(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ }));
+    await user.click(within(form).getByRole('button', { name: '매수 확정' }));
+    await screen.findByText(/체결됐어요/);
+
+    // 삼성전자 128,500원 + 현금 371,500원 = 500,000원
+    await waitFor(() => expect(alloc).toHaveTextContent('삼성전자128,500원25.7%'));
+    expect(alloc).toHaveTextContent('가상 현금371,500원74.3%');
+    expect(within(alloc).getByRole('img')).toHaveAccessibleName(/삼성전자 25.7%, 가상 현금 74.3%/);
+    expect(within(alloc).getByRole('link', { name: '삼성전자' })).toHaveAttribute(
+      'href',
+      '/companies/005930',
+    );
   });
 
   it('다른 사용자와의 수익률 순위·초기화 버튼은 없어요', async () => {

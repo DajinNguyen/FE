@@ -1,6 +1,6 @@
 /**
  * 모의투자 (지연 시세, 초기화 없음). 금액은 모두 가상 원이에요.
- * 앰똥깡을 가상 현금으로 환전해서(1 ADK = ADK_TO_WON 원) 그 돈으로 사고팔아요.
+ * 앰똥깡을 가상 현금으로 환전해서(1 ADK = ADK_TO_WON 원) 그 돈으로 매수·매도해요.
  * 가상 현금 = 환전한 돈 + 판 돈 − 산 돈
  */
 
@@ -68,7 +68,7 @@ export interface MockTrade {
   price: number;
   /** 체결 금액 = price × quantity (원) */
   amount: number;
-  /** 환전 기능 전 거래만: 빠지거나 돌아온 ADK. 가상 현금으로 사고팔았으면 0 */
+  /** 환전 기능 전 거래만: 빠지거나 돌아온 ADK. 가상 현금으로 매수·매도했으면 0 */
   amount_adk: number;
   /** ISO 시각 */
   created_at: string;
