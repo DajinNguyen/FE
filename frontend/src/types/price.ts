@@ -30,4 +30,6 @@ export interface PriceHistory {
   /** 캔들 길이. 예전 백엔드는 주지 않아요 */
   interval?: PriceInterval;
   points: PricePoint[];
+  /** 전일 종가 (원). 현재가·등락률과 같은 기준이에요. 없을 수 있어요 */
+  previous_close?: number | null;
 }

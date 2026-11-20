@@ -16,6 +16,18 @@ const points = (...closes: number[]) =>
     close,
   }));
 
+describe('오늘 캔들 등락률 기준', () => {
+  it('일 캔들의 마지막은 전일 종가(위쪽 현재가와 같은 기준)로, 없으면 앞 캔들 종가로 계산해요', () => {
+    const { rerender } = render(
+      <PriceChart points={points(100, 110)} interval="day" previousClose={105} />,
+    );
+    // 110 vs 전일 종가 105 → +4.76% (앞 캔들 종가 100 기준이면 +10.00%)
+    expect(screen.getByTestId('price-info')).toHaveTextContent('종가 110원 (+4.76%)');
+    rerender(<PriceChart points={points(100, 110)} interval="day" />);
+    expect(screen.getByTestId('price-info')).toHaveTextContent('종가 110원 (+10.00%)');
+  });
+});
+
 describe('주가 흐름 그래프 색', () => {
   it('시작보다 오르면 빨강, 내리면 파랑, 같으면 회색이에요', () => {
     expect(getTrend(100, 120)).toBe('rise');

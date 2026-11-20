@@ -35,6 +35,11 @@ interface PriceChartProps {
    * 오른쪽으로 끌면 그 앞의 과거 캔들이 나와요.
    */
   windowSize?: number;
+  /**
+   * 전일 종가. 일 캔들의 마지막(오늘) 등락률을 위쪽 현재가와 같은 기준으로 보여줘요.
+   * 없으면 바로 앞 캔들의 종가를 기준으로 해요.
+   */
+  previousClose?: number | null;
 }
 
 /** 가격 칸 위·아래 여백: 최고가·최저가 표시가 들어가는 자리 (px) */
@@ -171,6 +176,7 @@ export function PriceChart({
   points: allPoints,
   height = 220,
   interval: intervalProp,
+  previousClose,
   windowSize,
   action,
 }: PriceChartProps) {
@@ -365,7 +371,11 @@ export function PriceChart({
       {shownPoint && (
         <InfoBar
           point={shownPoint}
-          prevClose={allPoints[start + shown - 1]?.close}
+          prevClose={
+            interval === 'day' && previousClose && start + shown === allPoints.length - 1
+              ? previousClose
+              : allPoints[start + shown - 1]?.close
+          }
           averages={averages.map((a) => ({ window: a.window, value: a.values[shown] }))}
           unit={unit}
         />

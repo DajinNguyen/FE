@@ -64,6 +64,7 @@ export function PriceTrend({ stockCode }: { stockCode: string }) {
             points={points}
             height={220}
             interval={data?.interval ?? unit}
+            previousClose={data?.previous_close}
             action={
               <button
                 type="button"
