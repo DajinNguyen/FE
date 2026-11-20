@@ -10,7 +10,7 @@ const dateText = (iso: string) => {
   return `${d.getMonth() + 1}월 ${d.getDate()}일 ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-/** 거래 내역: 날짜, 종목, 사기/팔기, 수량, 가격 (최신 순) */
+/** 거래 내역: 날짜, 종목, 매수/매도, 수량, 가격 (최신 순) */
 export function MockTrades() {
   const { data, isPending, isError, error, refetch } = useMockTrades();
   return (
@@ -43,7 +43,7 @@ export function MockTrades() {
                 <td>{t.name}</td>
                 <td>
                   <span className={t.side === 'buy' ? styles.buyTag : styles.sellTag}>
-                    {t.side === 'buy' ? '사기' : '팔기'}
+                    {t.side === 'buy' ? '매수' : '매도'}
                   </span>
                 </td>
                 <td>{t.quantity.toLocaleString('ko-KR')}주</td>

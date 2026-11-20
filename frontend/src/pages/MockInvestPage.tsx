@@ -1,14 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '../components/Button';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
 import { ADK_NOTICE } from '../config/currency';
 import { MOCK_INVEST_NOTICE, MOCK_INVEST_SHARED_ADK_TEXT } from '../config/mockInvest';
 import { useChatContext } from '../features/chat/chatContextStore';
+import { MockAllocation } from '../features/mock-invest/MockAllocation';
 import { MockAssets } from '../features/mock-invest/MockAssets';
 import { MockHoldings } from '../features/mock-invest/MockHoldings';
 import { MockOrderPanel } from '../features/mock-invest/MockOrderPanel';
 import { MockTrades } from '../features/mock-invest/MockTrades';
+import type { OrderRequest } from '../features/mock-invest/orderRequest';
 import { useMockPortfolio } from '../hooks/useMockInvest';
 import { useRequireLogin } from '../hooks/useRequireLogin';
 import styles from '../features/mock-invest/MockInvest.module.css';
@@ -22,6 +24,7 @@ export function MockInvestPage() {
   const { data, isLoggedIn, isPending, isError, error, refetch } = useMockPortfolio();
   const requireLogin = useRequireLogin();
   useChatContext({ page: 'other' });
+  const [request, setRequest] = useState<OrderRequest | null>(null);
 
   // 비로그인으로 들어오면 한 번 로그인 시트를 띄워요.
   const asked = useRef(false);
@@ -56,12 +59,30 @@ export function MockInvestPage() {
         <div className={styles.skeleton} aria-hidden="true" />
       ) : (
         <div className={styles.layout}>
-          <div className={styles.column}>
+          <div className={styles.areaAssets}>
             <MockAssets portfolio={data} />
-            <MockOrderPanel portfolio={data} />
           </div>
-          <div className={styles.column}>
-            <MockHoldings holdings={data.holdings} />
+          <div className={styles.areaOrder}>
+            <MockOrderPanel portfolio={data} request={request} />
+          </div>
+          <div className={styles.areaAllocation}>
+            <MockAllocation portfolio={data} />
+          </div>
+          <div className={styles.areaHoldings}>
+            <MockHoldings
+              holdings={data.holdings}
+              onTrade={(h, side) =>
+                setRequest((prev) => ({
+                  stock_code: h.stock_code,
+                  name: h.name,
+                  side,
+                  price: h.current_price,
+                  nonce: (prev?.nonce ?? 0) + 1,
+                }))
+              }
+            />
+          </div>
+          <div className={styles.areaTrades}>
             <MockTrades />
           </div>
         </div>

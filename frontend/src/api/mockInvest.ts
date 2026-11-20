@@ -17,7 +17,7 @@ export function getMockTrades() {
   return request<MockTrade[]>({ path: '/api/me/mock-invest/trades' });
 }
 
-/** 사기·팔기. 체결 가격은 서버가 지연 시세로 정하고, 가상 현금으로 계산해요. */
+/** 매수·매도. 체결 가격은 서버가 지연 시세로 정하고, 가상 현금으로 계산해요. */
 export function postMockOrder(order: MockOrderRequest) {
   return request<MockOrderResult>({
     path: '/api/me/mock-invest/orders',

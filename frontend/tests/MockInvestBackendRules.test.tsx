@@ -19,8 +19,8 @@ async function chooseCompany(user: User, name: string) {
 }
 
 async function buy(user: User, form: HTMLElement) {
-  await user.click(within(form).getByRole('button', { name: '주문 확인' }));
-  await user.click(within(form).getByRole('button', { name: '사기 확정' }));
+  await user.click(within(form).getByRole('button', { name: /^(매수|매도) 주문$/ }));
+  await user.click(within(form).getByRole('button', { name: '매수 확정' }));
 }
 
 const funded = () => serverMockInvest.setCash(DEV_USER.id!, 500_000);
@@ -46,7 +46,7 @@ describe('모의투자 백엔드 규칙 반영', () => {
         .getByText(/모의투자 · 30 ADK를 가상 300,000원으로 환전/)
         .closest('li'),
     ).toHaveTextContent('−30 ADK');
-    expect(within(sheet).queryByText(/삼성전자 1주 사기/)).not.toBeInTheDocument();
+    expect(within(sheet).queryByText(/삼성전자 1주 매수/)).not.toBeInTheDocument();
   });
 
   it('주문 횟수 제한(429)은 몇 초 뒤에 다시 하라고 알려요', async () => {
