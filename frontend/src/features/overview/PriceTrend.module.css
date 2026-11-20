@@ -2,11 +2,29 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
+  padding-bottom: var(--sp-6);
 }
 
 .title {
   font-size: var(--fs-lg);
   font-weight: var(--fw-semibold);
+}
+
+/* 그래프 오른쪽 위 모서리의 차트 크게 보기 버튼 */
+.expand {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-2);
+}
+
+.expand:hover {
+  background: var(--surface);
+  color: var(--text-1);
 }
 
 .summary {
@@ -33,6 +51,11 @@
 
 .chartBox {
   min-height: 300px;
+}
+
+/* 그래프와 캔들 단위 버튼 사이, 버튼 아래에 숨 쉴 자리를 둬요 */
+.units {
+  margin-top: var(--sp-2);
 }
 
 .placeholder {

@@ -8,6 +8,7 @@ import type {
   Financials,
   PerformanceDetail,
   PriceHistory,
+  PriceInterval,
   PricePeriod,
 } from '../types';
 
@@ -57,9 +58,11 @@ export function getPerformanceDetail(stockCode: string) {
   });
 }
 
-export function getPriceHistory(stockCode: string, period: PricePeriod) {
+/** interval 을 빼면 백엔드가 기간에 맞춰 정해요 (1d→1분, 5d→10분, 1m~6m→일, 1y·5y→주, 전체→월) */
+export function getPriceHistory(stockCode: string, period: PricePeriod, interval?: PriceInterval) {
+  const query = new URLSearchParams({ period, ...(interval ? { interval } : {}) });
   return request<PriceHistory>({
-    path: `/api/companies/${stockCode}/prices?period=${period}`,
+    path: `/api/companies/${stockCode}/prices?${query}`,
   });
 }
 

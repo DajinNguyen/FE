@@ -1,31 +1,35 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { DataAsOf } from '../../components/DataAsOf';
 import { ErrorState } from '../../components/ErrorState';
+import { Icon } from '../../components/Icon';
 import { PriceChange } from '../../components/PriceChange';
 import { PriceChart } from '../../components/PriceChart';
 import { SegmentedControl } from '../../components/SegmentedControl';
+import { CANDLE_UNITS, type CandleUnit } from '../../config/priceChart';
 import { usePriceHistory } from '../../hooks/usePriceHistory';
-import type { PricePeriod } from '../../types';
 import { formatPrice } from '../../utils/format';
 import { getPeriodRate } from '../../utils/trend';
+import { PriceChartFullscreen } from './PriceChartFullscreen';
 import styles from './PriceTrend.module.css';
 
-const periodOptions = [
-  { value: '1m', label: '1달' },
-  { value: '3m', label: '3달' },
-  { value: '6m', label: '6달' },
-  { value: '1y', label: '1년' },
-] as const;
-
-/** 개요 오른쪽 "주가 흐름": 현재가, 기간 등락률, 그래프, 기간 버튼, 기준 시각 */
+/**
+ * 개요 오른쪽 "주가 흐름": 현재가, 기간 등락률, 그래프, 캔들 단위(일·주·월·년) 버튼, 기준 시각.
+ * 그래프 오른쪽 위 버튼으로 차트를 크게 볼 수 있어요 (거기서는 1일~전체 기간을 골라요).
+ */
 export function PriceTrend({ stockCode }: { stockCode: string }) {
-  const [period, setPeriod] = useState<PricePeriod>('3m');
-  const { data, isPending, isError, error, refetch } = usePriceHistory(stockCode, period);
+  const [unit, setUnit] = useState<CandleUnit>('day');
+  const [fullscreen, setFullscreen] = useState(false);
+  const option = CANDLE_UNITS.find((o) => o.value === unit)!;
+  const { data, isPending, isError, error, refetch } = usePriceHistory(
+    stockCode,
+    option.period,
+    unit,
+  );
+  const closeFullscreen = useCallback(() => setFullscreen(false), []);
 
   const points = data?.points ?? [];
   const last = points.at(-1);
   const periodRate = getPeriodRate(points);
-  const periodLabel = periodOptions.find((o) => o.value === period)?.label;
 
   return (
     <section className={styles.card} aria-labelledby="price-trend-title">
@@ -38,7 +42,7 @@ export function PriceTrend({ stockCode }: { stockCode: string }) {
           <p className={styles.price}>{formatPrice(last.close)}</p>
           {periodRate !== undefined && (
             <p className={styles.periodChange}>
-              {periodLabel} 전보다 <PriceChange rate={periodRate} size="md" />
+              {option.since} <PriceChange rate={periodRate} size="md" />
             </p>
           )}
         </div>
@@ -55,11 +59,40 @@ export function PriceTrend({ stockCode }: { stockCode: string }) {
           />
         )}
         {data && points.length === 0 && <p className={styles.empty}>주가 자료가 아직 없어요.</p>}
-        {points.length > 0 && <PriceChart points={points} height={220} />}
+        {points.length > 0 && (
+          <PriceChart
+            points={points}
+            height={220}
+            interval={data?.interval ?? unit}
+            action={
+              <button
+                type="button"
+                className={styles.expand}
+                onClick={() => setFullscreen(true)}
+                aria-label="차트 크게 보기"
+                title="차트 크게 보기"
+              >
+                <Icon name="expand" size={16} />
+              </button>
+            }
+          />
+        )}
       </div>
 
-      <SegmentedControl label="기간" options={periodOptions} value={period} onChange={setPeriod} />
-      {last && <DataAsOf value={last.date} prefix="종가" className={styles.asOf} />}
+      <div className={styles.units}>
+        <SegmentedControl
+          label="캔들 단위"
+          options={CANDLE_UNITS}
+          value={unit}
+          onChange={setUnit}
+        />
+      </div>
+      {/* 주·월·년 캔들의 날짜는 그 기간의 첫날이라, 기준일은 일 캔들에서만 보여 줘요 */}
+      {last && unit === 'day' && (
+        <DataAsOf value={last.date} prefix="종가" className={styles.asOf} />
+      )}
+
+      {fullscreen && <PriceChartFullscreen stockCode={stockCode} onClose={closeFullscreen} />}
     </section>
   );
 }
