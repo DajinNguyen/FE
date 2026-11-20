@@ -21,6 +21,15 @@ export interface IndustrySummary {
   as_of: string;
 }
 
+/** GET /api/industries 응답 항목: 전체 산업(키워드) 목록 */
+export interface IndustryListItem {
+  industry_id: string;
+  name: string;
+  icon_key: string;
+  /** 이 산업에 속한 기업 수 */
+  company_count: number;
+}
+
 /** 산업 페이지 "관련 기업" 한 줄 (시가총액 큰 순) */
 export interface IndustryCompany {
   stock_code: string;

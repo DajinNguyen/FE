@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage';
 import { LegalPage } from './pages/LegalPage';
 import { MockInvestPage } from './pages/MockInvestPage';
 import { MyPage } from './pages/MyPage';
+import { IndustryListPage } from './pages/IndustryListPage';
 import { IndustryPage } from './pages/IndustryPage';
 import { TermCardsPage } from './pages/TermCardsPage';
 import { TradingRankingPage } from './pages/TradingRankingPage';
@@ -18,6 +19,7 @@ export function App() {
         <Route path="companies/:stockCode" element={<CompanyPage />} />
         {/* 커뮤니티는 기업 화면 탭 안에서 바로 댓글을 써요. 예전 글쓰기·글 보기 주소는 탭으로 보내요. */}
         <Route path="companies/:stockCode/community/*" element={<CommunityRedirect />} />
+        <Route path="industries" element={<IndustryListPage />} />
         <Route path="industries/:industryId" element={<IndustryPage />} />
         <Route path="rankings/trading" element={<TradingRankingPage />} />
         <Route path="terms" element={<TermCardsPage />} />

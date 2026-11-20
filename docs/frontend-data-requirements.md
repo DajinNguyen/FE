@@ -1040,3 +1040,27 @@ D-0 결정 (2026-11-18): **1안 ADK 단일 · 지연 시세 · 초기화 없음 
 - 단위: 주식 수(주). 1년(주 단위 캔들)은 그 주의 거래량 합이에요.
 - 없으면 `null` 이나 칸을 빼도 돼요. 프론트는 거래량 막대를 숨겨요.
 - (선택) 이동평균선이 기간 맨 앞부터 이어지게 하려면 앞쪽 캔들이 더 필요해요. 지금은 기간의 2배 이상 캔들이 있을 때만 그 선을 그려요 (예: 60일선은 6달부터).
+
+## 21. 전체 산업 목록 `GET /api/industries` (2026-11-19 추가, 백엔드 필요)
+
+메인 "관심이 몰리는 산업 TOP 3" 옆 **전체 산업 보기** → `/industries` 화면에서 산업(키워드) 전체를 보여줘요. 누르면 기존 산업 화면(`/industries/{industry_id}`)으로 가요.
+
+`/api/industries/hot`은 관심도를 집계하는 산업(지금 10개)만 줘서, 나머지 20개를 볼 수 없어요. 그래서 전체 목록 API가 필요해요.
+
+```json
+[
+  { "industry_id": "ai", "name": "AI", "icon_key": "ai", "company_count": 20 },
+  { "industry_id": "semiconductor", "name": "반도체", "icon_key": "semiconductor", "company_count": 164 }
+]
+```
+
+| 칸 | 설명 |
+| --- | --- |
+| `industry_id` | 산업 화면 주소에 쓰는 id |
+| `name` | 화면에 보이는 이름 |
+| `icon_key` | 아이콘 이름 (화면 매핑: `src/config/industryIcons.ts`, 모르는 값이면 공장 아이콘) |
+| `company_count` | 이 산업에 속한 기업 수 (`industries.json`의 `companies` 길이) |
+
+- 순서: 서버가 준 순서 그대로 보여줘요 (`industries.json` 순서면 돼요).
+- 로그인 필요 없음. 자주 바뀌지 않아서 프론트는 30분 동안 다시 묻지 않아요.
+- API가 없으면(404) 화면에 "산업 목록을 불러오지 못했어요"와 다시 시도 버튼이 보여요.

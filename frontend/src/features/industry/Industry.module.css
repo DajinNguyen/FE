@@ -27,7 +27,8 @@
   font-weight: var(--fw-semibold);
 }
 
-.criteriaButton {
+.criteriaButton,
+.allLink {
   color: var(--brand);
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);

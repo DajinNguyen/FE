@@ -64,6 +64,9 @@ export function HotIndustries() {
           >
             기준 보기
           </button>
+          <Link to="/industries" className={styles.allLink}>
+            전체 산업 보기
+          </Link>
         </div>
         <SegmentedControl
           options={periodOptions}
