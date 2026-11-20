@@ -39,10 +39,14 @@ export function useWallet() {
 
   /** 낱말퀴즈를 다 풀었을 때 (로그인 사용자만). 실패하면 null */
   const completePuzzle = useCallback(
-    async (puzzleId: string, usedReveal: boolean): Promise<PuzzleCompletionResult | null> => {
+    async (
+      puzzleId: string,
+      usedReveal: boolean,
+      entries: Record<string, string>,
+    ): Promise<PuzzleCompletionResult | null> => {
       if (!isLoggedIn) return null;
       try {
-        const result = await postPuzzleCompletion(puzzleId, usedReveal);
+        const result = await postPuzzleCompletion(puzzleId, usedReveal, entries);
         queryClient.setQueryData<Wallet>(key, (old) =>
           old
             ? {

@@ -29,6 +29,8 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
   // 이미 끝난 판을 다시 열었을 때는 세지 않아요. (이번에 다 푼 순간에만)
   const finishedAtOpen = useRef(finished);
   const usedReveal = state.revealed || state.revealedKeys.length > 0;
+  const entriesRef = useRef(state.entries);
+  entriesRef.current = state.entries;
   // 다 푼 순간 한 번만 알려요. ([다시 하기] 후 다시 다 풀면 또 알려요)
   const reported = useRef(false);
   useEffect(() => {
@@ -44,7 +46,7 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
       return;
     }
     // 정답 보기를 쓴 퀴즈도 서버에 알리고(개수에는 안 들어가요) 안내만 바꿔요.
-    void completePuzzle(puzzle.id, usedReveal).then((result) =>
+    void completePuzzle(puzzle.id, usedReveal, entriesRef.current).then((result) =>
       setReward(
         usedReveal
           ? { kind: 'revealed' }
@@ -80,14 +82,14 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
             </Button>
             <Button
               variant="secondary"
-              onClick={() => dispatch({ type: 'hint' })}
+              onClick={() => void game.requestHint()}
               disabled={finished || hintLevel >= 2}
             >
               {hintLevel === 0 ? '힌트' : hintLevel === 1 ? '한 글자 공개' : '힌트 다 씀'}
             </Button>
             <Button
               variant="secondary"
-              onClick={() => dispatch({ type: 'reveal' })}
+              onClick={() => void game.requestReveal()}
               disabled={finished}
             >
               정답 보기
@@ -96,13 +98,13 @@ export function CrosswordGame({ puzzle }: { puzzle: CrosswordPuzzle }) {
               다시 하기
             </Button>
           </div>
-          {!finished && game.hint && (
+          {!finished && game.hintText && (
             <p className={styles.toolNote} aria-live="polite">
               {word.word.direction === 'across' ? '가로' : '세로'} {word.word.number}번 힌트{' '}
-              <strong className={styles.hintText}>{game.hint}</strong>
+              <strong className={styles.hintText}>{game.hintText}</strong>
             </p>
           )}
-          {!finished && state.checked && (
+          {!finished && state.checked && state.verdict && (
             <p className={styles.toolNote} role="status">
               {game.wrong.size === 0
                 ? '지금까지 넣은 글자는 모두 맞아요'

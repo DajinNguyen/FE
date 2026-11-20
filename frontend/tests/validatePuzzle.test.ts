@@ -20,6 +20,7 @@ const tiny = (): CrosswordPuzzle => ({
       row: 0,
       col: 0,
       answer: '주가',
+      answer_length: 2,
       term_id: 'stock_price',
       clue: '',
     },
@@ -29,6 +30,7 @@ const tiny = (): CrosswordPuzzle => ({
       row: 0,
       col: 0,
       answer: '주주',
+      answer_length: 2,
       term_id: 'shareholder',
       clue: '',
     },
@@ -73,6 +75,7 @@ describe('validatePuzzle', () => {
   it('격자 밖으로 나가면 잡아내요', () => {
     const puzzle = tiny();
     puzzle.words[0].answer = '주가지수';
+    puzzle.words[0].answer_length = 4;
     expect(validatePuzzle(puzzle).errors.join()).toMatch(/격자 밖/);
   });
 
@@ -97,6 +100,7 @@ describe('validatePuzzle', () => {
       row: 0,
       col: 1,
       answer: '가지',
+      answer_length: 2,
       term_id: 'x',
       clue: '',
     });
