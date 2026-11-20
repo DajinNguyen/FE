@@ -25,25 +25,31 @@ export function validatePuzzle(puzzle: CrosswordPuzzle): PuzzleCheck {
   const starts = new Set<string>();
 
   puzzle.words.forEach((word, index) => {
-    const label = `${word.number}번 ${word.direction === 'across' ? '가로' : '세로'} "${word.answer}"`;
-    if (!HANGUL_SYLLABLE.test(word.answer)) errors.push(`${label}: 한글 음절만 쓸 수 있어요`);
+    // 정답은 서버만 알아서 화면에 오는 퍼즐에는 없어요. 정답이 있을 때(퍼즐 데이터를 직접 검사할 때)만 글자를 봐요.
+    const label = `${word.number}번 ${word.direction === 'across' ? '가로' : '세로'} "${word.answer ?? `${word.answer_length}글자`}"`;
+    if (word.answer !== undefined && !HANGUL_SYLLABLE.test(word.answer))
+      errors.push(`${label}: 한글 음절만 쓸 수 있어요`);
+    if (word.answer !== undefined && [...word.answer].length !== word.answer_length)
+      errors.push(`${label}: 칸 수(answer_length)가 정답 글자 수와 달라요`);
 
     const startKey = `${word.direction}:${cellKey(word.row, word.col)}`;
     if (starts.has(startKey)) errors.push(`${label}: 같은 칸·방향에서 시작하는 단어가 또 있어요`);
     starts.add(startKey);
 
-    const chars = [...word.answer];
+    const chars = word.answer === undefined ? null : [...word.answer];
     wordCells(word).forEach((key, i) => {
       const [r, c] = key.split(',').map(Number);
       if (r < 0 || c < 0 || r >= rows || c >= cols) {
         errors.push(`${label}: ${i + 1}번째 글자가 격자 밖이에요`);
         return;
       }
-      const prev = letters.get(key);
-      if (prev !== undefined && prev !== chars[i]) {
-        errors.push(`${label}: (${r},${c}) 칸 글자가 "${prev}"와 달라요`);
+      if (chars) {
+        const prev = letters.get(key);
+        if (prev !== undefined && prev !== chars[i]) {
+          errors.push(`${label}: (${r},${c}) 칸 글자가 "${prev}"와 달라요`);
+        }
+        letters.set(key, chars[i]);
       }
-      letters.set(key, chars[i]);
       owners.set(key, [...(owners.get(key) ?? []), index]);
     });
   });

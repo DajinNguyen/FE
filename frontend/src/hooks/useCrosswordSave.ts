@@ -10,21 +10,27 @@ export interface CrosswordSave {
   /** 칸("행,열")별 입력 글자 */
   entries: Record<string, string>;
   hint_levels: Record<number, number>;
+  /** 단어별 초성 힌트 글자 (서버가 준 것을 이어 풀 때 다시 보여주려고 남겨요) */
+  hint_texts: Record<number, string>;
   hints_used: number;
   /** 지금 판에서 흐른 시간 */
   elapsed_ms: number;
   /** [정답 보기]를 썼는지, 그때 정답으로 채운 칸 */
   revealed: boolean;
   revealed_keys: string[];
+  /** 서버가 "다 맞았다"고 확인했는지 (다시 열었을 때 이미 푼 판으로 보여줘요) */
+  completed: boolean;
 }
 
 export const emptySave: CrosswordSave = {
   entries: {},
   hint_levels: {},
+  hint_texts: {},
   hints_used: 0,
   elapsed_ms: 0,
   revealed: false,
   revealed_keys: [],
+  completed: false,
 };
 
 const crosswordStores = createScopedStore<Record<string, CrosswordSave>>({

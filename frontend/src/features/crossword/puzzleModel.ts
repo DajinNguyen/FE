@@ -16,8 +16,6 @@ export interface CellInfo {
   key: string;
   row: number;
   col: number;
-  /** 정답 글자 */
-  answer: string;
   /** 단어가 시작하는 칸이면 번호 */
   number?: number;
   across?: number;
@@ -26,8 +24,10 @@ export interface CellInfo {
 
 export const cellKey = (row: number, col: number) => `${row},${col}`;
 
-export function wordCells(word: Pick<CrosswordWord, 'row' | 'col' | 'direction' | 'answer'>) {
-  return [...word.answer].map((_, i) =>
+export function wordCells(
+  word: Pick<CrosswordWord, 'row' | 'col' | 'direction' | 'answer_length'>,
+) {
+  return Array.from({ length: word.answer_length }, (_, i) =>
     word.direction === 'across' ? cellKey(word.row, word.col + i) : cellKey(word.row + i, word.col),
   );
 }
@@ -44,10 +44,9 @@ export function buildPuzzleModel(puzzle: CrosswordPuzzle): PuzzleModel {
   const cells = new Map<string, CellInfo>();
   const words = puzzle.words.map((word, index) => ({ index, word, cells: wordCells(word) }));
   for (const ref of words) {
-    const chars = [...ref.word.answer];
     ref.cells.forEach((key, i) => {
       const [row, col] = key.split(',').map(Number);
-      const cell = cells.get(key) ?? { key, row, col, answer: chars[i] };
+      const cell = cells.get(key) ?? { key, row, col };
       cell[ref.word.direction] = ref.index;
       if (i === 0) cell.number = ref.word.number;
       cells.set(key, cell);

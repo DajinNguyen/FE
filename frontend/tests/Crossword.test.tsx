@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router';
 import { describe, expect, it } from 'vitest';
@@ -38,7 +38,10 @@ describe('가로세로 낱말퀴즈', () => {
     expect(cell(/^가로 3번, 2번째 칸/)).toHaveTextContent('가');
 
     await typeInGrid(user, '지수{Enter}');
-    const first = cell(/^가로 3번, 1번째 칸, 세로 3번, 1번째 칸, 입력: 주, 맞음$/);
+    // 정답은 서버만 알아서, 채점 결과는 서버 응답을 받은 뒤에 칠해져요.
+    const first = await screen.findByRole('button', {
+      name: /^가로 3번, 1번째 칸, 세로 3번, 1번째 칸, 입력: 주, 맞음$/,
+    });
     expect(first).toHaveAttribute('data-mark', 'correct');
     expect(cell(/^가로 3번, 4번째 칸/)).toHaveAttribute('data-mark', 'correct');
     // 빈 칸이 있는 다음 단어(가로 5번)로 넘어가요.
@@ -53,11 +56,13 @@ describe('가로세로 낱말퀴즈', () => {
 
     await user.click(within(across).getByRole('button', { name: /^7/ }));
     await typeInGrid(user, '회계년도{Enter}');
-    expect(cell(/^가로 7번, 3번째 칸/)).toHaveAttribute('data-mark', 'wrong');
+    await waitFor(() => expect(cell(/^가로 7번, 3번째 칸/)).toHaveAttribute('data-mark', 'wrong'));
 
     await user.click(within(across).getByRole('button', { name: /^7/ }));
     await typeInGrid(user, '회계연도{Enter}');
-    expect(cell(/^가로 7번, 3번째 칸/)).toHaveAttribute('data-mark', 'correct');
+    await waitFor(() =>
+      expect(cell(/^가로 7번, 3번째 칸/)).toHaveAttribute('data-mark', 'correct'),
+    );
   });
 
   it('글자 수가 다르면 "N글자 단어예요"라고 알려주고 칸을 채우지 않아요', async () => {
@@ -124,7 +129,7 @@ describe('가로세로 낱말퀴즈', () => {
 
     await user.click(screen.getByRole('button', { name: '정답 보기' }));
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
-    expect(screen.getByText('정답을 채웠어요')).toBeInTheDocument();
+    expect(await screen.findByText('정답을 채웠어요')).toBeInTheDocument();
     expect(cell(/^가로 3번, 4번째 칸/)).toHaveAttribute('data-mark', 'correct');
     expect(cell(/^가로 7번, 1번째 칸, 세로 3번, 4번째 칸, 입력: 회/)).toHaveAttribute(
       'data-mark',

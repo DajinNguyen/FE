@@ -108,6 +108,21 @@ const routes: [method: string, pattern: RegExp, handler: Handler][] = [
   ['GET', /^\/api\/terms$/, async () => server.getTerms()],
   ['GET', /^\/api\/learn\/crosswords$/, async () => server.getCrosswordPuzzles()],
   ['GET', /^\/api\/learn\/crosswords\/([\w-]+)$/, async ([, id]) => server.getCrosswordPuzzle(id)],
+  [
+    'POST',
+    /^\/api\/learn\/crosswords\/([\w-]+)\/check$/,
+    async ([, id], _, body) => server.checkCrossword(id, body),
+  ],
+  [
+    'POST',
+    /^\/api\/learn\/crosswords\/([\w-]+)\/hint$/,
+    async ([, id], _, body) => server.hintCrossword(id, body),
+  ],
+  [
+    'POST',
+    /^\/api\/learn\/crosswords\/([\w-]+)\/reveal$/,
+    async ([, id]) => server.revealCrossword(id),
+  ],
   ['GET', /^\/api\/home$/, async () => server.getHomeDashboard()],
   ['GET', /^\/api\/auth\/me$/, async () => server.getMe()],
   ['PATCH', /^\/api\/auth\/me$/, async (_, __, body) => me.updateProfile(body)],

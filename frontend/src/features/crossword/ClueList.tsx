@@ -15,7 +15,11 @@ interface ClueListProps {
 /** 가로·세로 열쇠 목록. 누르면 그 단어를 골라요. 맞힌 단어는 체크, 틀린 단어는 "틀림". */
 export function ClueList({ model, state, word, dispatch, onPicked }: ClueListProps) {
   const marks = cellMarks(model, state);
-  const judged = new Set(state.judged);
+  // 서버가 채점한(다 채워서 맞고 틀림을 알려 준) 단어만 체크·"틀림"을 보여요
+  const judged = new Set([
+    ...(state.verdict?.correct_words ?? []),
+    ...(state.verdict?.wrong_words ?? []),
+  ]);
   return (
     <div className={styles.clues}>
       {(['across', 'down'] as const).map((direction) => (

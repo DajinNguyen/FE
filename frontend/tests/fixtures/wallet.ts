@@ -6,6 +6,7 @@ import { ApiError } from '../../src/api/errors';
 import { ADK_COST, PUZZLE_REWARD, SIGNUP_BONUS } from '../../src/config/currency';
 import type { PuzzleCompletionResult, Wallet, WalletHistoryItem } from '../../src/types';
 import { localDate } from '../../src/utils/date';
+import { isCrosswordSolved, revealedCrosswords } from './mockServer';
 import { getSessionUser } from './session';
 
 interface StoredWallet {
@@ -64,15 +65,22 @@ export async function getWallet(): Promise<Wallet> {
   return toWallet(walletOf(viewer()));
 }
 
-/** 정답 보기를 쓴 퀴즈·오늘 이미 센 퀴즈·하루 한도 이후는 세지 않아요. 3개째에 +20 ADK */
+/**
+ * 서버처럼: 마지막으로 채운 칸이 정답과 모두 같고, 정답 보기를 쓰지 않았고(서버가 기록), 오늘 이미 센 퀴즈·하루 한도
+ * 이후가 아니어야 세요. 3개째에 +20 ADK
+ */
 export async function completePuzzle(body: {
   puzzle_id: string;
   used_reveal: boolean;
+  entries?: Record<string, string>;
 }): Promise<PuzzleCompletionResult> {
   const w = walletOf(viewer());
   let rewarded = false;
   const counts =
     !body.used_reveal &&
+    !revealedCrosswords.has(body.puzzle_id) &&
+    body.entries !== undefined &&
+    isCrosswordSolved(body.puzzle_id, body.entries) &&
     !w.countedToday.includes(body.puzzle_id) &&
     w.rewardCount < PUZZLE_REWARD.dailyLimit;
   if (counts) {
@@ -141,5 +149,6 @@ export const serverWallet = {
 
 export function resetWalletStore() {
   wallets = new Map();
+  revealedCrosswords.clear();
   seq = 0;
 }

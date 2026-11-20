@@ -1,5 +1,4 @@
-import type { CrosswordDirection } from '../../types';
-import { toChoseong } from './choseong';
+import type { CrosswordCheckResult, CrosswordDirection } from '../../types';
 import { sortedWords, wordAt, type PuzzleModel, type WordRef } from './puzzleModel';
 
 /** 퍼즐 게임 상태 (화면과 분리된 순수 함수). useCrossword 훅이 이걸로 상태를 바꿔요. */
@@ -11,6 +10,8 @@ export interface CrosswordState {
   checked: boolean;
   /** 단어(words 위치)별 힌트 단계: 1 초성, 2 한 글자 공개 */
   hintLevels: Record<number, number>;
+  /** 단어별 초성 힌트 글자 (서버가 줬어요) */
+  hintTexts: Record<number, string>;
   hintsUsed: number;
   /** [정답 보기]를 썼는지 */
   revealed: boolean;
@@ -18,8 +19,18 @@ export interface CrosswordState {
   revealedKeys: string[];
   /** 입력창 안내 (예: "4글자 단어예요") */
   message: string | null;
-  /** 다 입력해서 채점한 단어(words 위치). 맞으면 초록, 틀리면 빨강으로 칸을 칠해요. */
-  judged: number[];
+  /**
+   * 서버가 채점한 마지막 결과와, 그때의 칸. 정답은 서버만 알아서 채점은 서버에 부탁해요.
+   * 그 뒤에 바뀐 칸은 아직 채점 전이라 색을 칠하지 않아요.
+   */
+  verdict: CrosswordCheckResult | null;
+  verdictEntries: Record<string, string>;
+  /** 이 숫자가 올라갈 때마다 서버에 채점을 부탁해요 (단어를 채우거나 [확인]을 눌렀을 때) */
+  requestId: number;
+  /** 받은 채점 결과의 요청 번호 (늦게 도착한 옛 결과는 버려요) */
+  verdictId: number;
+  /** 서버가 "다 맞았다"고 확인했는지 */
+  complete: boolean;
 }
 
 export type CrosswordAction =
@@ -29,10 +40,18 @@ export type CrosswordAction =
   | { type: 'nextWord'; step: 1 | -1 }
   | { type: 'fill'; text: string }
   | { type: 'check' }
-  | { type: 'hint' }
-  | { type: 'reveal' }
   | { type: 'restart' }
-  | { type: 'clearMessage' };
+  | { type: 'clearMessage' }
+  // 서버에서 돌아온 결과
+  | {
+      type: 'verdict';
+      requestId: number;
+      result: CrosswordCheckResult;
+      entries: Record<string, string>;
+    }
+  | { type: 'hintResult'; index: number; level: 1 | 2; choseong: string; firstChar?: string }
+  | { type: 'revealResult'; answers: Record<string, string> }
+  | { type: 'requestFailed' };
 
 /** 열쇠 순서: 가로 번호 순 → 세로 번호 순 */
 export const clueOrder = (model: PuzzleModel) => [
@@ -43,7 +62,16 @@ export const clueOrder = (model: PuzzleModel) => [
 export function initialState(
   model: PuzzleModel,
   saved?: Partial<
-    Pick<CrosswordState, 'entries' | 'hintLevels' | 'hintsUsed' | 'revealed' | 'revealedKeys'>
+    Pick<
+      CrosswordState,
+      | 'entries'
+      | 'hintLevels'
+      | 'hintTexts'
+      | 'hintsUsed'
+      | 'revealed'
+      | 'revealedKeys'
+      | 'complete'
+    >
   >,
 ): CrosswordState {
   const first = clueOrder(model)[0];
@@ -53,14 +81,17 @@ export function initialState(
     selected: { key: first.cells[0], direction: first.word.direction },
     checked: false,
     hintLevels: saved?.hintLevels ?? {},
+    hintTexts: saved?.hintTexts ?? {},
     hintsUsed: saved?.hintsUsed ?? 0,
     revealed: saved?.revealed ?? false,
     revealedKeys: saved?.revealedKeys ?? [],
     message: null,
-    // 이어 풀 때는 다 채워진 단어를 채점한 것으로 봐요.
-    judged: model.words
-      .filter((ref) => ref.cells.every((key) => entries[key]))
-      .map((ref) => ref.index),
+    verdict: null,
+    verdictEntries: {},
+    // 이어 풀 때는 채운 칸이 있으면 한 번 채점을 부탁해서 색을 되살려요.
+    requestId: Object.keys(entries).length > 0 ? 1 : 0,
+    verdictId: 0,
+    complete: saved?.complete ?? false,
   };
 }
 
@@ -75,24 +106,29 @@ const selectRef = (ref: WordRef): CrosswordState['selected'] => ({
 /** 입력한 글자 그대로 (띄어쓰기는 지워요) */
 const toChars = (text: string) => [...text.normalize('NFC').replace(/\s+/g, '')];
 
-export function isComplete(model: PuzzleModel, entries: Record<string, string>) {
-  return [...model.cells.values()].every((cell) => entries[cell.key] === cell.answer);
-}
-
 /**
  * 칸 색: 채점한 단어가 모두 맞으면 초록, 하나라도 틀리면 빨강.
  * 맞은 단어와 틀린 단어가 겹치는 칸은 초록으로 둬요. [확인]으로 찾은 틀린 칸도 빨강이에요.
  */
 export type CellMark = 'correct' | 'wrong' | 'revealed';
 
+/** 채점 결과를 받은 뒤로 이 칸들이 바뀌지 않았는지 */
+const unchangedSince = (state: CrosswordState, keys: string[]) =>
+  keys.every((key) => state.entries[key] === state.verdictEntries[key]);
+
 export function cellMarks(model: PuzzleModel, state: CrosswordState) {
   const marks = new Map<string, CellMark>();
-  for (const index of state.judged) {
-    const ref = model.words[index];
-    const right = ref.cells.every((key, i) => state.entries[key] === [...ref.word.answer][i]);
-    for (const key of ref.cells) {
-      if (right) marks.set(key, 'correct');
-      else if (marks.get(key) !== 'correct') marks.set(key, 'wrong');
+  const verdict = state.verdict;
+  if (verdict) {
+    for (const index of verdict.correct_words) {
+      const ref = model.words[index];
+      if (ref && unchangedSince(state, ref.cells))
+        ref.cells.forEach((k) => marks.set(k, 'correct'));
+    }
+    for (const index of verdict.wrong_words) {
+      const ref = model.words[index];
+      if (!ref || !unchangedSince(state, ref.cells)) continue;
+      for (const key of ref.cells) if (marks.get(key) !== 'correct') marks.set(key, 'wrong');
     }
   }
   for (const key of wrongCells(model, state)) marks.set(key, 'wrong');
@@ -105,20 +141,20 @@ export function cellMarks(model: PuzzleModel, state: CrosswordState) {
   return marks;
 }
 
-/** [확인] 후 빨간색으로 표시할 칸: 글자를 넣었는데 틀린 칸 */
-export function wrongCells(model: PuzzleModel, state: CrosswordState) {
-  if (!state.checked) return new Set<string>();
+/** [확인] 후 빨간색으로 표시할 칸: 글자를 넣었는데 서버가 틀리다고 한 칸 (그 뒤에 바꾼 칸은 빼요) */
+export function wrongCells(_model: PuzzleModel, state: CrosswordState) {
+  if (!state.checked || !state.verdict) return new Set<string>();
   return new Set(
-    [...model.cells.values()]
-      .filter((cell) => state.entries[cell.key] && state.entries[cell.key] !== cell.answer)
-      .map((cell) => cell.key),
+    state.verdict.wrong_cells.filter(
+      (key) => state.entries[key] && state.entries[key] === state.verdictEntries[key],
+    ),
   );
 }
 
 /** 선택한 단어의 초성 힌트 (힌트 1단계 이상일 때) */
 export function wordHint(model: PuzzleModel, state: CrosswordState) {
   const ref = currentWord(model, state);
-  return (state.hintLevels[ref.index] ?? 0) >= 1 ? toChoseong(ref.word.answer) : null;
+  return (state.hintLevels[ref.index] ?? 0) >= 1 ? (state.hintTexts[ref.index] ?? null) : null;
 }
 
 export function crosswordReducer(
@@ -194,36 +230,59 @@ export function crosswordReducer(
         entries,
         checked: false,
         message: null,
-        judged: state.judged.includes(ref.index) ? state.judged : [...state.judged, ref.index],
+        requestId: state.requestId + 1, // 서버에 채점을 부탁해요
         selected: next ? selectRef(next) : state.selected,
       };
     }
     case 'check':
-      return { ...state, checked: true, message: null };
-    case 'hint': {
-      const ref = currentWord(model, state);
-      const level = state.hintLevels[ref.index] ?? 0;
-      if (level >= 2) return state;
+      return { ...state, checked: true, message: null, requestId: state.requestId + 1 };
+    case 'verdict': {
+      if (action.requestId < state.verdictId) return state; // 늦게 도착한 옛 결과
+      const same = Object.keys({ ...state.entries, ...action.entries }).every(
+        (key) => (state.entries[key] ?? '') === (action.entries[key] ?? ''),
+      );
+      return {
+        ...state,
+        verdict: action.result,
+        verdictEntries: action.entries,
+        verdictId: action.requestId,
+        // 채점한 칸에서 바뀐 게 없을 때만 "다 맞았다"로 봐요
+        complete: state.complete || (action.result.complete && same),
+      };
+    }
+    case 'hintResult': {
+      if ((state.hintLevels[action.index] ?? 0) >= action.level) return state;
+      const ref = model.words[action.index];
+      if (!ref) return state;
       const entries =
-        level === 1 ? { ...state.entries, [ref.cells[0]]: [...ref.word.answer][0] } : state.entries;
+        action.level === 2 && action.firstChar
+          ? { ...state.entries, [ref.cells[0]]: action.firstChar }
+          : state.entries;
       return {
         ...state,
         entries,
-        hintLevels: { ...state.hintLevels, [ref.index]: level + 1 },
+        hintLevels: { ...state.hintLevels, [action.index]: action.level },
+        hintTexts: { ...state.hintTexts, [action.index]: action.choseong },
         hintsUsed: state.hintsUsed + 1,
+        message: null,
+        requestId: entries === state.entries ? state.requestId : state.requestId + 1,
+      };
+    }
+    case 'revealResult': {
+      const revealedKeys = [...model.cells.keys()].filter(
+        (key) => state.entries[key] !== action.answers[key],
+      );
+      return {
+        ...state,
+        entries: { ...action.answers },
+        revealed: true,
+        revealedKeys,
+        checked: false,
         message: null,
       };
     }
-    case 'reveal': {
-      const entries: Record<string, string> = {};
-      model.cells.forEach((cell) => {
-        entries[cell.key] = cell.answer;
-      });
-      const revealedKeys = [...model.cells.values()]
-        .filter((cell) => state.entries[cell.key] !== cell.answer)
-        .map((cell) => cell.key);
-      return { ...state, entries, revealed: true, revealedKeys, checked: false, message: null };
-    }
+    case 'requestFailed':
+      return { ...state, message: '서버에서 확인하지 못했어요. 잠시 후 다시 해 보세요' };
     case 'restart':
       return initialState(model);
     case 'clearMessage':

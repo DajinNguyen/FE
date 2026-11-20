@@ -575,10 +575,87 @@ export async function getCrosswordPuzzles(): Promise<CrosswordSummary[]> {
   }));
 }
 
-export async function getCrosswordPuzzle(puzzleId: string): Promise<CrosswordPuzzle> {
+function findCrossword(puzzleId: string): CrosswordPuzzle {
   const puzzle = crosswords.find((p) => p.id === puzzleId);
   if (!puzzle) throw new ApiError('퍼즐을 찾지 못했어요', 404, 'PUZZLE_NOT_FOUND');
   return puzzle;
+}
+
+/** 서버처럼 정답은 내려주지 않아요 (칸 수와 열쇠만). */
+export async function getCrosswordPuzzle(puzzleId: string): Promise<CrosswordPuzzle> {
+  const puzzle = findCrossword(puzzleId);
+  return {
+    ...puzzle,
+    // answer 를 undefined 로 두면 JSON 응답에서 빠져요 (서버가 정답을 내려주지 않는 것과 같아요)
+    words: puzzle.words.map((word) => ({ ...word, answer: undefined })),
+  };
+}
+
+const cellsOf = (w: CrosswordPuzzle['words'][number]) =>
+  Array.from({ length: w.answer_length }, (_, i) =>
+    w.direction === 'across' ? `${w.row},${w.col + i}` : `${w.row + i},${w.col}`,
+  );
+
+/** 칸 → 정답 글자 (서버 안에서만 알아요) */
+export function crosswordAnswers(puzzleId: string): Record<string, string> {
+  const grid: Record<string, string> = {};
+  for (const w of findCrossword(puzzleId).words) {
+    cellsOf(w).forEach((key, i) => {
+      grid[key] = [...w.answer!][i];
+    });
+  }
+  return grid;
+}
+
+export const isCrosswordSolved = (puzzleId: string, entries: Record<string, string>) => {
+  const grid = crosswordAnswers(puzzleId);
+  const filled = Object.fromEntries(Object.entries(entries).filter(([, v]) => v));
+  return (
+    Object.keys(grid).length === Object.keys(filled).length &&
+    Object.entries(grid).every(([k, v]) => filled[k] === v)
+  );
+};
+
+/** 채운 칸이 정답과 같은지: 서버의 /check 와 같은 규칙 */
+export async function checkCrossword(puzzleId: string, body: { entries: Record<string, string> }) {
+  const puzzle = findCrossword(puzzleId);
+  const grid = crosswordAnswers(puzzleId);
+  const entries = body.entries;
+  const correct: number[] = [];
+  const wrong: number[] = [];
+  puzzle.words.forEach((w, index) => {
+    const keys = cellsOf(w);
+    if (!keys.every((k) => entries[k])) return;
+    (keys.every((k) => entries[k] === grid[k]) ? correct : wrong).push(index);
+  });
+  return {
+    wrong_cells: Object.keys(entries).filter((k) => entries[k] && grid[k] !== entries[k]),
+    correct_words: correct,
+    wrong_words: wrong,
+    complete: isCrosswordSolved(puzzleId, entries),
+  };
+}
+
+const CHOSEONG = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+
+export async function hintCrossword(puzzleId: string, body: { word_index: number; level: 1 | 2 }) {
+  const word = findCrossword(puzzleId).words[body.word_index];
+  if (!word) throw new ApiError('없는 단어예요', 400, 'INVALID_PARAM');
+  const answer = word.answer!;
+  return {
+    choseong: [...answer]
+      .map((c) => CHOSEONG[Math.floor((c.charCodeAt(0) - 0xac00) / 588)] ?? c)
+      .join(''),
+    first_char: body.level >= 2 ? [...answer][0] : null,
+  };
+}
+
+/** 정답 보기를 쓴 퀴즈: 서버가 기록해서 보상에서 빠져요 */
+export const revealedCrosswords = new Set<string>();
+
+export async function revealCrossword(puzzleId: string) {
+  revealedCrosswords.add(puzzleId);
+  return { answers: crosswordAnswers(puzzleId) };
 }
 
 /** 목 모드는 실제 로그인이 없어서 항상 로그아웃 상태로 둬요. */
